@@ -1,0 +1,37 @@
+[gd_scene load_steps=5 format=3 uid="uid://e6lt36tjmmw8"]
+
+[ext_resource type="Texture2D" uid="uid://cxctfkb45dlg2" path="res://Assets/Textures/Orange/texture_01.png" id="1_j5dva"]
+[ext_resource type="PackedScene" uid="uid://bu66x2e72rfq8" path="res://Cenas/Leito.tscn" id="1_oji8i"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_8gp82"]
+albedo_texture = ExtResource("1_j5dva")
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_giwbh"]
+size = Vector3(1, 0.0154953, 1)
+
+[node name="Mundo" type="Node3D"]
+
+[node name="Superfície" type="CSGBox3D" parent="."]
+transform = Transform3D(10, 0, 0, 0, 10, 0, 0, 0, 10, -0.00554511, -0.18088, 0.00126243)
+material_override = SubResource("StandardMaterial3D_8gp82")
+size = Vector3(1, 0.00878906, 1)
+
+[node name="RigidBody3D" type="RigidBody3D" parent="Superfície"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Superfície/RigidBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.0013619, 0)
+shape = SubResource("BoxShape3D_giwbh")
+
+[node name="LeitoExtracao" parent="." instance=ExtResource("1_oji8i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.875795, 0)
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.914896, 0.403689, 0, -0.403689, 0.914896, 0, 2.3706, 2.35161)
+
+[node name="Camera3D2" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -0.042486, 0.999097, 0, -0.999097, -0.042486, 0, 2.97792, 0)
+
+[node name="OmniLight3D" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.17293, 0)
+light_energy = 2.131
+omni_range = 6.864

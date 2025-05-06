@@ -1,0 +1,15 @@
+[gd_scene load_steps=2 format=3 uid="uid://fk8dhcs58yjq"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_kqp0x"]
+
+[node name="Esferas" type="Node3D"]
+
+[node name="CSGSphere3D" type="CSGSphere3D" parent="."]
+transform = Transform3D(0.15, 0, 0, 0, 0.15, 0, 0, 0, 0.15, 0, 1.25217, 0)
+radial_segments = 32
+rings = 16
+
+[node name="RigidBody3D" type="RigidBody3D" parent="CSGSphere3D"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="CSGSphere3D/RigidBody3D"]
+shape = SubResource("SphereShape3D_kqp0x")

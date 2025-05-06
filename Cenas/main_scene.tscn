@@ -1,0 +1,284 @@
+[gd_scene load_steps=13 format=3 uid="uid://fbt81m33ijtb"]
+
+[ext_resource type="Script" uid="uid://d4klsjbircvsq" path="res://Scripts/extraction_bed.gd" id="1_2k4m3"]
+[ext_resource type="Texture2D" uid="uid://cxctfkb45dlg2" path="res://Assets/Textures/Orange/texture_01.png" id="1_j5dva"]
+[ext_resource type="Script" uid="uid://cw23ejejwghg" path="res://Scripts/camera_controller.gd" id="2_3k4m3"]
+[ext_resource type="Script" uid="uid://c6117y7ooqd2i" path="res://Scripts/ui_control_panel.gd" id="3_4k4m3"]
+[ext_resource type="Script" uid="uid://c3s2upg53hd5p" path="res://Scripts/free_camera.gd" id="8_freecam"]
+[ext_resource type="PackedScene" path="res://Cenas/sphere.tscn" id="10_sphere"]
+[ext_resource type="PackedScene" path="res://Cenas/cube.tscn" id="11_cube"]
+[ext_resource type="PackedScene" uid="uid://bs6bvdgbi270p" path="res://Cenas/cylinder.tscn" id="12_cylinder"]
+[ext_resource type="PackedScene" uid="uid://bx5ovgcp3b1jb" path="res://Cenas/plane.tscn" id="13_plane"]
+[ext_resource type="Script" uid="uid://c5vuj1v32js8g" path="res://Scripts/spawner.gd" id="14_spawner"]
+[ext_resource type="Script" uid="uid://cbyautdbwb5dg" path="res://Scripts/spawner_ui.gd" id="15_spawnerui"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_b4kl6"]
+albedo_texture = ExtResource("1_j5dva")
+
+[node name="MainScene" type="Node3D"]
+
+[node name="Floor" type="CSGBox3D" parent="."]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0)
+material_override = SubResource("StandardMaterial3D_b4kl6")
+size = Vector3(8, 0.2, 8)
+
+[node name="ExtractionBed" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2, 0)
+script = ExtResource("1_2k4m3")
+
+[node name="CSGCylinder3D" type="CSGCylinder3D" parent="ExtractionBed"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.35908, 0)
+radius = 0.7
+sides = 32
+
+[node name="InnerCylinder" type="CSGCylinder3D" parent="ExtractionBed"]
+operation = 2
+radius = 0.4
+height = 1.96
+sides = 32
+
+[node name="Spawner" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, 0)
+script = ExtResource("14_spawner")
+spawn_point = NodePath("SpawnerBlock")
+object_scenes = {
+"cube": ExtResource("11_cube"),
+"cylinder": ExtResource("12_cylinder"),
+"plane": ExtResource("13_plane"),
+"sphere": ExtResource("10_sphere")
+}
+
+[node name="SpawnerBlock" type="CSGBox3D" parent="Spawner"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.35908, 0)
+size = Vector3(0.3, 0.1, 0.3)
+
+[node name="CameraTop" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 9.35908, 0)
+current = true
+
+[node name="CameraFront" type="Camera3D" parent="."]
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 2.5, -6)
+
+[node name="CameraFree" type="Camera3D" parent="."]
+transform = Transform3D(-0.655295, 0, -0.755373, 0, 1, 0, 0.755373, 0, -0.655295, -4, 4.34248, -4)
+script = ExtResource("8_freecam")
+
+[node name="CameraIso" type="Camera3D" parent="."]
+transform = Transform3D(0.707, 0, 0.707, -0.408, 0.816, 0.408, -0.577, -0.577, 0.577, 6, 7, -6)
+
+[node name="CameraController" type="Node" parent="."]
+script = ExtResource("2_3k4m3")
+camera1_path = NodePath("../CameraTop")
+camera2_path = NodePath("../CameraFree")
+camera3_path = NodePath("../CameraFront")
+camera4_path = NodePath("../CameraIso")
+
+[node name="OmniLight3D" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5, 0)
+light_energy = 2.0
+omni_range = 10.0
+
+[node name="UIControlPanel" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -300.0
+offset_top = 20.0
+offset_right = -20.0
+offset_bottom = 300.0
+grow_horizontal = 0
+script = ExtResource("3_4k4m3")
+extraction_bed_path = NodePath("../ExtractionBed")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="UIControlPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 20
+
+[node name="HeightContainer" type="VBoxContainer" parent="UIControlPanel/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="UIControlPanel/VBoxContainer/HeightContainer"]
+layout_mode = 2
+text = "Altura"
+
+[node name="HeightSlider" type="HSlider" parent="UIControlPanel/VBoxContainer/HeightContainer"]
+layout_mode = 2
+min_value = 0.5
+max_value = 5.0
+step = 0.1
+value = 2.0
+
+[node name="HeightValue" type="Label" parent="UIControlPanel/VBoxContainer/HeightContainer"]
+layout_mode = 2
+text = "2.0"
+
+[node name="WidthContainer" type="VBoxContainer" parent="UIControlPanel/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="UIControlPanel/VBoxContainer/WidthContainer"]
+layout_mode = 2
+text = "Largura"
+
+[node name="WidthSlider" type="HSlider" parent="UIControlPanel/VBoxContainer/WidthContainer"]
+layout_mode = 2
+min_value = 0.5
+max_value = 5.0
+step = 0.1
+value = 1.0
+
+[node name="WidthValue" type="Label" parent="UIControlPanel/VBoxContainer/WidthContainer"]
+layout_mode = 2
+text = "1.0"
+
+[node name="DiameterContainer" type="VBoxContainer" parent="UIControlPanel/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="UIControlPanel/VBoxContainer/DiameterContainer"]
+layout_mode = 2
+text = "Diâmetro"
+
+[node name="DiameterSlider" type="HSlider" parent="UIControlPanel/VBoxContainer/DiameterContainer"]
+layout_mode = 2
+min_value = 0.5
+max_value = 5.0
+step = 0.1
+value = 1.0
+
+[node name="DiameterValue" type="Label" parent="UIControlPanel/VBoxContainer/DiameterContainer"]
+layout_mode = 2
+text = "1.0"
+
+[node name="InnerCylinderContainer" type="VBoxContainer" parent="UIControlPanel/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="UIControlPanel/VBoxContainer/InnerCylinderContainer"]
+layout_mode = 2
+text = "Raio do Espaço Interno"
+
+[node name="InnerRadiusSlider" type="HSlider" parent="UIControlPanel/VBoxContainer/InnerCylinderContainer"]
+layout_mode = 2
+min_value = 0.1
+max_value = 0.69
+step = 0.01
+value = 0.4
+
+[node name="InnerRadiusValue" type="Label" parent="UIControlPanel/VBoxContainer/InnerCylinderContainer"]
+layout_mode = 2
+text = "0.4"
+
+[node name="ConfirmButton" type="Button" parent="UIControlPanel/VBoxContainer/InnerCylinderContainer"]
+layout_mode = 2
+text = "Confirmar Espaço Interno"
+
+[node name="SpawnerControlPanel" type="Control" parent="UIControlPanel"]
+custom_minimum_size = Vector2(220, 0)
+layout_mode = 3
+anchors_preset = 0
+offset_left = 20.0
+offset_top = 20.0
+offset_right = 320.0
+offset_bottom = 400.0
+grow_horizontal = 0
+script = ExtResource("15_spawnerui")
+spawner_path = NodePath("../../Spawner")
+
+[node name="SpawnerVBox" type="VBoxContainer" parent="UIControlPanel/SpawnerControlPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -862.0
+offset_top = -30.0
+offset_right = -882.0
+offset_bottom = -50.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 8
+
+[node name="TypeLabel" type="Label" parent="UIControlPanel/SpawnerControlPanel/SpawnerVBox"]
+custom_minimum_size = Vector2(120, 18)
+layout_mode = 2
+text = "Tipo de Objeto"
+
+[node name="TypeOption" type="OptionButton" parent="UIControlPanel/SpawnerControlPanel/SpawnerVBox"]
+custom_minimum_size = Vector2(120, 22)
+layout_mode = 2
+
+[node name="QtdLabel" type="Label" parent="UIControlPanel/SpawnerControlPanel/SpawnerVBox"]
+custom_minimum_size = Vector2(120, 18)
+layout_mode = 2
+text = "Quantidade"
+
+[node name="QtdSpin" type="SpinBox" parent="UIControlPanel/SpawnerControlPanel/SpawnerVBox"]
+custom_minimum_size = Vector2(80, 22)
+layout_mode = 2
+min_value = 1.0
+value = 1.0
+
+[node name="RaioLabel" type="Label" parent="UIControlPanel/SpawnerControlPanel/SpawnerVBox"]
+custom_minimum_size = Vector2(120, 18)
+layout_mode = 2
+text = "Raio/Diâmetro"
+
+[node name="RaioSpin" type="SpinBox" parent="UIControlPanel/SpawnerControlPanel/SpawnerVBox"]
+custom_minimum_size = Vector2(80, 22)
+layout_mode = 2
+min_value = 0.05
+max_value = 2.0
+step = 0.01
+value = 0.15
+
+[node name="AlturaLabel" type="Label" parent="UIControlPanel/SpawnerControlPanel/SpawnerVBox"]
+custom_minimum_size = Vector2(120, 18)
+layout_mode = 2
+text = "Altura"
+
+[node name="AlturaSpin" type="SpinBox" parent="UIControlPanel/SpawnerControlPanel/SpawnerVBox"]
+custom_minimum_size = Vector2(80, 22)
+layout_mode = 2
+min_value = 0.05
+max_value = 2.0
+step = 0.01
+value = 0.3
+
+[node name="LarguraLabel" type="Label" parent="UIControlPanel/SpawnerControlPanel/SpawnerVBox"]
+custom_minimum_size = Vector2(120, 18)
+layout_mode = 2
+text = "Largura"
+
+[node name="LarguraSpin" type="SpinBox" parent="UIControlPanel/SpawnerControlPanel/SpawnerVBox"]
+custom_minimum_size = Vector2(80, 22)
+layout_mode = 2
+min_value = 0.05
+max_value = 2.0
+step = 0.01
+value = 0.3
+
+[node name="IntervaloLabel" type="Label" parent="UIControlPanel/SpawnerControlPanel/SpawnerVBox"]
+custom_minimum_size = Vector2(120, 18)
+layout_mode = 2
+text = "Intervalo (s)"
+
+[node name="IntervaloSpin" type="SpinBox" parent="UIControlPanel/SpawnerControlPanel/SpawnerVBox"]
+custom_minimum_size = Vector2(80, 22)
+layout_mode = 2
+min_value = 0.05
+max_value = 10.0
+step = 0.01
+value = 1.0
+
+[node name="SpawnButton" type="Button" parent="UIControlPanel/SpawnerControlPanel/SpawnerVBox"]
+custom_minimum_size = Vector2(120, 26)
+layout_mode = 2
+text = "Iniciar Spawn"
+
+[connection signal="value_changed" from="UIControlPanel/VBoxContainer/HeightContainer/HeightSlider" to="UIControlPanel" method="_on_height_slider_value_changed"]
+[connection signal="value_changed" from="UIControlPanel/VBoxContainer/WidthContainer/WidthSlider" to="UIControlPanel" method="_on_width_slider_value_changed"]
+[connection signal="value_changed" from="UIControlPanel/VBoxContainer/DiameterContainer/DiameterSlider" to="UIControlPanel" method="_on_diameter_slider_value_changed"]
+[connection signal="value_changed" from="UIControlPanel/VBoxContainer/InnerCylinderContainer/InnerRadiusSlider" to="UIControlPanel" method="_on_inner_radius_slider_value_changed"]

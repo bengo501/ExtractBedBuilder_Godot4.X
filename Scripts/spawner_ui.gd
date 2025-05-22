@@ -13,6 +13,12 @@ var spawner: Node3D
 
 func _ready():
 	spawner = get_node(spawner_path)
+	# Adiciona as opções ao OptionButton
+	type_option.clear()
+	type_option.add_item("Esfera")   # 0
+	type_option.add_item("Cubo")     # 1
+	type_option.add_item("Cilindro") # 2
+	type_option.add_item("Plano")    # 3
 	spawn_button.pressed.connect(_on_spawn_button_pressed)
 
 func _on_spawn_button_pressed():

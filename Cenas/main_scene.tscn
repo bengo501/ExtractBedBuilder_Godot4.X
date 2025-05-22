@@ -114,14 +114,13 @@ omni_attenuation = 1.2
 
 [node name="UIControlPanel" type="Control" parent="."]
 layout_mode = 3
-anchors_preset = 1
+anchors_preset = 11
 anchor_left = 1.0
 anchor_right = 1.0
+anchor_bottom = 1.0
 offset_left = -400.0
-offset_top = 20.0
-offset_right = -20.0
-offset_bottom = 500.0
-grow_horizontal = 0
+grow_horizontal = 2
+grow_vertical = 2
 script = ExtResource("3_4k4m3")
 extraction_bed_path = NodePath("../ExtractionBed")
 
@@ -130,9 +129,10 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_bottom = -97.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.2, 0.2, 0.2, 0.7)
+color = Color(0.2, 0.2, 0.2, 0.647059)
 
 [node name="VBoxContainer" type="VBoxContainer" parent="UIControlPanel"]
 layout_mode = 1
@@ -143,8 +143,6 @@ offset_left = 12.0
 offset_top = 12.0
 offset_right = -12.0
 offset_bottom = -12.0
-grow_horizontal = 2
-grow_vertical = 2
 theme_override_constants/separation = 15
 
 [node name="ZoomContainer" type="HBoxContainer" parent="UIControlPanel/VBoxContainer"]
@@ -324,10 +322,10 @@ color = Color(0, 0.8, 1, 1)
 custom_minimum_size = Vector2(300, 0)
 layout_mode = 3
 anchors_preset = 0
-offset_left = -1132.0
-offset_top = -17.0
-offset_right = -772.0
-offset_bottom = 463.0
+offset_left = -1152.0
+offset_top = 44.0
+offset_right = -792.0
+offset_bottom = 524.0
 script = ExtResource("15_spawnerui")
 spawner_path = NodePath("../../Spawner")
 
@@ -336,9 +334,10 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_top = -19.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.2, 0.2, 0.2, 0.7)
+color = Color(0.2, 0.2, 0.2, 0.592157)
 
 [node name="SpawnerVBox" type="VBoxContainer" parent="UIControlPanel/SpawnerControlPanel"]
 layout_mode = 1

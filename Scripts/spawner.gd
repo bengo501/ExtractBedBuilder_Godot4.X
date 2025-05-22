@@ -50,17 +50,23 @@ func _spawn_object():
 		)
 		obj.global_transform.origin = point.global_transform.origin + random_offset
 		
-		# Ajusta o tamanho
+		# Ajusta o tamanho e física
 		if obj.has_node("CSGSphere3D"):
 			obj.get_node("CSGSphere3D").radius = spawn_radius
-			# Ajusta a massa baseada no volume
 			var volume = (4.0/3.0) * PI * pow(spawn_radius, 3)
-			obj.mass = volume * 0.5  # Densidade de 0.5 kg/m³
+			obj.mass = volume * 0.5
 		if obj.has_node("CSGCylinder3D"):
 			obj.get_node("CSGCylinder3D").radius = spawn_radius
 			obj.get_node("CSGCylinder3D").height = spawn_height
+			obj.mass = PI * pow(spawn_radius, 2) * spawn_height * 0.5
 		if obj.has_node("CSGBox3D"):
 			obj.get_node("CSGBox3D").size = Vector3(spawn_width, spawn_height, spawn_width)
+			obj.mass = spawn_width * spawn_height * spawn_width * 0.5
+		if obj.name == "Plane" or obj.has_node("CSGBox3D") and spawn_type == "plane":
+			# Para plano, deixar bem fino
+			if obj.has_node("CSGBox3D"):
+				obj.get_node("CSGBox3D").size = Vector3(spawn_width, 0.05, spawn_width)
+			obj.mass = spawn_width * 0.05 * spawn_width * 0.5
 		if obj.has_node("CSGMesh3D"):
 			obj.get_node("CSGMesh3D").scale = Vector3(spawn_width, 1, spawn_width)
 		

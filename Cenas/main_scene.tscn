@@ -107,13 +107,24 @@ grow_horizontal = 0
 script = ExtResource("3_4k4m3")
 extraction_bed_path = NodePath("../ExtractionBed")
 
+[node name="BackgroundBlur" type="ColorRect" parent="UIControlPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.2, 0.2, 0.2, 0.7)
+
 [node name="VBoxContainer" type="VBoxContainer" parent="UIControlPanel"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_left = 12.0
 offset_top = 12.0
-offset_bottom = 12.0
+offset_right = -12.0
+offset_bottom = -12.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 15
@@ -123,9 +134,11 @@ layout_mode = 2
 
 [node name="Label" type="Label" parent="UIControlPanel/VBoxContainer/HeightContainer"]
 layout_mode = 2
+theme_override_font_sizes/font_size = 16
 text = "Altura"
 
 [node name="HeightSlider" type="HSlider" parent="UIControlPanel/VBoxContainer/HeightContainer"]
+custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
 min_value = 0.5
 max_value = 5.0
@@ -134,6 +147,7 @@ value = 2.0
 
 [node name="HeightValue" type="Label" parent="UIControlPanel/VBoxContainer/HeightContainer"]
 layout_mode = 2
+theme_override_font_sizes/font_size = 14
 text = "2.0"
 
 [node name="WidthContainer" type="VBoxContainer" parent="UIControlPanel/VBoxContainer"]
@@ -205,31 +219,47 @@ offset_bottom = 463.0
 script = ExtResource("15_spawnerui")
 spawner_path = NodePath("../../Spawner")
 
-[node name="SpawnerVBox" type="VBoxContainer" parent="UIControlPanel/SpawnerControlPanel"]
+[node name="BackgroundBlur" type="ColorRect" parent="UIControlPanel/SpawnerControlPanel"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+color = Color(0.2, 0.2, 0.2, 0.7)
+
+[node name="SpawnerVBox" type="VBoxContainer" parent="UIControlPanel/SpawnerControlPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 12.0
+offset_top = 12.0
+offset_right = -12.0
+offset_bottom = -12.0
+grow_horizontal = 2
+grow_vertical = 2
 theme_override_constants/separation = 12
 
 [node name="TypeLabel" type="Label" parent="UIControlPanel/SpawnerControlPanel/SpawnerVBox"]
-custom_minimum_size = Vector2(120, 18)
+custom_minimum_size = Vector2(120, 24)
 layout_mode = 2
+theme_override_font_sizes/font_size = 16
 text = "Tipo de Objeto"
 
 [node name="TypeOption" type="OptionButton" parent="UIControlPanel/SpawnerControlPanel/SpawnerVBox"]
-custom_minimum_size = Vector2(120, 22)
+custom_minimum_size = Vector2(120, 30)
 layout_mode = 2
+theme_override_font_sizes/font_size = 14
 
 [node name="QtdLabel" type="Label" parent="UIControlPanel/SpawnerControlPanel/SpawnerVBox"]
-custom_minimum_size = Vector2(120, 18)
+custom_minimum_size = Vector2(120, 24)
 layout_mode = 2
+theme_override_font_sizes/font_size = 16
 text = "Quantidade"
 
 [node name="QtdSpin" type="SpinBox" parent="UIControlPanel/SpawnerControlPanel/SpawnerVBox"]
-custom_minimum_size = Vector2(80, 22)
+custom_minimum_size = Vector2(80, 30)
 layout_mode = 2
 min_value = 1.0
 value = 1.0
@@ -287,8 +317,9 @@ step = 0.01
 value = 1.0
 
 [node name="SpawnButton" type="Button" parent="UIControlPanel/SpawnerControlPanel/SpawnerVBox"]
-custom_minimum_size = Vector2(120, 26)
+custom_minimum_size = Vector2(120, 36)
 layout_mode = 2
+theme_override_font_sizes/font_size = 16
 text = "Iniciar Spawn"
 
 [connection signal="value_changed" from="UIControlPanel/VBoxContainer/HeightContainer/HeightSlider" to="UIControlPanel" method="_on_height_slider_value_changed"]

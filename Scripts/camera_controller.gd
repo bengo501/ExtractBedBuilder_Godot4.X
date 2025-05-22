@@ -49,7 +49,7 @@ func _input(event):
 func switch_camera(new_camera: Camera3D):
 	current_camera.current = false
 	new_camera.current = true
-	current_camera = new_camera
+	current_camera = new_camera 
 
 func zoom_in():
 	var new_fov = clamp(current_camera.fov - ZOOM_STEP, MIN_FOV, MAX_FOV)

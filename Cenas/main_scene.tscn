@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3 uid="uid://fbt81m33ijtb"]
+[gd_scene load_steps=17 format=3 uid="uid://fbt81m33ijtb"]
 
 [ext_resource type="Script" uid="uid://d4klsjbircvsq" path="res://Scripts/extraction_bed.gd" id="1_2k4m3"]
 [ext_resource type="Texture2D" uid="uid://cxctfkb45dlg2" path="res://Assets/Textures/Orange/texture_01.png" id="1_j5dva"]
@@ -11,6 +11,7 @@
 [ext_resource type="PackedScene" uid="uid://bx5ovgcp3b1jb" path="res://Cenas/plane.tscn" id="13_plane"]
 [ext_resource type="Script" uid="uid://c5vuj1v32js8g" path="res://Scripts/spawner.gd" id="14_spawner"]
 [ext_resource type="Script" uid="uid://cbyautdbwb5dg" path="res://Scripts/spawner_ui.gd" id="15_spawnerui"]
+[ext_resource type="PackedScene" uid="uid://bq6t8isw3doa5" path="res://Cenas/PauseMenu.tscn" id="16_pausemenu"]
 
 [sub_resource type="Environment" id="Environment_1"]
 background_mode = 1
@@ -143,6 +144,8 @@ offset_left = 12.0
 offset_top = 12.0
 offset_right = -12.0
 offset_bottom = -12.0
+grow_horizontal = 2
+grow_vertical = 2
 theme_override_constants/separation = 15
 
 [node name="ZoomContainer" type="HBoxContainer" parent="UIControlPanel/VBoxContainer"]
@@ -432,6 +435,8 @@ custom_minimum_size = Vector2(120, 36)
 layout_mode = 2
 theme_override_font_sizes/font_size = 16
 text = "Iniciar Spawn"
+
+[node name="PauseMenu" parent="." instance=ExtResource("16_pausemenu")]
 
 [connection signal="value_changed" from="UIControlPanel/VBoxContainer/HeightContainer/HeightSlider" to="UIControlPanel" method="_on_height_slider_value_changed"]
 [connection signal="value_changed" from="UIControlPanel/VBoxContainer/WidthContainer/WidthSlider" to="UIControlPanel" method="_on_width_slider_value_changed"]

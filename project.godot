@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="Ic_leitoExtracao"
-run/main_scene="uid://e6lt36tjmmw8"
+run/main_scene="uid://fbt81m33ijtb"
 config/features=PackedStringArray("4.4", "Forward Plus")
 config/icon="res://icon.svg"
 

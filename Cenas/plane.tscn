@@ -1,11 +1,9 @@
-[gd_scene load_steps=3 format=3 uid="uid://bx5ovgcp3b1jb"]
+[gd_scene load_steps=2 format=3 uid="uid://bx5ovgcp3b1jb"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_1"]
 size = Vector3(0.3, 0.05, 0.3)
 
 [node name="Plane" type="RigidBody3D"]
-mass = 1.0
-gravity_scale = 1.0
 linear_damp = 0.1
 angular_damp = 0.1
 

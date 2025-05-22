@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://fbt81m33ijtb"]
+[gd_scene load_steps=14 format=3 uid="uid://fbt81m33ijtb"]
 
 [ext_resource type="Script" uid="uid://d4klsjbircvsq" path="res://Scripts/extraction_bed.gd" id="1_2k4m3"]
 [ext_resource type="Texture2D" uid="uid://cxctfkb45dlg2" path="res://Assets/Textures/Orange/texture_01.png" id="1_j5dva"]
@@ -12,10 +12,20 @@
 [ext_resource type="Script" uid="uid://c5vuj1v32js8g" path="res://Scripts/spawner.gd" id="14_spawner"]
 [ext_resource type="Script" uid="uid://cbyautdbwb5dg" path="res://Scripts/spawner_ui.gd" id="15_spawnerui"]
 
+[sub_resource type="Environment" id="Environment_1"]
+background_mode = 1
+background_color = Color(0.9, 0.9, 0.95, 1)
+ambient_light_source = 2
+ambient_light_color = Color(0.8, 0.8, 0.85, 1)
+ambient_light_energy = 0.5
+
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_b4kl6"]
 albedo_texture = ExtResource("1_j5dva")
 
 [node name="MainScene" type="Node3D"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_1")
 
 [node name="Floor" type="CSGBox3D" parent="."]
 transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0)
@@ -73,20 +83,26 @@ camera2_path = NodePath("../CameraFree")
 camera3_path = NodePath("../CameraFront")
 camera4_path = NodePath("../CameraIso")
 
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.866025, -0.433013, 0.25, 0, 0.5, 0.866025, -0.5, -0.75, 0.433013, 0, 5, 0)
+light_energy = 1.5
+shadow_enabled = true
+
 [node name="OmniLight3D" type="OmniLight3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5, 0)
-light_energy = 2.0
-omni_range = 10.0
+light_energy = 1.5
+omni_range = 15.0
+omni_attenuation = 1.2
 
 [node name="UIControlPanel" type="Control" parent="."]
 layout_mode = 3
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -300.0
+offset_left = -400.0
 offset_top = 20.0
 offset_right = -20.0
-offset_bottom = 300.0
+offset_bottom = 500.0
 grow_horizontal = 0
 script = ExtResource("3_4k4m3")
 extraction_bed_path = NodePath("../ExtractionBed")
@@ -96,9 +112,11 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_top = 12.0
+offset_bottom = 12.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/separation = 20
+theme_override_constants/separation = 15
 
 [node name="HeightContainer" type="VBoxContainer" parent="UIControlPanel/VBoxContainer"]
 layout_mode = 2
@@ -177,14 +195,13 @@ layout_mode = 2
 text = "Confirmar Espaço Interno"
 
 [node name="SpawnerControlPanel" type="Control" parent="UIControlPanel"]
-custom_minimum_size = Vector2(220, 0)
+custom_minimum_size = Vector2(300, 0)
 layout_mode = 3
 anchors_preset = 0
-offset_left = 20.0
-offset_top = 20.0
-offset_right = 320.0
-offset_bottom = 400.0
-grow_horizontal = 0
+offset_left = -1132.0
+offset_top = -17.0
+offset_right = -772.0
+offset_bottom = 463.0
 script = ExtResource("15_spawnerui")
 spawner_path = NodePath("../../Spawner")
 
@@ -193,13 +210,9 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -862.0
-offset_top = -30.0
-offset_right = -882.0
-offset_bottom = -50.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/separation = 8
+theme_override_constants/separation = 12
 
 [node name="TypeLabel" type="Label" parent="UIControlPanel/SpawnerControlPanel/SpawnerVBox"]
 custom_minimum_size = Vector2(120, 18)

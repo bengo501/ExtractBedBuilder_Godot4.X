@@ -1,13 +1,24 @@
-[gd_scene format=3]
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://Scripts/sphere_physics.gd" id="1_physics"]
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_1"]
 radius = 0.15
 
-[node name="Sphere" type="RigidBody3D"]
-mass = 1.0
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_1"]
+roughness = 0.7
+metallic = 0.3
+physics_material_override = SubResource("StandardMaterial3D_1")
+
+[node name="Sphere" type="RigidBody3D" groups=["spheres"]]
+mass = 0.5
 gravity_scale = 1.0
 linear_damp = 0.1
 angular_damp = 0.1
+contact_monitor = true
+max_contacts_reported = 4
+physics_material_override = SubResource("StandardMaterial3D_1")
+script = ExtResource("1_physics")
 
 [node name="CSGSphere3D" type="CSGSphere3D" parent="."]
 radius = 0.15

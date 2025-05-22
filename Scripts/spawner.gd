@@ -41,10 +41,21 @@ func _spawn_object():
 	if scene:
 		var obj = scene.instantiate()
 		var point = get_node(spawn_point)
-		obj.global_transform.origin = point.global_transform.origin
-		# Ajustar tamanho
+		
+		# Adiciona uma pequena variação aleatória na posição inicial
+		var random_offset = Vector3(
+			randf_range(-0.1, 0.1),
+			0,
+			randf_range(-0.1, 0.1)
+		)
+		obj.global_transform.origin = point.global_transform.origin + random_offset
+		
+		# Ajusta o tamanho
 		if obj.has_node("CSGSphere3D"):
 			obj.get_node("CSGSphere3D").radius = spawn_radius
+			# Ajusta a massa baseada no volume
+			var volume = (4.0/3.0) * PI * pow(spawn_radius, 3)
+			obj.mass = volume * 0.5  # Densidade de 0.5 kg/m³
 		if obj.has_node("CSGCylinder3D"):
 			obj.get_node("CSGCylinder3D").radius = spawn_radius
 			obj.get_node("CSGCylinder3D").height = spawn_height
@@ -52,5 +63,6 @@ func _spawn_object():
 			obj.get_node("CSGBox3D").size = Vector3(spawn_width, spawn_height, spawn_width)
 		if obj.has_node("CSGMesh3D"):
 			obj.get_node("CSGMesh3D").scale = Vector3(spawn_width, 1, spawn_width)
+		
 		get_tree().current_scene.add_child(obj)
 		spawn_count += 1 

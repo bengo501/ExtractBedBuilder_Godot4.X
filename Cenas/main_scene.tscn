@@ -25,11 +25,12 @@ albedo_texture = ExtResource("1_j5dva")
 [sub_resource type="BoxShape3D" id="BoxShape3D_floor"]
 size = Vector3(8, 0.2, 8)
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_transparent"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_outline"]
 transparency = 1
 albedo_color = Color(0.8, 0.8, 0.8, 0.3)
-metallic = 0.2
-roughness = 0.8
+emission_enabled = true
+emission = Color(0, 0.8, 1, 1)
+emission_energy_multiplier = 0.5
 
 [node name="MainScene" type="Node3D"]
 
@@ -52,7 +53,7 @@ script = ExtResource("1_2k4m3")
 
 [node name="CSGCylinder3D" type="CSGCylinder3D" parent="ExtractionBed"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.35908, 0)
-material_override = SubResource("StandardMaterial3D_transparent")
+material_override = SubResource("StandardMaterial3D_outline")
 use_collision = true
 radius = 0.7
 sides = 32
@@ -242,9 +243,82 @@ value = 0.4
 layout_mode = 2
 text = "0.4"
 
+[node name="OperationTypeContainer" type="VBoxContainer" parent="UIControlPanel/VBoxContainer/InnerCylinderContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="UIControlPanel/VBoxContainer/InnerCylinderContainer/OperationTypeContainer"]
+layout_mode = 2
+text = "Tipo de Operação"
+
+[node name="OperationOption" type="OptionButton" parent="UIControlPanel/VBoxContainer/InnerCylinderContainer/OperationTypeContainer"]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+item_count = 3
+popup/item_0/text = "Subtração"
+popup/item_0/id = 0
+popup/item_1/text = "União"
+popup/item_1/id = 1
+popup/item_2/text = "Interseção"
+popup/item_2/id = 2
+
 [node name="ConfirmButton" type="Button" parent="UIControlPanel/VBoxContainer/InnerCylinderContainer"]
 layout_mode = 2
-text = "Confirmar Espaço Interno"
+text = "Confirmar Operação"
+
+[node name="OutlineContainer" type="VBoxContainer" parent="UIControlPanel/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="UIControlPanel/VBoxContainer/OutlineContainer"]
+layout_mode = 2
+text = "Outline"
+
+[node name="OutlineWidthContainer" type="HBoxContainer" parent="UIControlPanel/VBoxContainer/OutlineContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="UIControlPanel/VBoxContainer/OutlineContainer/OutlineWidthContainer"]
+layout_mode = 2
+text = "Largura"
+
+[node name="OutlineWidthSlider" type="HSlider" parent="UIControlPanel/VBoxContainer/OutlineContainer/OutlineWidthContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = 0.001
+max_value = 0.05
+step = 0.001
+value = 0.02
+
+[node name="OutlineWidthValue" type="Label" parent="UIControlPanel/VBoxContainer/OutlineContainer/OutlineWidthContainer"]
+layout_mode = 2
+text = "0.02"
+
+[node name="TransparencyContainer" type="HBoxContainer" parent="UIControlPanel/VBoxContainer/OutlineContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="UIControlPanel/VBoxContainer/OutlineContainer/TransparencyContainer"]
+layout_mode = 2
+text = "Transparência"
+
+[node name="TransparencySlider" type="HSlider" parent="UIControlPanel/VBoxContainer/OutlineContainer/TransparencyContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 1.0
+step = 0.01
+value = 0.3
+
+[node name="TransparencyValue" type="Label" parent="UIControlPanel/VBoxContainer/OutlineContainer/TransparencyContainer"]
+layout_mode = 2
+text = "0.3"
+
+[node name="OutlineColorContainer" type="HBoxContainer" parent="UIControlPanel/VBoxContainer/OutlineContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="UIControlPanel/VBoxContainer/OutlineContainer/OutlineColorContainer"]
+layout_mode = 2
+text = "Cor"
+
+[node name="OutlineColorButton" type="ColorPickerButton" parent="UIControlPanel/VBoxContainer/OutlineContainer/OutlineColorContainer"]
+layout_mode = 2
+color = Color(0, 0.8, 1, 1)
 
 [node name="SpawnerControlPanel" type="Control" parent="UIControlPanel"]
 custom_minimum_size = Vector2(300, 0)

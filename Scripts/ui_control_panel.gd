@@ -12,9 +12,11 @@ extends Control
 
 @export var extraction_bed_path: NodePath
 var extraction_bed: Node3D
+var camera_controller: Node
 
 func _ready():
 	extraction_bed = get_node(extraction_bed_path)
+	camera_controller = get_node("../CameraController")
 	
 	# Initialize sliders with current values
 	height_slider.value = extraction_bed.height
@@ -24,6 +26,16 @@ func _ready():
 	
 	update_labels()
 	confirm_button.pressed.connect(_on_confirm_button_pressed)
+	
+	# Conectar sinais dos sliders
+	$VBoxContainer/HeightContainer/HeightSlider.value_changed.connect(_on_height_slider_value_changed)
+	$VBoxContainer/WidthContainer/WidthSlider.value_changed.connect(_on_width_slider_value_changed)
+	$VBoxContainer/DiameterContainer/DiameterSlider.value_changed.connect(_on_diameter_slider_value_changed)
+	$VBoxContainer/InnerCylinderContainer/InnerRadiusSlider.value_changed.connect(_on_inner_radius_slider_value_changed)
+	
+	# Conectar botões de zoom
+	$VBoxContainer/ZoomContainer/ZoomInButton.pressed.connect(_on_zoom_in_pressed)
+	$VBoxContainer/ZoomContainer/ZoomOutButton.pressed.connect(_on_zoom_out_pressed)
 
 func _on_height_slider_value_changed(value: float):
 	extraction_bed.set_height(value)
@@ -43,6 +55,12 @@ func _on_inner_radius_slider_value_changed(value: float):
 
 func _on_confirm_button_pressed():
 	extraction_bed.confirm_boolean()
+
+func _on_zoom_in_pressed():
+	camera_controller.zoom_in()
+
+func _on_zoom_out_pressed():
+	camera_controller.zoom_out()
 
 func update_labels():
 	height_value.text = str(height_slider.value)

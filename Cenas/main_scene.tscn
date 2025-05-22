@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://fbt81m33ijtb"]
+[gd_scene load_steps=18 format=3 uid="uid://fbt81m33ijtb"]
 
 [ext_resource type="Script" uid="uid://d4klsjbircvsq" path="res://Scripts/extraction_bed.gd" id="1_2k4m3"]
 [ext_resource type="Texture2D" uid="uid://cxctfkb45dlg2" path="res://Assets/Textures/Orange/texture_01.png" id="1_j5dva"]
@@ -22,24 +22,51 @@ ambient_light_energy = 0.5
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_b4kl6"]
 albedo_texture = ExtResource("1_j5dva")
 
+[sub_resource type="BoxShape3D" id="BoxShape3D_floor"]
+size = Vector3(8, 0.2, 8)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_transparent"]
+transparency = 1
+albedo_color = Color(0.8, 0.8, 0.8, 0.3)
+metallic = 0.2
+roughness = 0.8
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_outer"]
+height = 4.71816
+radius = 0.7
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_inner"]
+height = 1.96
+radius = 0.4
+
 [node name="MainScene" type="Node3D"]
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_1")
 
-[node name="Floor" type="CSGBox3D" parent="."]
+[node name="Floor" type="StaticBody3D" parent="."]
 transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0)
+
+[node name="CSGBox3D" type="CSGBox3D" parent="Floor"]
 material_override = SubResource("StandardMaterial3D_b4kl6")
 size = Vector3(8, 0.2, 8)
 
-[node name="ExtractionBed" type="Node3D" parent="."]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Floor"]
+shape = SubResource("BoxShape3D_floor")
+
+[node name="ExtractionBed" type="StaticBody3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2, 0)
 script = ExtResource("1_2k4m3")
 
 [node name="CSGCylinder3D" type="CSGCylinder3D" parent="ExtractionBed"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.35908, 0)
+material_override = SubResource("StandardMaterial3D_transparent")
 radius = 0.7
 sides = 32
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="ExtractionBed"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.35908, 0)
+shape = SubResource("CylinderShape3D_outer")
 
 [node name="InnerCylinder" type="CSGCylinder3D" parent="ExtractionBed"]
 operation = 2
@@ -47,8 +74,12 @@ radius = 0.4
 height = 1.96
 sides = 32
 
+[node name="CollisionShape3D2" type="CollisionShape3D" parent="ExtractionBed"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.35908, 0)
+shape = SubResource("CylinderShape3D_inner")
+
 [node name="Spawner" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
 script = ExtResource("14_spawner")
 spawn_point = NodePath("SpawnerBlock")
 object_scenes = {
@@ -59,7 +90,7 @@ object_scenes = {
 }
 
 [node name="SpawnerBlock" type="CSGBox3D" parent="Spawner"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.35908, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 0)
 size = Vector3(0.3, 0.1, 0.3)
 
 [node name="CameraTop" type="Camera3D" parent="."]
@@ -128,6 +159,27 @@ offset_bottom = -12.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 15
+
+[node name="ZoomContainer" type="HBoxContainer" parent="UIControlPanel/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Label" type="Label" parent="UIControlPanel/VBoxContainer/ZoomContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "Zoom"
+
+[node name="ZoomOutButton" type="Button" parent="UIControlPanel/VBoxContainer/ZoomContainer"]
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "-"
+
+[node name="ZoomInButton" type="Button" parent="UIControlPanel/VBoxContainer/ZoomContainer"]
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "+"
 
 [node name="HeightContainer" type="VBoxContainer" parent="UIControlPanel/VBoxContainer"]
 layout_mode = 2

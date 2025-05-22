@@ -11,6 +11,12 @@ var camera3: Camera3D
 var camera4: Camera3D
 var current_camera: Camera3D
 
+const MIN_FOV = 30.0
+const MAX_FOV = 120.0
+const ZOOM_STEP = 5.0
+
+signal fov_changed(new_fov: float)
+
 func _ready():
 	camera1 = get_node(camera1_path)
 	camera2 = get_node(camera2_path)
@@ -35,8 +41,22 @@ func _input(event):
 				switch_camera(camera3)
 			KEY_4:
 				switch_camera(camera4)
+			KEY_EQUAL, KEY_KP_ADD:  # Tecla + ou + do numpad
+				zoom_in()
+			KEY_MINUS, KEY_KP_SUBTRACT:  # Tecla - ou - do numpad
+				zoom_out()
 
 func switch_camera(new_camera: Camera3D):
 	current_camera.current = false
 	new_camera.current = true
-	current_camera = new_camera 
+	current_camera = new_camera
+
+func zoom_in():
+	var new_fov = clamp(current_camera.fov - ZOOM_STEP, MIN_FOV, MAX_FOV)
+	current_camera.fov = new_fov
+	emit_signal("fov_changed", new_fov)
+
+func zoom_out():
+	var new_fov = clamp(current_camera.fov + ZOOM_STEP, MIN_FOV, MAX_FOV)
+	current_camera.fov = new_fov
+	emit_signal("fov_changed", new_fov) 

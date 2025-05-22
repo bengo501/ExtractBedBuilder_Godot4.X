@@ -1,14 +1,16 @@
 [gd_scene format=3]
 
-[sub_resource type="BoxShape3D" id=1]
+[sub_resource type="BoxShape3D" id="BoxShape3D_1"]
 size = Vector3(0.3, 0.3, 0.3)
 
-[node name="Cube" type="Node3D"]
+[node name="Cube" type="RigidBody3D"]
+mass = 1.0
+gravity_scale = 1.0
+linear_damp = 0.1
+angular_damp = 0.1
 
 [node name="CSGBox3D" type="CSGBox3D" parent="."]
 size = Vector3(0.3, 0.3, 0.3)
 
-[node name="RigidBody3D" type="RigidBody3D" parent="CSGBox3D"]
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="CSGBox3D/RigidBody3D"]
-shape = SubResource(1) 
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("BoxShape3D_1") 

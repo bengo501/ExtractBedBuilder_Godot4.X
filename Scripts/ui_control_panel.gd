@@ -8,7 +8,6 @@ extends Control
 @onready var diameter_value: Label = $VBoxContainer/DiameterContainer/DiameterValue
 @onready var inner_radius_slider: HSlider = $VBoxContainer/InnerCylinderContainer/InnerRadiusSlider
 @onready var inner_radius_value: Label = $VBoxContainer/InnerCylinderContainer/InnerRadiusValue
-@onready var operation_option: OptionButton = $VBoxContainer/InnerCylinderContainer/OperationTypeContainer/OperationOption
 @onready var confirm_button: Button = $VBoxContainer/InnerCylinderContainer/ConfirmButton
 @onready var outline_color_button: ColorPickerButton = $VBoxContainer/OutlineContainer/OutlineColorContainer/OutlineColorButton
 @onready var transparency_slider: HSlider = $VBoxContainer/OutlineContainer/TransparencyContainer/TransparencySlider
@@ -27,7 +26,6 @@ func _ready():
 	width_slider.value = extraction_bed.width
 	diameter_slider.value = extraction_bed.diameter
 	inner_radius_slider.value = extraction_bed.inner_cylinder_radius
-	operation_option.selected = extraction_bed.operation_type
 	outline_color_button.color = extraction_bed.outline_color
 	transparency_slider.value = extraction_bed.transparency
 	
@@ -39,16 +37,12 @@ func _ready():
 	$VBoxContainer/WidthContainer/WidthSlider.value_changed.connect(_on_width_slider_value_changed)
 	$VBoxContainer/DiameterContainer/DiameterSlider.value_changed.connect(_on_diameter_slider_value_changed)
 	$VBoxContainer/InnerCylinderContainer/InnerRadiusSlider.value_changed.connect(_on_inner_radius_slider_value_changed)
-	operation_option.item_selected.connect(_on_operation_type_changed)
 	outline_color_button.color_changed.connect(_on_outline_color_changed)
 	transparency_slider.value_changed.connect(_on_transparency_changed)
 	
 	# Conectar botões de zoom
 	$VBoxContainer/ZoomContainer/ZoomInButton.pressed.connect(_on_zoom_in_pressed)
 	$VBoxContainer/ZoomContainer/ZoomOutButton.pressed.connect(_on_zoom_out_pressed)
-
-func _on_operation_type_changed(index: int):
-	extraction_bed.set_operation_type(index)
 
 func _on_height_slider_value_changed(value: float):
 	extraction_bed.set_height(value)

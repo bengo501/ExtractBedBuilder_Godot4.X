@@ -51,6 +51,12 @@ shape = SubResource("BoxShape3D_floor")
 [node name="ExtractionBed" type="StaticBody3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2, 0)
 script = ExtResource("1_2k4m3")
+height = null
+width = null
+diameter = null
+inner_cylinder_radius = null
+outline_color = null
+transparency = null
 
 [node name="CSGCylinder3D" type="CSGCylinder3D" parent="ExtractionBed"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.35908, 0)

@@ -4,12 +4,11 @@ extends Node3D
 @export var width: float = 1.0
 @export var diameter: float = 1.0
 @export var inner_cylinder_radius: float = 0.4
-@export var operation_type: int = 0  # 0 = Subtração, 1 = União, 2 = Interseção
 @export var outline_color: Color = Color(0.0, 0.8, 1.0, 1.0)
 @export var transparency: float = 0.3
 
 @onready var cylinder: CSGCylinder3D = $CSGCylinder3D
-@onready var inner_cylinder: CSGCylinder3D = $InnerCylinder
+@onready var inner_cylinder: CSGCylinder3D = $CSGCylinder3D/InnerCylinder
 
 func _ready():
 	update_cylinder()
@@ -27,8 +26,8 @@ func update_inner_cylinder():
 	inner_cylinder.height = height * 0.98
 	inner_cylinder.radius = inner_cylinder_radius
 	inner_cylinder.visible = true
-	# Atualiza a operação booleana
-	inner_cylinder.operation = operation_type
+	# Garante que a operação é sempre subtração (furo)
+	inner_cylinder.operation = CSGShape3D.OPERATION_SUBTRACTION
 
 func update_material():
 	if cylinder.material_override is StandardMaterial3D:
@@ -52,10 +51,6 @@ func set_inner_cylinder_radius(new_radius: float):
 	inner_cylinder_radius = new_radius
 	update_inner_cylinder()
 
-func set_operation_type(new_type: int):
-	operation_type = new_type
-	update_inner_cylinder()
-
 func set_outline_color(new_color: Color):
 	outline_color = new_color
 	update_material()
@@ -65,9 +60,8 @@ func set_transparency(new_transparency: float):
 	update_material()
 
 func confirm_boolean():
-	# Aplica a operação booleana
-	inner_cylinder.operation = operation_type
-	# Esconde o cilindro interno após a operação
-	inner_cylinder.visible = false
-	# Atualiza o material para mostrar o resultado
+	# Garante que a operação é subtração
+	inner_cylinder.operation = CSGShape3D.OPERATION_SUBTRACTION
+	# Esconde o cilindro interno após a operação (opcional)
+	# inner_cylinder.visible = false
 	update_material() 

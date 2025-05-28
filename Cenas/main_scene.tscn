@@ -325,6 +325,26 @@ text = "Cor"
 layout_mode = 2
 color = Color(0, 0.8, 1, 1)
 
+[node name="TampasContainer" type="VBoxContainer" parent="UIControlPanel/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="UIControlPanel/VBoxContainer/TampasContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "Tampas do Leito"
+
+[node name="TampaInferiorButton" type="Button" parent="UIControlPanel/VBoxContainer/TampasContainer"]
+custom_minimum_size = Vector2(0, 36)
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "Adicionar/Remover Tampa Inferior"
+
+[node name="TampaSuperiorButton" type="Button" parent="UIControlPanel/VBoxContainer/TampasContainer"]
+custom_minimum_size = Vector2(0, 36)
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "Adicionar/Remover Tampa Superior"
+
 [node name="SpawnerControlPanel" type="Control" parent="UIControlPanel"]
 custom_minimum_size = Vector2(300, 0)
 layout_mode = 3

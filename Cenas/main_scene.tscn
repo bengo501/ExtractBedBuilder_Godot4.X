@@ -123,6 +123,7 @@ anchor_bottom = 1.0
 offset_left = -400.0
 grow_horizontal = 2
 grow_vertical = 2
+scale = Vector2(0.8, 0.8)
 script = ExtResource("3_4k4m3")
 extraction_bed_path = NodePath("../ExtractionBed")
 
@@ -131,7 +132,7 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_bottom = -97.0
+offset_bottom = 17.0
 grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.2, 0.2, 0.2, 0.647059)
@@ -328,12 +329,11 @@ color = Color(0, 0.8, 1, 1)
 custom_minimum_size = Vector2(300, 0)
 layout_mode = 3
 anchors_preset = 0
-offset_left = -1152.0
-offset_top = 44.0
-offset_right = -792.0
-offset_bottom = 524.0
-grow_horizontal = 0
-grow_vertical = 0
+offset_left = -1288.75
+offset_top = 203.75
+offset_right = -928.75
+offset_bottom = 683.75
+scale = Vector2(0.8, 0.8)
 script = ExtResource("15_spawnerui")
 spawner_path = NodePath("../../Spawner")
 
@@ -342,7 +342,8 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_top = -19.0
+offset_top = -236.0
+offset_bottom = 238.0
 grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.2, 0.2, 0.2, 0.592157)
@@ -447,7 +448,62 @@ text = "Iniciar Spawn"
 custom_minimum_size = Vector2(120, 36)
 layout_mode = 2
 theme_override_font_sizes/font_size = 16
-text = "��️ Limpar Objetos"
+text = "Limpar Objetos"
+
+[node name="PhysicsLabel" type="Label" parent="UIControlPanel/SpawnerControlPanel/SpawnerVBox"]
+custom_minimum_size = Vector2(120, 24)
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "Propriedades Físicas"
+
+[node name="MassLabel" type="Label" parent="UIControlPanel/SpawnerControlPanel/SpawnerVBox"]
+custom_minimum_size = Vector2(120, 18)
+layout_mode = 2
+text = "Massa"
+
+[node name="MassSpin" type="SpinBox" parent="UIControlPanel/SpawnerControlPanel/SpawnerVBox"]
+custom_minimum_size = Vector2(80, 22)
+layout_mode = 2
+min_value = 0.1
+max_value = 10.0
+step = 0.1
+value = 1.0
+
+[node name="GravityScaleLabel" type="Label" parent="UIControlPanel/SpawnerControlPanel/SpawnerVBox"]
+custom_minimum_size = Vector2(120, 18)
+layout_mode = 2
+text = "Escala da Gravidade"
+
+[node name="GravityScaleSpin" type="SpinBox" parent="UIControlPanel/SpawnerControlPanel/SpawnerVBox"]
+custom_minimum_size = Vector2(80, 22)
+layout_mode = 2
+max_value = 5.0
+step = 0.1
+value = 1.0
+
+[node name="LinearDampLabel" type="Label" parent="UIControlPanel/SpawnerControlPanel/SpawnerVBox"]
+custom_minimum_size = Vector2(120, 18)
+layout_mode = 2
+text = "Amortecimento Linear"
+
+[node name="LinearDampSpin" type="SpinBox" parent="UIControlPanel/SpawnerControlPanel/SpawnerVBox"]
+custom_minimum_size = Vector2(80, 22)
+layout_mode = 2
+max_value = 1.0
+step = 0.01
+value = 0.1
+
+[node name="AngularDampLabel" type="Label" parent="UIControlPanel/SpawnerControlPanel/SpawnerVBox"]
+custom_minimum_size = Vector2(120, 18)
+layout_mode = 2
+text = "Amortecimento Angular"
+
+[node name="AngularDampSpin" type="SpinBox" parent="UIControlPanel/SpawnerControlPanel/SpawnerVBox"]
+custom_minimum_size = Vector2(80, 22)
+layout_mode = 2
+max_value = 1.0
+step = 0.01
+value = 0.1
 
 [node name="PauseMenu" parent="." instance=ExtResource("16_pausemenu")]
 

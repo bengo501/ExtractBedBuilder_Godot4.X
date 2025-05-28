@@ -9,6 +9,10 @@ var spawner: Node3D
 @onready var altura_spin: SpinBox = $SpawnerVBox/AlturaSpin
 @onready var largura_spin: SpinBox = $SpawnerVBox/LarguraSpin
 @onready var intervalo_spin: SpinBox = $SpawnerVBox/IntervaloSpin
+@onready var mass_spin: SpinBox = $SpawnerVBox/MassSpin
+@onready var gravity_scale_spin: SpinBox = $SpawnerVBox/GravityScaleSpin
+@onready var linear_damp_spin: SpinBox = $SpawnerVBox/LinearDampSpin
+@onready var angular_damp_spin: SpinBox = $SpawnerVBox/AngularDampSpin
 @onready var spawn_button: Button = $SpawnerVBox/SpawnButton
 @onready var clear_button: Button = $SpawnerVBox/ClearButton
 
@@ -31,7 +35,11 @@ func _on_spawn_button_pressed():
 	var altura = float(altura_spin.value)
 	var largura = float(largura_spin.value)
 	var intervalo = float(intervalo_spin.value)
-	spawner.start_spawning(qtd, obj_type, raio, altura, largura, intervalo)
+	var mass = float(mass_spin.value)
+	var gravity_scale = float(gravity_scale_spin.value)
+	var linear_damp = float(linear_damp_spin.value)
+	var angular_damp = float(angular_damp_spin.value)
+	spawner.start_spawning(qtd, obj_type, raio, altura, largura, intervalo, mass, gravity_scale, linear_damp, angular_damp)
 
 func _on_clear_button_pressed():
 	spawner.clear_objects() 

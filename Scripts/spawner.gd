@@ -1,74 +1,68 @@
 extends Node3D
 
 @export var spawn_point: NodePath
-@export var object_scenes: Dictionary
+@export var object_scenes: Dictionary = {}
 
+var spawned_objects = []
 var spawn_timer: Timer
-var spawn_count: int = 0
-var spawn_total: int = 1
-var spawn_type: String = "sphere"
-var spawn_radius: float = 0.15
-var spawn_height: float = 0.3
-var spawn_width: float = 0.3
-var spawn_interval: float = 1.0
+var remaining_spawns: int = 0
+var current_spawn_type: String = ""
+var current_spawn_raio: float = 0.0
+var current_spawn_altura: float = 0.0
+var current_spawn_largura: float = 0.0
 
 func _ready():
 	spawn_timer = Timer.new()
-	spawn_timer.one_shot = false
 	add_child(spawn_timer)
 	spawn_timer.timeout.connect(_on_spawn_timer_timeout)
 
-func start_spawning(count: int, obj_type: String, radius: float, height: float, width: float, interval: float):
-	spawn_count = 0
-	spawn_total = count
-	spawn_type = obj_type
-	spawn_radius = radius
-	spawn_height = height
-	spawn_width = width
-	spawn_interval = interval
-	spawn_timer.wait_time = interval
+func start_spawning(qtd: int, obj_type: String, raio: float, altura: float, largura: float, intervalo: float):
+	# Configura os parâmetros do spawn
+	remaining_spawns = qtd
+	current_spawn_type = obj_type
+	current_spawn_raio = raio
+	current_spawn_altura = altura
+	current_spawn_largura = largura
+	
+	# Configura e inicia o timer
+	spawn_timer.wait_time = intervalo
 	spawn_timer.start()
-	_spawn_object()
+	
+	# Spawn inicial
+	spawn_object(obj_type, raio, altura, largura)
+	remaining_spawns -= 1
 
 func _on_spawn_timer_timeout():
-	if spawn_count < spawn_total:
-		_spawn_object()
+	if remaining_spawns > 0:
+		spawn_object(current_spawn_type, current_spawn_raio, current_spawn_altura, current_spawn_largura)
+		remaining_spawns -= 1
 	else:
 		spawn_timer.stop()
 
-func _spawn_object():
-	var scene = object_scenes.get(spawn_type, null)
-	if scene:
-		var obj = scene.instantiate()
-		var point = get_node(spawn_point)
+func spawn_object(obj_type: String, raio: float, altura: float, largura: float):
+	if not object_scenes.has(obj_type):
+		return
 		
-		# Adiciona uma pequena variação aleatória na posição inicial
-		var random_offset = Vector3(
-			randf_range(-0.1, 0.1),
-			0,
-			randf_range(-0.1, 0.1)
-		)
-		obj.global_transform.origin = point.global_transform.origin + random_offset
-		
-		# Ajusta o tamanho e física
-		if obj.has_node("CSGSphere3D"):
-			obj.get_node("CSGSphere3D").radius = spawn_radius
-			var volume = (4.0/3.0) * PI * pow(spawn_radius, 3)
-			obj.mass = volume * 0.5
-		if obj.has_node("CSGCylinder3D"):
-			obj.get_node("CSGCylinder3D").radius = spawn_radius
-			obj.get_node("CSGCylinder3D").height = spawn_height
-			obj.mass = PI * pow(spawn_radius, 2) * spawn_height * 0.5
-		if obj.has_node("CSGBox3D"):
-			obj.get_node("CSGBox3D").size = Vector3(spawn_width, spawn_height, spawn_width)
-			obj.mass = spawn_width * spawn_height * spawn_width * 0.5
-		if obj.name == "Plane" or obj.has_node("CSGBox3D") and spawn_type == "plane":
-			# Para plano, deixar bem fino
-			if obj.has_node("CSGBox3D"):
-				obj.get_node("CSGBox3D").size = Vector3(spawn_width, 0.05, spawn_width)
-			obj.mass = spawn_width * 0.05 * spawn_width * 0.5
-		if obj.has_node("CSGMesh3D"):
-			obj.get_node("CSGMesh3D").scale = Vector3(spawn_width, 1, spawn_width)
-		
-		get_tree().current_scene.add_child(obj)
-		spawn_count += 1 
+	var scene = object_scenes[obj_type]
+	var instance = scene.instantiate()
+	add_child(instance)
+	instance.global_position = get_node(spawn_point).global_position
+	
+	# Ajusta o tamanho do objeto baseado no tipo
+	match obj_type:
+		"sphere":
+			instance.scale = Vector3(raio, raio, raio)
+		"cube":
+			instance.scale = Vector3(largura, altura, largura)
+		"cylinder":
+			instance.scale = Vector3(raio, altura, raio)
+		"plane":
+			instance.scale = Vector3(largura, 1, largura)
+	
+	spawned_objects.append(instance)
+
+func clear_objects():
+	for obj in spawned_objects:
+		if is_instance_valid(obj):
+			obj.queue_free()
+	spawned_objects.clear() 

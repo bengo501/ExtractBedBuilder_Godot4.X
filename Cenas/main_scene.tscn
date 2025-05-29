@@ -1,10 +1,11 @@
-[gd_scene load_steps=17 format=3 uid="uid://fbt81m33ijtb"]
+[gd_scene load_steps=18 format=3 uid="uid://fbt81m33ijtb"]
 
 [ext_resource type="Script" uid="uid://d4klsjbircvsq" path="res://Scripts/extraction_bed.gd" id="1_2k4m3"]
 [ext_resource type="Texture2D" uid="uid://cxctfkb45dlg2" path="res://Assets/Textures/Orange/texture_01.png" id="1_j5dva"]
 [ext_resource type="Script" uid="uid://cw23ejejwghg" path="res://Scripts/camera_controller.gd" id="2_3k4m3"]
 [ext_resource type="Script" uid="uid://c6117y7ooqd2i" path="res://Scripts/ui_control_panel.gd" id="3_4k4m3"]
 [ext_resource type="Script" uid="uid://c3s2upg53hd5p" path="res://Scripts/free_camera.gd" id="8_freecam"]
+[ext_resource type="Script" path="res://Scripts/camera_iso_control.gd" id="9_fhk2h"]
 [ext_resource type="PackedScene" path="res://Cenas/sphere.tscn" id="10_sphere"]
 [ext_resource type="PackedScene" path="res://Cenas/cube.tscn" id="11_cube"]
 [ext_resource type="PackedScene" uid="uid://bs6bvdgbi270p" path="res://Cenas/cylinder.tscn" id="12_cylinder"]
@@ -87,14 +88,17 @@ transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 9.3
 current = true
 
 [node name="CameraFront" type="Camera3D" parent="."]
-transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 2.5, -6)
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 3.56054, -6)
 
 [node name="CameraFree" type="Camera3D" parent="."]
-transform = Transform3D(-0.655295, 0, -0.755373, 0, 1, 0, 0.755373, 0, -0.655295, -4, 4.34248, -4)
+transform = Transform3D(-0.655295, 0, -0.755373, 0, 1, 0, 0.755373, 0, -0.655295, -4, 3.24748, -4)
+fov = 60.0
 script = ExtResource("8_freecam")
 
 [node name="CameraIso" type="Camera3D" parent="."]
-transform = Transform3D(0.707, 0, 0.707, -0.408, 0.816, 0.408, -0.577, -0.577, 0.577, 6, 7, -6)
+transform = Transform3D(0.783693, 0.310574, -0.53793, 0, 0.866025, 0.5, 0.621148, -0.391847, 0.678698, -3.52846, 5.39418, 3.89156)
+fov = 60.0
+script = ExtResource("9_fhk2h")
 
 [node name="CameraController" type="Node" parent="."]
 script = ExtResource("2_3k4m3")
@@ -120,8 +124,11 @@ anchors_preset = 11
 anchor_left = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -400.0
-grow_horizontal = 2
+offset_left = -361.0
+offset_top = 60.0
+offset_right = 39.0
+offset_bottom = 60.0
+grow_horizontal = 0
 grow_vertical = 2
 scale = Vector2(0.8, 0.8)
 script = ExtResource("3_4k4m3")
@@ -166,6 +173,11 @@ custom_minimum_size = Vector2(40, 40)
 layout_mode = 2
 theme_override_font_sizes/font_size = 20
 text = "-"
+
+[node name="ZoomValue" type="Label" parent="UIControlPanel/VBoxContainer/ZoomContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "1.0"
 
 [node name="ZoomInButton" type="Button" parent="UIControlPanel/VBoxContainer/ZoomContainer"]
 custom_minimum_size = Vector2(40, 40)
@@ -248,53 +260,12 @@ value = 0.4
 layout_mode = 2
 text = "0.4"
 
-[node name="OperationTypeContainer" type="VBoxContainer" parent="UIControlPanel/VBoxContainer/InnerCylinderContainer"]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="UIControlPanel/VBoxContainer/InnerCylinderContainer/OperationTypeContainer"]
-layout_mode = 2
-text = "Tipo de Operação"
-
-[node name="OperationOption" type="OptionButton" parent="UIControlPanel/VBoxContainer/InnerCylinderContainer/OperationTypeContainer"]
-custom_minimum_size = Vector2(0, 30)
-layout_mode = 2
-item_count = 3
-popup/item_0/text = "Subtração"
-popup/item_0/id = 0
-popup/item_1/text = "União"
-popup/item_1/id = 1
-popup/item_2/text = "Interseção"
-popup/item_2/id = 2
-
-[node name="ConfirmButton" type="Button" parent="UIControlPanel/VBoxContainer/InnerCylinderContainer"]
-layout_mode = 2
-text = "Confirmar Operação"
-
 [node name="OutlineContainer" type="VBoxContainer" parent="UIControlPanel/VBoxContainer"]
 layout_mode = 2
 
 [node name="Label" type="Label" parent="UIControlPanel/VBoxContainer/OutlineContainer"]
 layout_mode = 2
 text = "Outline"
-
-[node name="OutlineWidthContainer" type="HBoxContainer" parent="UIControlPanel/VBoxContainer/OutlineContainer"]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="UIControlPanel/VBoxContainer/OutlineContainer/OutlineWidthContainer"]
-layout_mode = 2
-text = "Largura"
-
-[node name="OutlineWidthSlider" type="HSlider" parent="UIControlPanel/VBoxContainer/OutlineContainer/OutlineWidthContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-min_value = 0.001
-max_value = 0.05
-step = 0.001
-value = 0.02
-
-[node name="OutlineWidthValue" type="Label" parent="UIControlPanel/VBoxContainer/OutlineContainer/OutlineWidthContainer"]
-layout_mode = 2
-text = "0.02"
 
 [node name="TransparencyContainer" type="HBoxContainer" parent="UIControlPanel/VBoxContainer/OutlineContainer"]
 layout_mode = 2
@@ -322,6 +293,7 @@ layout_mode = 2
 text = "Cor"
 
 [node name="OutlineColorButton" type="ColorPickerButton" parent="UIControlPanel/VBoxContainer/OutlineContainer/OutlineColorContainer"]
+custom_minimum_size = Vector2(100, 30)
 layout_mode = 2
 color = Color(0, 0.8, 1, 1)
 
@@ -349,11 +321,10 @@ text = "Adicionar/Remover Tampa Superior"
 custom_minimum_size = Vector2(300, 0)
 layout_mode = 3
 anchors_preset = 0
-offset_left = -1288.75
-offset_top = 203.75
-offset_right = -928.75
-offset_bottom = 683.75
-scale = Vector2(0.8, 0.8)
+offset_left = -1486.25
+offset_top = 213.75
+offset_right = -1126.25
+offset_bottom = 693.75
 script = ExtResource("15_spawnerui")
 spawner_path = NodePath("../../Spawner")
 

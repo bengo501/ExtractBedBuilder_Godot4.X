@@ -2,7 +2,6 @@ shader_type spatial;
 render_mode unshaded, depth_prepass_alpha, cull_back;
 
 uniform vec4 outline_color : source_color = vec4(0.0, 0.8, 1.0, 1.0);
-uniform float outline_width : hint_range(0.0, 0.1) = 0.02;
 uniform float transparency : hint_range(0.0, 1.0) = 0.3;
 
 void fragment() {

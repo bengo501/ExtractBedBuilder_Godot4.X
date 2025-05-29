@@ -1,9 +1,9 @@
-[gd_scene load_steps=22 format=3 uid="uid://fbt81m33ijtb"]
+[gd_scene load_steps=24 format=3 uid="uid://fbt81m33ijtb"]
 
 [ext_resource type="Script" uid="uid://d4klsjbircvsq" path="res://Scripts/extraction_bed.gd" id="1_2k4m3"]
 [ext_resource type="Texture2D" uid="uid://cs7pfnrwfl34w" path="res://Assets/Textures/AnyConv.com__sl_072622_51930_13.hdr" id="1_g2tnf"]
-[ext_resource type="Texture2D" uid="uid://cxctfkb45dlg2" path="res://Assets/Textures/Orange/texture_01.png" id="1_j5dva"]
 [ext_resource type="Script" uid="uid://cw23ejejwghg" path="res://Scripts/camera_controller.gd" id="2_3k4m3"]
+[ext_resource type="Texture2D" uid="uid://cp4mfyrvevmh5" path="res://Assets/Textures/Dark/texture_01.png" id="2_xwv2h"]
 [ext_resource type="Script" uid="uid://c6117y7ooqd2i" path="res://Scripts/ui_control_panel.gd" id="3_4k4m3"]
 [ext_resource type="Script" uid="uid://c3s2upg53hd5p" path="res://Scripts/free_camera.gd" id="8_freecam"]
 [ext_resource type="Script" uid="uid://rt7suxcv2hij" path="res://Scripts/camera_iso_control.gd" id="9_fhk2h"]
@@ -15,6 +15,7 @@
 [ext_resource type="Script" uid="uid://cbyautdbwb5dg" path="res://Scripts/spawner_ui.gd" id="15_spawnerui"]
 [ext_resource type="PackedScene" uid="uid://bq6t8isw3doa5" path="res://Cenas/PauseMenu.tscn" id="16_pausemenu"]
 [ext_resource type="Script" path="res://Scripts/object_info.gd" id="17_objectinfo"]
+[ext_resource type="Shader" uid="uid://bupq543w5ylqu" path="res://Shaders/outline.gdshader" id="18_outline"]
 
 [sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_xwv2h"]
 panorama = ExtResource("1_g2tnf")
@@ -32,8 +33,8 @@ sky_custom_fov = 80.0
 ambient_light_source = 2
 ambient_light_energy = 0.5
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_b4kl6"]
-albedo_texture = ExtResource("1_j5dva")
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_age84"]
+albedo_texture = ExtResource("2_xwv2h")
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_floor"]
 size = Vector3(8, 0.2, 8)
@@ -45,17 +46,22 @@ emission_enabled = true
 emission = Color(0, 0.8, 1, 1)
 emission_energy_multiplier = 0.5
 
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_tampa"]
+render_priority = 0
+shader = ExtResource("18_outline")
+shader_parameter/outline_color = Color(0, 0.8, 1, 1)
+shader_parameter/transparency = 0.3
+
 [node name="MainScene" type="Node3D"]
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_1")
 
 [node name="Floor" type="StaticBody3D" parent="."]
-transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0)
+transform = Transform3D(2.5, 0, 0, 0, 2.5, 0, 0, 0, 2.5, 0, 0, 0)
 
 [node name="CSGBox3D" type="CSGBox3D" parent="Floor"]
-transform = Transform3D(1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, 0, 0, 0)
-material_override = SubResource("StandardMaterial3D_b4kl6")
+material_override = SubResource("StandardMaterial3D_age84")
 size = Vector3(8, 0.2, 8)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Floor"]
@@ -79,6 +85,23 @@ use_collision = true
 radius = 0.4
 height = 1.47145
 sides = 32
+
+[node name="TampaInferior" type="CSGCylinder3D" parent="ExtractionBed"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 0)
+visible = false
+cast_shadow = 0
+radius = 0.735
+sides = 32
+material = SubResource("ShaderMaterial_tampa")
+
+[node name="TampaSuperior" type="CSGCylinder3D" parent="ExtractionBed"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+visible = false
+cast_shadow = 0
+radius = 0.735
+height = 0.01
+sides = 32
+material = SubResource("ShaderMaterial_tampa")
 
 [node name="Spawner" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
@@ -334,10 +357,10 @@ text = "Adicionar/Remover Tampa Superior"
 custom_minimum_size = Vector2(300, 0)
 layout_mode = 3
 anchors_preset = 0
-offset_left = -1486.25
-offset_top = 213.75
-offset_right = -1126.25
-offset_bottom = 693.75
+offset_left = -1655.0
+offset_top = 216.25
+offset_right = -1295.0
+offset_bottom = 696.25
 script = ExtResource("15_spawnerui")
 spawner_path = NodePath("../../Spawner")
 
@@ -514,10 +537,10 @@ value = 0.1
 [node name="CameraInfo" type="Control" parent="."]
 layout_mode = 3
 anchors_preset = 0
-offset_left = 206.0
-offset_top = 839.0
-offset_right = 246.0
-offset_bottom = 879.0
+offset_left = 56.0
+offset_top = 844.0
+offset_right = 96.0
+offset_bottom = 884.0
 
 [node name="Background" type="ColorRect" parent="CameraInfo"]
 layout_mode = 0
@@ -546,10 +569,10 @@ anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -756.0
-offset_top = -169.0
-offset_right = -436.0
-offset_bottom = -121.0
+offset_left = -1366.0
+offset_top = -938.0
+offset_right = -1046.0
+offset_bottom = -890.0
 grow_horizontal = 0
 grow_vertical = 0
 script = ExtResource("17_objectinfo")
@@ -559,7 +582,8 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_bottom = 98.0
+offset_right = -166.0
+offset_bottom = 212.0
 grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.364706, 0.364706, 0.364706, 0.309804)

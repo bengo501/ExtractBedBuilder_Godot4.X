@@ -48,21 +48,55 @@ func _on_spawn_timer_timeout():
 	else:
 		spawn_timer.stop()
 
+func update_object_info():
+	var type_map = {
+		"sphere": ["Esferas", 0],
+		"cube": ["Cubos", 0],
+		"cylinder": ["Cilindros", 0],
+		"plane": ["Planos", 0]
+	}
+	var total = 0
+	var total_mass = 0.0
+	for obj in spawned_objects:
+		if not is_instance_valid(obj):
+			continue
+		var t = ""
+		if obj.has_method("get_class"):
+			t = obj.get_class().to_lower()
+		if obj.name.to_lower().find("sphere") != -1 or t == "sphere":
+			type_map["sphere"][1] += 1
+		elif obj.name.to_lower().find("cube") != -1 or t == "cube":
+			type_map["cube"][1] += 1
+		elif obj.name.to_lower().find("cylinder") != -1 or t == "cylinder":
+			type_map["cylinder"][1] += 1
+		elif obj.name.to_lower().find("plane") != -1 or t == "plane":
+			type_map["plane"][1] += 1
+		total += 1
+		if obj.has_method("get_mass"):
+			total_mass += obj.get_mass()
+		elif "mass" in obj:
+			total_mass += obj.mass
+	var type_counts = {}
+	for k in type_map.keys():
+		type_counts[type_map[k][0]] = type_map[k][1]
+	var avg_mass = total_mass / total if total > 0 else 0.0
+	var extra_info = "Massa total: %.2f\nMassa média: %.2f" % [total_mass, avg_mass]
+	var object_info = get_tree().get_current_scene().get_node_or_null("ObjectInfo")
+	if object_info:
+		object_info.update_info(total, type_counts, extra_info)
+
 func spawn_object(obj_type: String, raio: float, altura: float, largura: float, mass: float, gravity_scale: float, linear_damp: float, angular_damp: float):
 	if not object_scenes.has(obj_type):
 		return
-		
 	var scene = object_scenes[obj_type]
 	var instance = scene.instantiate()
 	add_child(instance)
 	instance.global_position = get_node(spawn_point).global_position
-	
 	# Aplica as propriedades físicas
 	instance.mass = mass
 	instance.gravity_scale = gravity_scale
 	instance.linear_damp = linear_damp
 	instance.angular_damp = angular_damp
-	
 	# Ajusta o tamanho do objeto baseado no tipo
 	match obj_type:
 		"sphere":
@@ -73,7 +107,6 @@ func spawn_object(obj_type: String, raio: float, altura: float, largura: float, 
 			instance.scale = Vector3(raio, altura, raio)
 		"plane":
 			instance.scale = Vector3(largura, 1, largura)
-	
 	# Desabilita projeção de sombra em todos os MeshInstance3D/CSG* filhos
 	for child in instance.get_children():
 		if child is MeshInstance3D or child is CSGShape3D:
@@ -82,11 +115,12 @@ func spawn_object(obj_type: String, raio: float, altura: float, largura: float, 
 			for subchild in child.get_children():
 				if subchild is MeshInstance3D or subchild is CSGShape3D:
 					subchild.cast_shadow = 0
-
 	spawned_objects.append(instance)
+	update_object_info()
 
 func clear_objects():
 	for obj in spawned_objects:
 		if is_instance_valid(obj):
 			obj.queue_free()
-	spawned_objects.clear() 
+	spawned_objects.clear()
+	update_object_info() 

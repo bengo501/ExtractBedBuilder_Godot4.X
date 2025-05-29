@@ -59,9 +59,14 @@ func _ready():
 	inner_radius_value.gui_input.connect(_on_inner_radius_value_gui_input)
 	transparency_value.gui_input.connect(_on_transparency_value_gui_input)
 	
-	# Inicializa as tampas
+	# Inicializa as tampas como nodes já existentes
 	tampa_inferior = extraction_bed.get_node_or_null("TampaInferior")
 	tampa_superior = extraction_bed.get_node_or_null("TampaSuperior")
+	# Garante que começam invisíveis
+	if tampa_inferior:
+		tampa_inferior.visible = false
+	if tampa_superior:
+		tampa_superior.visible = false
 	
 	# Atualiza o texto dos botões baseado no estado atual
 	_update_tampa_buttons()
@@ -71,11 +76,13 @@ func _on_height_slider_value_changed(value: float):
 	height_value.text = str(value)
 	if extraction_bed:
 		extraction_bed.scale.y = value
-		# Atualiza a posição das tampas se existirem
+		# Atualiza a posição e raio das tampas se existirem
 		if tampa_inferior:
-			tampa_inferior.transform.origin.y = -value/2
+			tampa_inferior.transform.origin.y = -value/2 + tampa_inferior.height * 0.5 - 0.0001
+			tampa_inferior.radius = (diameter_slider.value / 2) * 1.05
 		if tampa_superior:
-			tampa_superior.transform.origin.y = value/2
+			tampa_superior.transform.origin.y = value/2 - tampa_superior.height * 0.5 + 0.0001
+			tampa_superior.radius = (diameter_slider.value / 2) * 1.05
 
 func _on_width_slider_value_changed(value: float):
 	extraction_bed.set_width(value)
@@ -122,37 +129,20 @@ func _on_transparency_changed(value: float):
 
 func _on_tampa_inferior_button_pressed():
 	if tampa_inferior:
-		tampa_inferior.queue_free()
-		tampa_inferior = null
-	else:
-		tampa_inferior = CSGCylinder3D.new()
-		tampa_inferior.name = "TampaInferior"
-		tampa_inferior.radius = diameter_slider.value / 2
-		tampa_inferior.height = 0.05
-		tampa_inferior.transform.origin = Vector3(0, -height_slider.value/2, 0)
-		extraction_bed.add_child(tampa_inferior)
+		tampa_inferior.visible = not tampa_inferior.visible
 	_update_tampa_buttons()
 
 func _on_tampa_superior_button_pressed():
 	if tampa_superior:
-		tampa_superior.queue_free()
-		tampa_superior = null
-	else:
-		tampa_superior = CSGCylinder3D.new()
-		tampa_superior.name = "TampaSuperior"
-		tampa_superior.radius = diameter_slider.value / 2
-		tampa_superior.height = 0.05
-		tampa_superior.transform.origin = Vector3(0, height_slider.value/2, 0)
-		extraction_bed.add_child(tampa_superior)
+		tampa_superior.visible = not tampa_superior.visible
 	_update_tampa_buttons()
 
 func _update_tampa_buttons():
-	if tampa_inferior:
+	if tampa_inferior and tampa_inferior.visible:
 		tampa_inferior_button.text = "Remover Tampa Inferior"
 	else:
 		tampa_inferior_button.text = "Adicionar Tampa Inferior"
-		
-	if tampa_superior:
+	if tampa_superior and tampa_superior.visible:
 		tampa_superior_button.text = "Remover Tampa Superior"
 	else:
 		tampa_superior_button.text = "Adicionar Tampa Superior"

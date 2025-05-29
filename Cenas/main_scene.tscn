@@ -1,11 +1,12 @@
-[gd_scene load_steps=18 format=3 uid="uid://fbt81m33ijtb"]
+[gd_scene load_steps=21 format=3 uid="uid://fbt81m33ijtb"]
 
 [ext_resource type="Script" uid="uid://d4klsjbircvsq" path="res://Scripts/extraction_bed.gd" id="1_2k4m3"]
+[ext_resource type="Texture2D" uid="uid://cs7pfnrwfl34w" path="res://Assets/Textures/AnyConv.com__sl_072622_51930_13.hdr" id="1_g2tnf"]
 [ext_resource type="Texture2D" uid="uid://cxctfkb45dlg2" path="res://Assets/Textures/Orange/texture_01.png" id="1_j5dva"]
 [ext_resource type="Script" uid="uid://cw23ejejwghg" path="res://Scripts/camera_controller.gd" id="2_3k4m3"]
 [ext_resource type="Script" uid="uid://c6117y7ooqd2i" path="res://Scripts/ui_control_panel.gd" id="3_4k4m3"]
 [ext_resource type="Script" uid="uid://c3s2upg53hd5p" path="res://Scripts/free_camera.gd" id="8_freecam"]
-[ext_resource type="Script" path="res://Scripts/camera_iso_control.gd" id="9_fhk2h"]
+[ext_resource type="Script" uid="uid://rt7suxcv2hij" path="res://Scripts/camera_iso_control.gd" id="9_fhk2h"]
 [ext_resource type="PackedScene" path="res://Cenas/sphere.tscn" id="10_sphere"]
 [ext_resource type="PackedScene" path="res://Cenas/cube.tscn" id="11_cube"]
 [ext_resource type="PackedScene" uid="uid://bs6bvdgbi270p" path="res://Cenas/cylinder.tscn" id="12_cylinder"]
@@ -14,11 +15,21 @@
 [ext_resource type="Script" uid="uid://cbyautdbwb5dg" path="res://Scripts/spawner_ui.gd" id="15_spawnerui"]
 [ext_resource type="PackedScene" uid="uid://bq6t8isw3doa5" path="res://Cenas/PauseMenu.tscn" id="16_pausemenu"]
 
+[sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_xwv2h"]
+panorama = ExtResource("1_g2tnf")
+energy_multiplier = 1.3
+
+[sub_resource type="Sky" id="Sky_age84"]
+sky_material = SubResource("PanoramaSkyMaterial_xwv2h")
+radiance_size = 2
+
 [sub_resource type="Environment" id="Environment_1"]
-background_mode = 1
+background_mode = 2
 background_color = Color(0.9, 0.9, 0.95, 1)
+sky = SubResource("Sky_age84")
+sky_custom_fov = 100.0
 ambient_light_source = 2
-ambient_light_color = Color(0.8, 0.8, 0.85, 1)
+ambient_light_color = Color(1, 1, 1, 1)
 ambient_light_energy = 0.5
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_b4kl6"]
@@ -88,15 +99,15 @@ transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 9.3
 current = true
 
 [node name="CameraFront" type="Camera3D" parent="."]
-transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 3.56054, -6)
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 2.5, -6)
 
 [node name="CameraFree" type="Camera3D" parent="."]
-transform = Transform3D(-0.655295, 0, -0.755373, 0, 1, 0, 0.755373, 0, -0.655295, -4, 3.24748, -4)
+transform = Transform3D(-0.655295, 0, -0.755373, 0, 1, 0, 0.755373, 0, -0.655295, -4, 3.4605, -4)
 fov = 60.0
 script = ExtResource("8_freecam")
 
 [node name="CameraIso" type="Camera3D" parent="."]
-transform = Transform3D(0.783693, 0.310574, -0.53793, 0, 0.866025, 0.5, 0.621148, -0.391847, 0.678698, -3.52846, 5.39418, 3.89156)
+transform = Transform3D(0.783693, 0.310574, -0.53793, 0, 0.866025, 0.5, 0.621148, -0.391847, 0.678698, -3.52846, 5.19071, 3.89156)
 fov = 60.0
 script = ExtResource("9_fhk2h")
 

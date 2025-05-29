@@ -74,6 +74,15 @@ func spawn_object(obj_type: String, raio: float, altura: float, largura: float, 
 		"plane":
 			instance.scale = Vector3(largura, 1, largura)
 	
+	# Desabilita projeção de sombra em todos os MeshInstance3D/CSG* filhos
+	for child in instance.get_children():
+		if child is MeshInstance3D or child is CSGShape3D:
+			child.cast_shadow = 0
+		elif child.has_method("get_children"):
+			for subchild in child.get_children():
+				if subchild is MeshInstance3D or subchild is CSGShape3D:
+					subchild.cast_shadow = 0
+
 	spawned_objects.append(instance)
 
 func clear_objects():

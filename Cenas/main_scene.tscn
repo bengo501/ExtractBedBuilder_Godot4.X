@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=3 uid="uid://fbt81m33ijtb"]
+[gd_scene load_steps=22 format=3 uid="uid://fbt81m33ijtb"]
 
 [ext_resource type="Script" uid="uid://d4klsjbircvsq" path="res://Scripts/extraction_bed.gd" id="1_2k4m3"]
 [ext_resource type="Texture2D" uid="uid://cs7pfnrwfl34w" path="res://Assets/Textures/AnyConv.com__sl_072622_51930_13.hdr" id="1_g2tnf"]
@@ -14,6 +14,7 @@
 [ext_resource type="Script" uid="uid://c5vuj1v32js8g" path="res://Scripts/spawner.gd" id="14_spawner"]
 [ext_resource type="Script" uid="uid://cbyautdbwb5dg" path="res://Scripts/spawner_ui.gd" id="15_spawnerui"]
 [ext_resource type="PackedScene" uid="uid://bq6t8isw3doa5" path="res://Cenas/PauseMenu.tscn" id="16_pausemenu"]
+[ext_resource type="Script" path="res://Scripts/object_info.gd" id="17_objectinfo"]
 
 [sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_xwv2h"]
 panorama = ExtResource("1_g2tnf")
@@ -519,6 +520,7 @@ offset_right = 246.0
 offset_bottom = 879.0
 
 [node name="Background" type="ColorRect" parent="CameraInfo"]
+layout_mode = 0
 offset_right = 269.0
 offset_bottom = 51.0
 color = Color(0.462745, 0.462745, 0.462745, 0.635294)
@@ -536,6 +538,45 @@ grow_vertical = 0
 theme_override_font_sizes/font_size = 16
 text = "Câmera: -
 Posição: -"
+
+[node name="ObjectInfo" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -756.0
+offset_top = -169.0
+offset_right = -436.0
+offset_bottom = -121.0
+grow_horizontal = 0
+grow_vertical = 0
+script = ExtResource("17_objectinfo")
+
+[node name="Background" type="ColorRect" parent="ObjectInfo"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_bottom = 98.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.364706, 0.364706, 0.364706, 0.309804)
+
+[node name="ObjectIndicator" type="Label" parent="ObjectInfo"]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = -8.0
+theme_override_font_sizes/font_size = 16
+text = "Objetos: -
+Tipo A: -
+Tipo B: -
+..."
 
 [connection signal="value_changed" from="UIControlPanel/VBoxContainer/HeightContainer/HeightSlider" to="UIControlPanel" method="_on_height_slider_value_changed"]
 [connection signal="value_changed" from="UIControlPanel/VBoxContainer/WidthContainer/WidthSlider" to="UIControlPanel" method="_on_width_slider_value_changed"]

@@ -32,6 +32,7 @@ func update_inner_cylinder():
 func update_material():
 	if cylinder.material_override is StandardMaterial3D:
 		var material = cylinder.material_override as StandardMaterial3D
+		material.unshaded = true
 		material.albedo_color.a = transparency
 		material.emission = outline_color
 

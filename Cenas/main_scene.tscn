@@ -510,6 +510,33 @@ value = 0.1
 
 [node name="PauseMenu" parent="." instance=ExtResource("16_pausemenu")]
 
+[node name="CameraInfo" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_left = 206.0
+offset_top = 839.0
+offset_right = 246.0
+offset_bottom = 879.0
+
+[node name="Background" type="ColorRect" parent="CameraInfo"]
+offset_right = 269.0
+offset_bottom = 51.0
+color = Color(0.462745, 0.462745, 0.462745, 0.635294)
+
+[node name="CameraIndicator" type="Label" parent="CameraInfo"]
+custom_minimum_size = Vector2(320, 32)
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -40.0
+offset_right = 320.0
+offset_bottom = 9.0
+grow_vertical = 0
+theme_override_font_sizes/font_size = 16
+text = "Câmera: -
+Posição: -"
+
 [connection signal="value_changed" from="UIControlPanel/VBoxContainer/HeightContainer/HeightSlider" to="UIControlPanel" method="_on_height_slider_value_changed"]
 [connection signal="value_changed" from="UIControlPanel/VBoxContainer/WidthContainer/WidthSlider" to="UIControlPanel" method="_on_width_slider_value_changed"]
 [connection signal="value_changed" from="UIControlPanel/VBoxContainer/DiameterContainer/DiameterSlider" to="UIControlPanel" method="_on_diameter_slider_value_changed"]

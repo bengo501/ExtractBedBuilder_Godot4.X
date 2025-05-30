@@ -554,7 +554,7 @@ offset_bottom = 884.0
 layout_mode = 0
 offset_right = 269.0
 offset_bottom = 51.0
-color = Color(0.462745, 0.462745, 0.462745, 0.635294)
+color = Color(0.2, 0.2, 0.2, 0.592157)
 
 [node name="CameraIndicator" type="Label" parent="CameraInfo"]
 custom_minimum_size = Vector2(320, 32)
@@ -606,7 +606,7 @@ offset_right = -166.0
 offset_bottom = 212.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.364706, 0.364706, 0.364706, 0.309804)
+color = Color(0.2, 0.2, 0.2, 0.592157)
 
 [node name="ObjectIndicator" type="Label" parent="ObjectInfo"]
 layout_mode = 0
@@ -643,9 +643,11 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_right = -114.0
+offset_bottom = 52.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.364706, 0.364706, 0.364706, 0.309804)
+color = Color(0.2, 0.2, 0.2, 0.592157)
 
 [node name="BedIndicator" type="Label" parent="BedInfo"]
 layout_mode = 0
@@ -666,4 +668,4 @@ Transparência: 0.30"
 [connection signal="value_changed" from="UIControlPanel/VBoxContainer/HeightContainer/HeightSlider" to="UIControlPanel" method="_on_height_slider_value_changed"]
 [connection signal="value_changed" from="UIControlPanel/VBoxContainer/WidthContainer/WidthSlider" to="UIControlPanel" method="_on_width_slider_value_changed"]
 [connection signal="value_changed" from="UIControlPanel/VBoxContainer/DiameterContainer/DiameterSlider" to="UIControlPanel" method="_on_diameter_slider_value_changed"]
-[connection signal="value_changed" from="UIControlPanel/VBoxContainer/InnerCylinderContainer/InnerRadiusSlider" to="UIControlPanel" method="_on_inner_radius_slider_value_changed"] 
+[connection signal="value_changed" from="UIControlPanel/VBoxContainer/InnerCylinderContainer/InnerRadiusSlider" to="UIControlPanel" method="_on_inner_radius_slider_value_changed"]

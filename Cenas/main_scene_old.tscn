@@ -1,4 +1,4 @@
-[gd_scene load_steps=25 format=3 uid="uid://bh0sm8njxt00b"]
+[gd_scene load_steps=25 format=3 uid="uid://dvvpv51105f5r"]
 
 [ext_resource type="Script" uid="uid://d4klsjbircvsq" path="res://Scripts/extraction_bed.gd" id="1_2k4m3"]
 [ext_resource type="Texture2D" uid="uid://cs7pfnrwfl34w" path="res://Assets/Textures/AnyConv.com__sl_072622_51930_13.hdr" id="1_g2tnf"]

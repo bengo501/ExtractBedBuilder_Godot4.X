@@ -76,7 +76,7 @@ func _ready():
 	_update_tampa_buttons()
 
 func _on_height_slider_value_changed(value: float):
-	extraction_bed.set_height(value)
+	extraction_bed.height = value
 	height_value.text = str(value)
 	if extraction_bed:
 		extraction_bed.scale.y = value
@@ -89,14 +89,14 @@ func _on_height_slider_value_changed(value: float):
 			tampa_superior.radius = (diameter_slider.value / 2) * 1.05
 
 func _on_width_slider_value_changed(value: float):
-	extraction_bed.set_width(value)
+	extraction_bed.width = value
 	width_value.text = str(value)
 	if extraction_bed:
 		extraction_bed.scale.x = value
 		extraction_bed.scale.z = value
 
 func _on_diameter_slider_value_changed(value: float):
-	extraction_bed.set_diameter(value)
+	extraction_bed.diameter = value
 	diameter_value.text = str(value)
 	if extraction_bed:
 		var cylinder = extraction_bed.get_node("CSGCylinder3D")
@@ -109,7 +109,7 @@ func _on_diameter_slider_value_changed(value: float):
 			tampa_superior.radius = value / 2
 
 func _on_inner_radius_slider_value_changed(value: float):
-	extraction_bed.set_inner_cylinder_radius(value)
+	extraction_bed.inner_cylinder_radius = value
 	inner_radius_value.text = str(value)
 	if extraction_bed:
 		var inner_cylinder = extraction_bed.get_node("CSGCylinder3D/InnerCylinder")
@@ -125,10 +125,10 @@ func _on_zoom_out_pressed():
 	zoom_value.text = str(camera_controller.current_zoom)
 
 func _on_outline_color_changed(color: Color):
-	extraction_bed.set_outline_color(color)
+	extraction_bed.outline_color = color
 
 func _on_transparency_changed(value: float):
-	extraction_bed.set_transparency(value)
+	extraction_bed.transparency = value
 	transparency_value.text = str(value)
 
 func _on_tampa_inferior_button_pressed():

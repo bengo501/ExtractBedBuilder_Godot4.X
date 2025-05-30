@@ -7,20 +7,45 @@ const INITIAL_HEIGHT = 2.0
 const INITIAL_WIDTH = 1.0
 const INITIAL_DIAMETER = 1.0
 const INITIAL_INNER_RADIUS = 0.4
-const INITIAL_OUTLINE_COLOR = Color(0.0, 0.8, 1.0, 1.0)
+const INITIAL_OUTLINE_COLOR = Color(0, 0.8, 1, 1)
 const INITIAL_TRANSPARENCY = 0.3
 
-@export var height: float = INITIAL_HEIGHT
-@export var width: float = INITIAL_WIDTH
-@export var diameter: float = INITIAL_DIAMETER
-@export var inner_cylinder_radius: float = INITIAL_INNER_RADIUS
-@export var outline_color: Color = INITIAL_OUTLINE_COLOR
-@export var transparency: float = INITIAL_TRANSPARENCY
+@export var height: float = INITIAL_HEIGHT:
+	set(value):
+		height = value
+		_update_bed()
+		_update_tampas()
 
-@onready var cylinder: CSGCylinder3D = $CSGCylinder3D
-@onready var inner_cylinder: CSGCylinder3D = $CSGCylinder3D/InnerCylinder
-@onready var tampa_superior: CSGCylinder3D = $TampaInferior  # Corrigido: TampaInferior é na verdade a superior
-@onready var tampa_inferior: CSGCylinder3D = $TampaSuperior  # Corrigido: TampaSuperior é na verdade a inferior
+@export var width: float = INITIAL_WIDTH:
+	set(value):
+		width = value
+		_update_bed()
+
+@export var diameter: float = INITIAL_DIAMETER:
+	set(value):
+		diameter = value
+		_update_bed()
+		_update_tampas()
+
+@export var inner_cylinder_radius: float = INITIAL_INNER_RADIUS:
+	set(value):
+		inner_cylinder_radius = value
+		_update_bed()
+
+@export var outline_color: Color = INITIAL_OUTLINE_COLOR:
+	set(value):
+		outline_color = value
+		_update_materials()
+
+@export var transparency: float = INITIAL_TRANSPARENCY:
+	set(value):
+		transparency = value
+		_update_materials()
+
+var tampa_inferior: CSGCylinder3D
+var tampa_superior: CSGCylinder3D
+var main_cylinder: CSGCylinder3D
+var inner_cylinder: CSGCylinder3D
 
 # Constantes para o posicionamento
 const FLOOR_Y = 0.0  # Posição Y do chão
@@ -29,25 +54,57 @@ const MIN_DISTANCE_FROM_BED = 0.001  # Distância mínima do leito
 const MAX_HEIGHT = 10.0  # Altura máxima permitida
 
 func _ready():
-	update_cylinder()
-	update_inner_cylinder()
-	update_material()
-	update_tampas()
+	main_cylinder = $CSGCylinder3D
+	inner_cylinder = $CSGCylinder3D/InnerCylinder
+	tampa_inferior = $TampaInferior
+	tampa_superior = $TampaSuperior
+	
+	_update_bed()
+	_update_materials()
+	_update_tampas()
 
-func update_cylinder():
-	cylinder.height = height
-	cylinder.radius = diameter / 2.0
-	# Scale the cylinder to match width
-	cylinder.scale.x = width
-	update_inner_cylinder()
-	update_tampas()
+func _update_bed():
+	if main_cylinder and inner_cylinder:
+		# Atualiza o cilindro principal
+		main_cylinder.radius = diameter / 2.0
+		main_cylinder.height = height
+		
+		# Ajusta a posição do cilindro principal para manter a base fixa
+		main_cylinder.position.y = height / 2.0
+		
+		# Atualiza o cilindro interno
+		inner_cylinder.radius = inner_cylinder_radius
+		inner_cylinder.height = height * 1.38603  # Mantém a proporção
+		inner_cylinder.position.y = -0.030771  # Mantém a posição relativa
 
-func update_inner_cylinder():
-	inner_cylinder.height = height * 0.98
-	inner_cylinder.radius = inner_cylinder_radius
-	inner_cylinder.visible = true
-	# Garante que a operação é sempre subtração (furo)
-	inner_cylinder.operation = CSGShape3D.OPERATION_SUBTRACTION
+func _update_materials():
+	if main_cylinder:
+		var material = main_cylinder.material_override as StandardMaterial3D
+		if material:
+			material.albedo_color.a = transparency
+			material.emission = outline_color
+			material.emission_energy_multiplier = 0.5
+	
+	if tampa_inferior and tampa_superior:
+		var tampa_material = tampa_inferior.material as ShaderMaterial
+		if tampa_material:
+			tampa_material.set_shader_parameter("outline_color", outline_color)
+			tampa_material.set_shader_parameter("transparency", transparency)
+		
+		tampa_material = tampa_superior.material as ShaderMaterial
+		if tampa_material:
+			tampa_material.set_shader_parameter("outline_color", outline_color)
+			tampa_material.set_shader_parameter("transparency", transparency)
+
+func _update_tampas():
+	if tampa_inferior and tampa_superior:
+		# Ajusta o raio das tampas para corresponder ao diâmetro do leito
+		tampa_inferior.radius = (diameter / 2.0) + 0.035
+		tampa_superior.radius = (diameter / 2.0) + 0.035
+		
+		# Ajusta a posição das tampas para acompanhar a altura do leito
+		tampa_inferior.position.y = height + 1.15883  # Mantém a distância relativa
+		tampa_superior.position.y = height - 1.35908  # Mantém a distância relativa
 
 func get_ponto_mais_baixo() -> float:
 	# Calcula o ponto mais baixo do leito considerando a altura e a escala
@@ -102,41 +159,7 @@ func update_tampa_material(tampa: CSGCylinder3D):
 		material.albedo_color.a = transparency
 		material.emission = outline_color
 
-func update_material():
-	if cylinder.material_override is StandardMaterial3D:
-		var material = cylinder.material_override as StandardMaterial3D
-		material.unshaded = true
-		material.albedo_color.a = transparency
-		material.emission = outline_color
-
-func set_height(new_height: float):
-	height = new_height
-	update_cylinder()
-
-func set_width(new_width: float):
-	width = new_width
-	update_cylinder()
-
-func set_diameter(new_diameter: float):
-	diameter = new_diameter
-	update_cylinder()
-
-func set_inner_cylinder_radius(new_radius: float):
-	inner_cylinder_radius = new_radius
-	update_inner_cylinder()
-
-func set_outline_color(new_color: Color):
-	outline_color = new_color
-	update_material()
-	update_tampas()  # Atualiza também o material das tampas
-
-func set_transparency(new_transparency: float):
-	transparency = new_transparency
-	update_material()
-	update_tampas()  # Atualiza também o material das tampas
-
 func reset_bed():
-	# Reseta todos os parâmetros para os valores iniciais
 	height = INITIAL_HEIGHT
 	width = INITIAL_WIDTH
 	diameter = INITIAL_DIAMETER
@@ -144,16 +167,12 @@ func reset_bed():
 	outline_color = INITIAL_OUTLINE_COLOR
 	transparency = INITIAL_TRANSPARENCY
 	
-	# Atualiza o leito com os novos valores
-	update_cylinder()
-	update_inner_cylinder()
-	update_material()
-	update_tampas()
-	
-	# Emite um sinal para atualizar a UI
+	_update_bed()
+	_update_materials()
+	_update_tampas()
 	emit_signal("bed_reset")
 
 func confirm_boolean():
 	# Garante que a operação é subtração
 	inner_cylinder.operation = CSGShape3D.OPERATION_SUBTRACTION
-	update_material() 
+	_update_materials() 

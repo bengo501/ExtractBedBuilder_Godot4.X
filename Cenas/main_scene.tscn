@@ -87,8 +87,8 @@ radius = 0.4
 height = 1.70838
 sides = 32
 
-[node name="TampaInferior" type="CSGCylinder3D" parent="ExtractionBed"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.51791, 0)
+[node name="TampaInferior" type="CSGCylinder3D" parent="ExtractionBed/CSGCylinder3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.15883, 0)
 cast_shadow = 0
 use_collision = true
 radius = 0.735
@@ -96,8 +96,8 @@ height = 0.0576172
 sides = 32
 material = SubResource("ShaderMaterial_tampa")
 
-[node name="TampaSuperior" type="CSGCylinder3D" parent="ExtractionBed"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+[node name="TampaSuperior" type="CSGCylinder3D" parent="ExtractionBed/CSGCylinder3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.06971, 0)
 cast_shadow = 0
 use_collision = true
 radius = 0.735

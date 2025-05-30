@@ -14,7 +14,7 @@
 [ext_resource type="Script" uid="uid://c5vuj1v32js8g" path="res://Scripts/spawner.gd" id="14_spawner"]
 [ext_resource type="Script" uid="uid://cbyautdbwb5dg" path="res://Scripts/spawner_ui.gd" id="15_spawnerui"]
 [ext_resource type="PackedScene" uid="uid://bq6t8isw3doa5" path="res://Cenas/PauseMenu.tscn" id="16_pausemenu"]
-[ext_resource type="Script" path="res://Scripts/object_info.gd" id="17_objectinfo"]
+[ext_resource type="Script" uid="uid://n0hile8xer85" path="res://Scripts/object_info.gd" id="17_objectinfo"]
 [ext_resource type="Shader" uid="uid://bupq543w5ylqu" path="res://Shaders/outline.gdshader" id="18_outline"]
 
 [sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_xwv2h"]
@@ -79,25 +79,26 @@ radius = 0.7
 sides = 32
 
 [node name="InnerCylinder" type="CSGCylinder3D" parent="ExtractionBed/CSGCylinder3D"]
-transform = Transform3D(1, 0, 0, 0, 1.38603, 0, 0, 0, 1, 0, 0.133426, 0)
+transform = Transform3D(1, 0, 0, 0, 1.38603, 0, 0, 0, 1, 0, -0.030771, 0)
 operation = 2
 use_collision = true
 radius = 0.4
-height = 1.47145
+height = 1.70838
 sides = 32
 
 [node name="TampaInferior" type="CSGCylinder3D" parent="ExtractionBed"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 0)
-visible = false
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.51791, 0)
 cast_shadow = 0
+use_collision = true
 radius = 0.735
+height = 0.0576172
 sides = 32
 material = SubResource("ShaderMaterial_tampa")
 
 [node name="TampaSuperior" type="CSGCylinder3D" parent="ExtractionBed"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
-visible = false
 cast_shadow = 0
+use_collision = true
 radius = 0.735
 height = 0.01
 sides = 32
@@ -561,6 +562,18 @@ grow_vertical = 0
 theme_override_font_sizes/font_size = 16
 text = "Câmera: -
 Posição: -"
+
+[node name="ResetButton" type="Button" parent="CameraInfo"]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = 9.0
+offset_right = 320.0
+offset_bottom = 49.0
+grow_vertical = 0
+theme_override_font_sizes/font_size = 14
+text = "Resetar Câmeras"
 
 [node name="ObjectInfo" type="Control" parent="."]
 layout_mode = 3

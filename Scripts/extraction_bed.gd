@@ -1,5 +1,7 @@
 extends Node3D
 
+signal bed_reset
+
 # Valores iniciais do leito
 const INITIAL_HEIGHT = 2.0
 const INITIAL_WIDTH = 1.0

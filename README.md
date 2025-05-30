@@ -1,7 +1,6 @@
 # Leito de Extração - Simulador 3D
-![testeLEITOgodot](https://github.com/user-attachments/assets/c5a04329-762c-403
-![testeLEITOgodot2](https://github.com/user-attachments/assets/56d370b0-29df-410e-ae77-609657b5869e)
-5-b398-eb397a1e092c)
+![testeLEITOgodot](https://github.com/user-attachments/assets/c5a04329-762c-403)
+![testeLEITOgodot2](https://github.com/user-attachments/assets/56d370b0-29df-410e-ae77-609657b5869e5-b398-eb397a1e092c)
 
 ## Visão Geral
 Este é um simulador 3D de um leito de extração, desenvolvido em Godot Engine. O projeto permite visualizar e interagir com um leito de extração em um ambiente 3D, com múltiplas câmeras e controles interativos.

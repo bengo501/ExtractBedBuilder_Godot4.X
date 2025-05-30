@@ -16,7 +16,7 @@
 [ext_resource type="PackedScene" uid="uid://bq6t8isw3doa5" path="res://Cenas/PauseMenu.tscn" id="16_pausemenu"]
 [ext_resource type="Script" uid="uid://n0hile8xer85" path="res://Scripts/object_info.gd" id="17_objectinfo"]
 [ext_resource type="Shader" uid="uid://bupq543w5ylqu" path="res://Shaders/outline.gdshader" id="18_outline"]
-[ext_resource type="Script" path="res://Scripts/bed_info.gd" id="19_bedinfo"]
+[ext_resource type="Script" uid="uid://ci8im2debx7vg" path="res://Scripts/bed_info.gd" id="19_bedinfo"]
 
 [sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_xwv2h"]
 panorama = ExtResource("1_g2tnf")

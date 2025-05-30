@@ -1,0 +1,188 @@
+FEATURES E PLANOS FUTUROS - SIMULADOR DE LEITO DE EXTRAÇÃO
+=========================================================
+
+1. FEATURES IMPLEMENTADAS
+------------------------
+
+1.1 Sistema de Câmeras
+---------------------
+✓ Sistema de múltiplas câmeras (Front, Free, Iso, Top)
+✓ Controles independentes para cada câmera
+✓ Ajuste automático de FOV baseado no tamanho do leito
+✓ Movimento vertical mantido para câmeras Front e Iso
+✓ Rotação livre para câmera Free
+✓ Zoom manual e automático
+✓ Reset de posições das câmeras
+
+1.2 Interface do Usuário
+-----------------------
+✓ Indicador de câmera em tempo real
+✓ Controles de zoom na interface
+✓ Ajuste de intensidade do skybox
+✓ Exibição de informações da câmera atual
+✓ Botões de controle intuitivos
+
+1.3 Sistema de Controle
+----------------------
+✓ Atalhos de teclado para troca de câmeras
+✓ Controles WASD para câmera livre
+✓ Controles Q/E para movimento vertical
+✓ Rotação com mouse e setas
+✓ Sistema de zoom suave
+
+1.4 Ajustes Automáticos
+----------------------
+✓ Ajuste de FOV baseado no tamanho
+✓ Ajuste de distância automático
+✓ Zoom proporcional ao leito
+✓ Manutenção de posições verticais
+
+2. FEATURES EM DESENVOLVIMENTO
+-----------------------------
+
+2.1 Sistema de Câmeras
+---------------------
+- [ ] Suavização de transições entre câmeras
+- [ ] Salvamento de posições personalizadas
+- [ ] Sistema de waypoints para câmera livre
+- [ ] Ajuste de sensibilidade via interface
+
+2.2 Interface do Usuário
+-----------------------
+- [ ] Menu de configurações avançadas
+- [ ] Personalização de atalhos
+- [ ] Temas de interface (claro/escuro)
+- [ ] Indicadores visuais de limites
+
+2.3 Sistema de Controle
+----------------------
+- [ ] Suporte a gamepad/controle
+- [ ] Perfis de controle personalizáveis
+- [ ] Modo de precisão para movimentos
+- [ ] Atalhos personalizáveis
+
+3. FEATURES FUTURAS
+------------------
+
+3.1 Sistema de Câmeras
+---------------------
+- [ ] Sistema de câmeras dinâmicas
+- [ ] Modo de câmera em primeira pessoa
+- [ ] Sistema de câmera orbital
+- [ ] Animações de transição personalizadas
+- [ ] Sistema de câmera em terceira pessoa
+- [ ] Modo de câmera em perspectiva
+
+3.2 Interface do Usuário
+-----------------------
+- [ ] Interface totalmente personalizável
+- [ ] Sistema de atalhos contextuais
+- [ ] Modo de tela cheia personalizado
+- [ ] Sistema de notificações
+- [ ] Painel de informações detalhadas
+- [ ] Modo de apresentação
+
+3.3 Sistema de Controle
+----------------------
+- [ ] Sistema de gestos para controle
+- [ ] Suporte a realidade virtual
+- [ ] Controle por voz
+- [ ] Sistema de macros
+- [ ] Modo de automação
+
+3.4 Recursos Avançados
+---------------------
+- [ ] Sistema de partículas para efeitos
+- [ ] Animações do leito
+- [ ] Sistema de física realista
+- [ ] Modo de simulação
+- [ ] Sistema de colisão
+- [ ] Efeitos de pós-processamento
+
+4. MELHORIAS TÉCNICAS
+--------------------
+
+4.1 Performance
+--------------
+- [ ] Otimização de renderização
+- [ ] Sistema de LOD (Level of Detail)
+- [ ] Culling de objetos
+- [ ] Compressão de texturas
+- [ ] Sistema de cache
+
+4.2 Estabilidade
+---------------
+- [ ] Sistema de backup automático
+- [ ] Recuperação de crashes
+- [ ] Logs detalhados
+- [ ] Sistema de diagnóstico
+- [ ] Verificação de integridade
+
+4.3 Compatibilidade
+-----------------
+- [ ] Suporte a múltiplas plataformas
+- [ ] Exportação para diferentes formatos
+- [ ] Sistema de plugins
+- [ ] API para extensões
+- [ ] Suporte a mods
+
+5. RECURSOS ADICIONAIS
+---------------------
+
+5.1 Documentação
+--------------
+- [ ] Manual do usuário interativo
+- [ ] Tutoriais em vídeo
+- [ ] Sistema de ajuda contextual
+- [ ] Documentação de API
+- [ ] Guias de troubleshooting
+
+5.2 Ferramentas de Desenvolvimento
+--------------------------------
+- [ ] Editor de câmeras
+- [ ] Ferramenta de debug visual
+- [ ] Sistema de profiling
+- [ ] Editor de configurações
+- [ ] Ferramenta de teste
+
+6. PRIORIDADES DE IMPLEMENTAÇÃO
+-----------------------------
+
+Alta Prioridade:
+1. Suavização de transições entre câmeras
+2. Menu de configurações avançadas
+3. Sistema de backup automático
+4. Otimização de performance
+
+Média Prioridade:
+1. Suporte a gamepad/controle
+2. Sistema de waypoints
+3. Personalização de atalhos
+4. Sistema de diagnóstico
+
+Baixa Prioridade:
+1. Suporte a realidade virtual
+2. Sistema de partículas
+3. Modo de apresentação
+4. Sistema de plugins
+
+7. CONSIDERAÇÕES TÉCNICAS
+------------------------
+
+7.1 Requisitos Futuros
+---------------------
+- Aumento da memória necessária
+- Requisitos de GPU mais altos
+- Necessidade de mais espaço em disco
+- Suporte a tecnologias mais recentes
+
+7.2 Limitações Atuais
+--------------------
+- Limitações de performance
+- Restrições de compatibilidade
+- Limitações de memória
+- Restrições de plataforma
+
+=========================================================
+FIM DO DOCUMENTO DE FEATURES E PLANOS
+========================================================= 

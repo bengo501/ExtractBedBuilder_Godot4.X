@@ -7,13 +7,14 @@ extends Node
 @export var extraction_bed_path: NodePath
 
 var current_camera: Camera3D
-var current_camera_index: int = 0  # Alterado para 0 (Front como padrão)
+var current_camera_index: int = 0  # Front como padrão
 var cameras: Array[Camera3D]
 var current_zoom: float = 1.0
 var target_zoom: float = 1.0
-var camera_names = ["Front", "Free", "Iso", "Top"]  # Reordenado
+var camera_names = ["Front", "Free", "Iso", "Top"]
 var camera_indicator: Label
 var extraction_bed: Node3D
+var manual_vertical_offset: float = 0.0  # Offset vertical manual
 
 const MIN_FOV = 30.0
 const MAX_FOV = 120.0
@@ -23,8 +24,9 @@ const MAX_DISTANCE = 50.0
 const ZOOM_STEP = 0.05
 const BED_SIZE_MULTIPLIER = 3.0
 const FOV_ADJUSTMENT = 10.0
+const VERTICAL_MOVE_SPEED = 2.0  # Velocidade do movimento vertical
 
-# Posições iniciais das câmeras (exatamente como estão na cena)
+# Posições iniciais das câmeras
 const INITIAL_POSITIONS = {
 	"Front": Vector3(0, 2.5, -6),     # Câmera frontal
 	"Free": Vector3(-4, 3.4605, -4),  # Câmera livre
@@ -32,10 +34,10 @@ const INITIAL_POSITIONS = {
 	"Top": Vector3(0, 9.35908, 0)     # Câmera superior
 }
 
-# Rotações iniciais das câmeras (exatamente como estão na cena)
+# Rotações iniciais das câmeras
 const INITIAL_ROTATIONS = {
 	"Front": Vector3(0, 3.14159, 0),  # 180 graus em Y
-	"Free": Vector3(0, -0.8, 0),      # Rotação da câmera livre
+	"Free": Vector3(0, 0.785398, 0),  # 45 graus em Y para olhar para o leito
 	"Iso": Vector3(0.5, -0.8, 0.5),   # Rotação isométrica
 	"Top": Vector3(-1.5708, 0, 0)     # -90 graus em X
 }
@@ -63,20 +65,41 @@ func _ready():
 func _input(event):
 	if event.is_action_pressed("camera_1"):
 		current_camera_index = 0  # Front
+		manual_vertical_offset = 0.0  # Reseta o offset ao trocar de câmera
 		_update_cameras()
 		_update_camera_indicator()
 	elif event.is_action_pressed("camera_2"):
 		current_camera_index = 1  # Free
+		manual_vertical_offset = 0.0
 		_update_cameras()
 		_update_camera_indicator()
 	elif event.is_action_pressed("camera_3"):
 		current_camera_index = 2  # Iso
+		manual_vertical_offset = 0.0
 		_update_cameras()
 		_update_camera_indicator()
 	elif event.is_action_pressed("camera_4"):
 		current_camera_index = 3  # Top
+		manual_vertical_offset = 0.0
 		_update_cameras()
 		_update_camera_indicator()
+
+func _process(delta):
+	_update_camera_indicator()
+	
+	# Movimento vertical para Front e Iso
+	if current_camera_index == 0 or current_camera_index == 2:  # Front ou Iso
+		var vertical_move = 0.0
+		if Input.is_action_pressed("move_up") or Input.is_action_pressed("e"):
+			vertical_move = VERTICAL_MOVE_SPEED * delta
+		elif Input.is_action_pressed("move_down") or Input.is_action_pressed("q"):
+			vertical_move = -VERTICAL_MOVE_SPEED * delta
+		
+		if vertical_move != 0.0:
+			manual_vertical_offset += vertical_move
+	
+	# Ajusta a câmera baseado no tamanho do leito
+	adjust_camera_for_bed_size()
 
 func _update_cameras():
 	for camera in cameras:
@@ -132,15 +155,19 @@ func adjust_camera_for_bed_size():
 	var direction = initial_pos.normalized()
 	var target_pos = direction * target_distance
 	
+	# Aplica o offset vertical manual
+	target_pos.y += manual_vertical_offset
+	
 	# Ajusta a posição diretamente
 	current_camera.transform.origin = target_pos
 	
 	emit_signal("fov_changed", current_camera.fov)
 
 func reset_cameras():
-	# Reseta o zoom
+	# Reseta o zoom e o offset vertical
 	current_zoom = 1.0
 	target_zoom = 1.0
+	manual_vertical_offset = 0.0
 	
 	# Reseta cada câmera para sua posição e rotação inicial
 	for i in range(cameras.size()):
@@ -159,12 +186,6 @@ func reset_cameras():
 	# Atualiza a câmera atual
 	_update_cameras()
 	_update_camera_indicator()
-
-func _process(delta):
-	_update_camera_indicator()
-	
-	# Ajusta a câmera baseado no tamanho do leito
-	adjust_camera_for_bed_size()
 
 func _update_camera_indicator():
 	if camera_indicator and current_camera:

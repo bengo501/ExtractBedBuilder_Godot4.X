@@ -1,0 +1,237 @@
+DOCUMENTAÇÃO TÉCNICA - SIMULADOR DE LEITO DE EXTRAÇÃO
+====================================================
+
+1. SISTEMA DE CÂMERAS
+---------------------
+
+1.1 Câmera Frontal (Front)
+--------------------------
+- Posição Inicial: (0, 2.5, -6)
+- Rotação Inicial: (0, 3.14159, 0) - 180 graus em Y
+- FOV Padrão: 60.0
+- Controles:
+  * Q: Movimento vertical para baixo
+  * E: Movimento vertical para cima
+  * Mouse: Zoom in/out
+  * Botões de interface: Ajuste de zoom
+- Características:
+  * Ajuste automático de FOV baseado no tamanho do leito
+  * Movimento vertical mantido após ajuste do leito
+  * Zoom limitado entre 0.5 e 2.0
+
+1.2 Câmera Livre (Free)
+-----------------------
+- Posição Inicial: (-4, 3.4605, -4)
+- Rotação Inicial: (0, 0.785398, 0) - 45 graus em Y
+- FOV Padrão: 60.0
+- Controles:
+  * WASD: Movimento horizontal
+  * Q: Movimento para baixo
+  * E: Movimento para cima
+  * Botão direito do mouse: Rotação da câmera
+  * Setas: Rotação adicional
+- Características:
+  * Movimento independente do leito
+  * Rotação livre em 360 graus
+  * Velocidade base: 5.0 unidades/segundo
+  * Sensibilidade do mouse: 0.03
+  * Sensibilidade das setas: 1.0
+
+1.3 Câmera Isométrica (Iso)
+---------------------------
+- Posição Inicial: (-3.52846, 5.19071, 3.89156)
+- Rotação Inicial: (0.5, -0.8, 0.5)
+- FOV Padrão: 60.0
+- Controles:
+  * Q: Movimento vertical para baixo
+  * E: Movimento vertical para cima
+  * Mouse: Zoom in/out
+  * Botões de interface: Ajuste de zoom
+- Características:
+  * Ajuste automático de FOV
+  * Movimento vertical mantido
+  * Zoom limitado entre 0.5 e 2.0
+
+1.4 Câmera Superior (Top)
+-------------------------
+- Posição Inicial: (0, 9.35908, 0)
+- Rotação Inicial: (-1.5708, 0, 0) - -90 graus em X
+- FOV Padrão: 60.0
+- Controles:
+  * Mouse: Zoom in/out
+  * Botões de interface: Ajuste de zoom
+- Características:
+  * Ajuste automático de FOV
+  * Zoom limitado entre 0.5 e 2.0
+
+2. SISTEMA DE AJUSTE AUTOMÁTICO
+------------------------------
+
+2.1 Ajuste de FOV
+----------------
+- FOV Mínimo: 30.0
+- FOV Máximo: 120.0
+- FOV Base: 60.0
+- Ajuste por tamanho do leito: +10.0 graus por unidade de tamanho
+
+2.2 Ajuste de Distância
+----------------------
+- Distância Mínima: 5.0
+- Distância Máxima: 50.0
+- Multiplicador de tamanho do leito: 3.0
+- Cálculo: tamanho_leito * BED_SIZE_MULTIPLIER
+
+2.3 Ajuste de Zoom
+-----------------
+- Zoom Mínimo: 0.5
+- Zoom Máximo: 2.0
+- Incremento: 0.05
+- Ajuste suave entre valores
+
+3. INTERFACE DO USUÁRIO
+----------------------
+
+3.1 Indicador de Câmera
+----------------------
+- Exibe:
+  * Nome da câmera atual
+  * Posição (X, Y, Z)
+  * FOV atual
+  * Nível de zoom
+- Atualização em tempo real
+
+3.2 Controles de Zoom
+--------------------
+- Botões + e - para ajuste manual
+- Zoom automático baseado no leito
+- Limites de zoom configuráveis
+
+3.3 Ajuste de Skybox
+-------------------
+- Intensidade padrão: 0.2
+- Range: 0.0 a 2.0
+- Ajuste via slider
+- Atualização em tempo real
+
+4. SISTEMA DE CONTROLE
+---------------------
+
+4.1 Atalhos de Teclado
+---------------------
+- 1: Câmera Frontal
+- 2: Câmera Livre
+- 3: Câmera Isométrica
+- 4: Câmera Superior
+- R: Reset de todas as câmeras
+
+4.2 Controles de Movimento
+-------------------------
+- WASD: Movimento horizontal (câmera livre)
+- Q/E: Movimento vertical
+- Mouse: Zoom e rotação
+- Setas: Rotação adicional
+
+5. ESTRUTURA DE ARQUIVOS
+-----------------------
+
+5.1 Diretórios
+-------------
+/Cenas
+  - main_scene.tscn
+/Scripts
+  - camera_controller.gd
+  - free_camera.gd
+  - camera_iso_control.gd
+  - extraction_bed.gd
+
+5.2 Scripts Principais
+---------------------
+camera_controller.gd:
+- Gerenciamento de todas as câmeras
+- Sistema de zoom
+- Ajuste automático
+- Interface do usuário
+
+free_camera.gd:
+- Controle da câmera livre
+- Sistema de movimento
+- Rotação da câmera
+
+camera_iso_control.gd:
+- Controle da câmera isométrica
+- Ajustes de perspectiva
+
+extraction_bed.gd:
+- Controle do leito de extração
+- Ajustes de tamanho
+- Interação com câmeras
+
+6. CONFIGURAÇÕES TÉCNICAS
+------------------------
+
+6.1 Requisitos do Sistema
+------------------------
+- Godot Engine 4.x
+- Sistema operacional compatível
+- OpenGL 3.3 ou superior
+- Memória RAM: 4GB mínimo
+- Espaço em disco: 500MB
+
+6.2 Parâmetros de Performance
+----------------------------
+- FPS alvo: 60
+- Resolução mínima: 1280x720
+- Anti-aliasing: MSAA 2x
+- Sombreador: PBR
+
+7. MANUTENÇÃO E SUPORTE
+----------------------
+
+7.1 Logs e Debug
+---------------
+- Log de erros em tempo real
+- Indicadores de performance
+- Debug de câmera
+
+7.2 Atualizações
+---------------
+- Sistema de versionamento
+- Backup automático
+- Log de alterações
+
+8. LIMITAÇÕES CONHECIDAS
+-----------------------
+- Zoom máximo limitado a 2.0
+- FOV máximo de 120.0
+- Distância máxima de 50.0 unidades
+- Movimento vertical mantido apenas para Front e Iso
+
+9. RECOMENDAÇÕES DE USO
+----------------------
+1. Iniciar com câmera frontal para visão geral
+2. Usar câmera livre para inspeção detalhada
+3. Câmera isométrica para verificação de proporções
+4. Câmera superior para alinhamentos
+5. Ajustar skybox para melhor visualização
+6. Utilizar zoom automático para leitos grandes
+
+10. SOLUÇÃO DE PROBLEMAS
+-----------------------
+1. Câmera não responde:
+   - Verificar teclas de atalho
+   - Resetar câmeras (R)
+   - Verificar conflitos de input
+
+2. Zoom não funciona:
+   - Verificar limites de zoom
+   - Resetar zoom
+   - Verificar tamanho do leito
+
+3. Performance ruim:
+   - Reduzir qualidade gráfica
+   - Ajustar FOV
+   - Verificar recursos do sistema
+
+====================================================
+FIM DA DOCUMENTAÇÃO TÉCNICA
+==================================================== 

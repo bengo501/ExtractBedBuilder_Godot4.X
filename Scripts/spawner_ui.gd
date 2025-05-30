@@ -15,6 +15,8 @@ var spawner: Node3D
 @onready var angular_damp_spin: SpinBox = $SpawnerVBox/AngularDampSpin
 @onready var spawn_button: Button = $SpawnerVBox/SpawnButton
 @onready var clear_button: Button = $SpawnerVBox/ClearButton
+@onready var height_slider: HSlider = $SpawnerVBox/HeightSlider
+@onready var height_label: Label = $SpawnerVBox/HeightLabel
 
 func _ready():
 	spawner = get_node(spawner_path)
@@ -26,6 +28,17 @@ func _ready():
 	type_option.add_item("Plano")    # 3
 	spawn_button.pressed.connect(_on_spawn_button_pressed)
 	clear_button.pressed.connect(_on_clear_button_pressed)
+	height_slider.value_changed.connect(_on_height_slider_changed)
+	
+	# Configura o slider de altura
+	height_slider.min_value = 0.0
+	height_slider.max_value = 10.0
+	height_slider.value = spawner.position.y
+	height_label.text = "Altura do Spawner: %.1f" % height_slider.value
+
+func _on_height_slider_changed(value: float):
+	spawner.position.y = value
+	height_label.text = "Altura do Spawner: %.1f" % value
 
 func _on_spawn_button_pressed():
 	var type_map = {0: "sphere", 1: "cube", 2: "cylinder", 3: "plane"}

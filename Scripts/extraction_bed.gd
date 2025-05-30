@@ -105,6 +105,10 @@ func _update_tampas():
 		# Ajusta a posição das tampas para acompanhar a altura do leito
 		tampa_inferior.position.y = height + 1.15883  # Mantém a distância relativa
 		tampa_superior.position.y = height - 1.35908  # Mantém a distância relativa
+		
+		# Atualiza a colisão das tampas baseado na visibilidade
+		tampa_inferior.use_collision = tampa_inferior.visible
+		tampa_superior.use_collision = tampa_superior.visible
 
 func get_ponto_mais_baixo() -> float:
 	# Calcula o ponto mais baixo do leito considerando a altura e a escala

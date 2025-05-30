@@ -18,6 +18,8 @@ extends Control
 @onready var skybox_button: Button = $VBoxContainer/SkyboxButton
 @onready var skybox_intensity_slider: HSlider = $VBoxContainer/SkyboxContainer/SkyboxIntensitySlider
 @onready var skybox_intensity_value: Label = $VBoxContainer/SkyboxContainer/SkyboxIntensityValue
+@onready var floor_distance_slider: HSlider = $VBoxContainer/FloorDistanceContainer/FloorDistanceSlider
+@onready var floor_distance_value: Label = $VBoxContainer/FloorDistanceContainer/FloorDistanceValue
 
 @export var extraction_bed_path: NodePath
 @export var skybox_manager_path: NodePath
@@ -28,19 +30,23 @@ var skybox_manager: Node
 var tampa_inferior: CSGCylinder3D
 var tampa_superior: CSGCylinder3D
 
+# Constante para conversão entre centímetros e unidades do Godot
+const CM_TO_UNITS = 0.01  # 1 unidade = 100cm
+
 func _ready():
 	extraction_bed = get_node(extraction_bed_path)
 	camera_controller = get_node("../CameraController")
 	skybox_manager = get_node(skybox_manager_path)
 	
-	# Initialize sliders with current values
-	height_slider.value = extraction_bed.height
-	width_slider.value = extraction_bed.width
-	diameter_slider.value = extraction_bed.diameter
-	inner_radius_slider.value = extraction_bed.inner_cylinder_radius
+	# Initialize sliders with current values (convertendo de unidades para centímetros)
+	height_slider.value = extraction_bed.height / CM_TO_UNITS
+	width_slider.value = extraction_bed.width / CM_TO_UNITS
+	diameter_slider.value = extraction_bed.diameter / CM_TO_UNITS
+	inner_radius_slider.value = extraction_bed.inner_cylinder_radius / CM_TO_UNITS
 	outline_color_button.color = extraction_bed.outline_color
 	transparency_slider.value = extraction_bed.transparency
 	skybox_intensity_slider.value = skybox_manager.skybox_intensity
+	floor_distance_slider.value = extraction_bed.global_position.y / CM_TO_UNITS
 	
 	update_labels()
 	
@@ -52,6 +58,7 @@ func _ready():
 	outline_color_button.color_changed.connect(_on_outline_color_changed)
 	transparency_slider.value_changed.connect(_on_transparency_changed)
 	skybox_intensity_slider.value_changed.connect(_on_skybox_intensity_changed)
+	floor_distance_slider.value_changed.connect(_on_floor_distance_changed)
 	
 	# Conectar botões de zoom
 	$VBoxContainer/ZoomContainer/ZoomInButton.pressed.connect(_on_zoom_in_pressed)
@@ -75,57 +82,57 @@ func _ready():
 	reset_button.pressed.connect(_on_reset_button_pressed)
 	
 	# Inicializa as tampas como nodes já existentes
-	tampa_inferior = extraction_bed.get_node_or_null("TampaInferior")
-	tampa_superior = extraction_bed.get_node_or_null("TampaSuperior")
-	# Garante que começam invisíveis
-	if tampa_inferior:
-		tampa_inferior.visible = false
+	tampa_inferior = extraction_bed.get_node_or_null("CSGCylinder3D/TampaInferior")
+	tampa_superior = extraction_bed.get_node_or_null("CSGCylinder3D/TampaSuperior")
+	
+	# Garante que a tampa superior começa invisível
 	if tampa_superior:
 		tampa_superior.visible = false
+		tampa_superior.use_collision = false
 	
 	# Atualiza o texto dos botões baseado no estado atual
 	_update_tampa_buttons()
 
 func _on_height_slider_value_changed(value: float):
-	extraction_bed.height = value
+	extraction_bed.height = value * CM_TO_UNITS
 	height_value.text = str(value)
 	if extraction_bed:
-		extraction_bed.scale.y = value
+		extraction_bed.scale.y = value * CM_TO_UNITS
 		# Atualiza a posição e raio das tampas se existirem
 		if tampa_inferior:
-			tampa_inferior.transform.origin.y = -value/2 + tampa_inferior.height * 0.5 - 0.0001
-			tampa_inferior.radius = (diameter_slider.value / 2) * 1.05
+			tampa_inferior.transform.origin.y = -(value * CM_TO_UNITS)/2 + tampa_inferior.height * 0.5 - 0.0001
+			tampa_inferior.radius = (diameter_slider.value * CM_TO_UNITS / 2) * 1.05
 		if tampa_superior:
-			tampa_superior.transform.origin.y = value/2 - tampa_superior.height * 0.5 + 0.0001
-			tampa_superior.radius = (diameter_slider.value / 2) * 1.05
+			tampa_superior.transform.origin.y = (value * CM_TO_UNITS)/2 - tampa_superior.height * 0.5 + 0.0001
+			tampa_superior.radius = (diameter_slider.value * CM_TO_UNITS / 2) * 1.05
 
 func _on_width_slider_value_changed(value: float):
-	extraction_bed.width = value
+	extraction_bed.width = value * CM_TO_UNITS
 	width_value.text = str(value)
 	if extraction_bed:
-		extraction_bed.scale.x = value
-		extraction_bed.scale.z = value
+		extraction_bed.scale.x = value * CM_TO_UNITS
+		extraction_bed.scale.z = value * CM_TO_UNITS
 
 func _on_diameter_slider_value_changed(value: float):
-	extraction_bed.diameter = value
+	extraction_bed.diameter = value * CM_TO_UNITS
 	diameter_value.text = str(value)
 	if extraction_bed:
 		var cylinder = extraction_bed.get_node("CSGCylinder3D")
 		if cylinder:
-			cylinder.radius = value / 2
+			cylinder.radius = value * CM_TO_UNITS / 2
 		# Atualiza o raio das tampas se existirem
 		if tampa_inferior:
-			tampa_inferior.radius = value / 2
+			tampa_inferior.radius = value * CM_TO_UNITS / 2
 		if tampa_superior:
-			tampa_superior.radius = value / 2
+			tampa_superior.radius = value * CM_TO_UNITS / 2
 
 func _on_inner_radius_slider_value_changed(value: float):
-	extraction_bed.inner_cylinder_radius = value
+	extraction_bed.inner_cylinder_radius = value * CM_TO_UNITS
 	inner_radius_value.text = str(value)
 	if extraction_bed:
 		var inner_cylinder = extraction_bed.get_node("CSGCylinder3D/InnerCylinder")
 		if inner_cylinder:
-			inner_cylinder.radius = value
+			inner_cylinder.radius = value * CM_TO_UNITS
 
 func _on_zoom_in_pressed():
 	camera_controller.zoom_in()
@@ -145,22 +152,27 @@ func _on_transparency_changed(value: float):
 func _on_tampa_inferior_button_pressed():
 	if tampa_inferior:
 		tampa_inferior.visible = not tampa_inferior.visible
+		tampa_inferior.use_collision = tampa_inferior.visible
 	_update_tampa_buttons()
 
 func _on_tampa_superior_button_pressed():
 	if tampa_superior:
 		tampa_superior.visible = not tampa_superior.visible
+		tampa_superior.use_collision = tampa_superior.visible
 	_update_tampa_buttons()
 
 func _update_tampa_buttons():
-	if tampa_inferior and tampa_inferior.visible:
-		tampa_inferior_button.text = "Remover Tampa Inferior"
-	else:
-		tampa_inferior_button.text = "Adicionar Tampa Inferior"
-	if tampa_superior and tampa_superior.visible:
-		tampa_superior_button.text = "Remover Tampa Superior"
-	else:
-		tampa_superior_button.text = "Adicionar Tampa Superior"
+	if tampa_inferior:
+		if tampa_inferior.visible:
+			tampa_inferior_button.text = "Remover Tampa Inferior"
+		else:
+			tampa_inferior_button.text = "Adicionar Tampa Inferior"
+	
+	if tampa_superior:
+		if tampa_superior.visible:
+			tampa_superior_button.text = "Remover Tampa Superior"
+		else:
+			tampa_superior_button.text = "Adicionar Tampa Superior"
 
 func update_labels():
 	height_value.text = str(height_slider.value)
@@ -170,6 +182,7 @@ func update_labels():
 	transparency_value.text = str(transparency_slider.value)
 	zoom_value.text = str(camera_controller.current_zoom)
 	skybox_intensity_value.text = str(skybox_intensity_slider.value)
+	floor_distance_value.text = str(floor_distance_slider.value)
 
 func _on_height_value_gui_input(event: InputEvent):
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
@@ -232,13 +245,14 @@ func _show_number_dialog(title: String, current_value: float, min_value: float, 
 func _on_reset_button_pressed():
 	extraction_bed.reset_bed()
 	# Atualiza os sliders e valores para refletir o reset
-	height_slider.value = extraction_bed.height
-	width_slider.value = extraction_bed.width
-	diameter_slider.value = extraction_bed.diameter
-	inner_radius_slider.value = extraction_bed.inner_cylinder_radius
+	height_slider.value = extraction_bed.height / CM_TO_UNITS
+	width_slider.value = extraction_bed.width / CM_TO_UNITS
+	diameter_slider.value = extraction_bed.diameter / CM_TO_UNITS
+	inner_radius_slider.value = extraction_bed.inner_cylinder_radius / CM_TO_UNITS
 	outline_color_button.color = extraction_bed.outline_color
 	transparency_slider.value = extraction_bed.transparency
 	skybox_intensity_slider.value = skybox_manager.skybox_intensity
+	floor_distance_slider.value = extraction_bed.global_position.y / CM_TO_UNITS
 	update_labels() 
 
 func _on_skybox_button_pressed():
@@ -249,3 +263,8 @@ func _on_skybox_intensity_changed(value: float):
 	skybox_manager.skybox_intensity = value
 	skybox_intensity_value.text = str(value)
 	skybox_manager.load_skybox(skybox_manager.skybox_white_path if skybox_manager.current_skybox == "white" else skybox_manager.skybox_black_path) 
+
+func _on_floor_distance_changed(value: float):
+	if extraction_bed:
+		extraction_bed.global_position.y = value * CM_TO_UNITS
+		floor_distance_value.text = str(value)

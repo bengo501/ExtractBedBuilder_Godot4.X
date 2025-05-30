@@ -70,7 +70,7 @@ size = Vector3(8, 0.2, 8)
 shape = SubResource("BoxShape3D_floor")
 
 [node name="ExtractionBed" type="StaticBody3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
 script = ExtResource("1_2k4m3")
 
 [node name="CSGCylinder3D" type="CSGCylinder3D" parent="ExtractionBed"]
@@ -106,8 +106,8 @@ height = 0.01
 sides = 32
 material = SubResource("ShaderMaterial_tampa")
 
-[node name="Spawner" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
+[node name="Spawner" type="Node3D" parent="ExtractionBed"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7.8, 0)
 script = ExtResource("14_spawner")
 spawn_point = NodePath("SpawnerBlock")
 object_scenes = {
@@ -117,7 +117,7 @@ object_scenes = {
 "sphere": ExtResource("10_sphere")
 }
 
-[node name="SpawnerBlock" type="CSGBox3D" parent="Spawner"]
+[node name="SpawnerBlock" type="CSGBox3D" parent="ExtractionBed/Spawner"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 0)
 cast_shadow = 0
 size = Vector3(0.3, 0.1, 0.3)
@@ -199,6 +199,25 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_constants/separation = 15
 
+[node name="FloorDistanceContainer" type="VBoxContainer" parent="UIControlPanel/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="UIControlPanel/VBoxContainer/FloorDistanceContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "Distância do Chão (cm)"
+
+[node name="FloorDistanceSlider" type="HSlider" parent="UIControlPanel/VBoxContainer/FloorDistanceContainer"]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+max_value = 50.0
+value = 5.0
+
+[node name="FloorDistanceValue" type="Label" parent="UIControlPanel/VBoxContainer/FloorDistanceContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "5.0"
+
 [node name="ZoomContainer" type="HBoxContainer" parent="UIControlPanel/VBoxContainer"]
 layout_mode = 2
 theme_override_constants/separation = 10
@@ -231,74 +250,70 @@ layout_mode = 2
 [node name="Label" type="Label" parent="UIControlPanel/VBoxContainer/HeightContainer"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 16
-text = "Altura"
+text = "Altura (cm)"
 
 [node name="HeightSlider" type="HSlider" parent="UIControlPanel/VBoxContainer/HeightContainer"]
 custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
-min_value = 0.5
-max_value = 5.0
-step = 0.1
-value = 2.0
+min_value = 5.0
+max_value = 200.0
+value = 20.0
 
 [node name="HeightValue" type="Label" parent="UIControlPanel/VBoxContainer/HeightContainer"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 14
-text = "2.0"
+text = "20.0"
 
 [node name="WidthContainer" type="VBoxContainer" parent="UIControlPanel/VBoxContainer"]
 layout_mode = 2
 
 [node name="Label" type="Label" parent="UIControlPanel/VBoxContainer/WidthContainer"]
 layout_mode = 2
-text = "Largura"
+text = "Largura (cm)"
 
 [node name="WidthSlider" type="HSlider" parent="UIControlPanel/VBoxContainer/WidthContainer"]
 layout_mode = 2
-min_value = 0.5
-max_value = 5.0
-step = 0.1
-value = 1.0
+min_value = 5.0
+max_value = 200.0
+value = 10.0
 
 [node name="WidthValue" type="Label" parent="UIControlPanel/VBoxContainer/WidthContainer"]
 layout_mode = 2
-text = "1.0"
+text = "10.0"
 
 [node name="DiameterContainer" type="VBoxContainer" parent="UIControlPanel/VBoxContainer"]
 layout_mode = 2
 
 [node name="Label" type="Label" parent="UIControlPanel/VBoxContainer/DiameterContainer"]
 layout_mode = 2
-text = "Diâmetro"
+text = "Diâmetro (cm)"
 
 [node name="DiameterSlider" type="HSlider" parent="UIControlPanel/VBoxContainer/DiameterContainer"]
 layout_mode = 2
-min_value = 0.5
-max_value = 5.0
-step = 0.1
-value = 1.0
+min_value = 5.0
+max_value = 200.0
+value = 10.0
 
 [node name="DiameterValue" type="Label" parent="UIControlPanel/VBoxContainer/DiameterContainer"]
 layout_mode = 2
-text = "1.0"
+text = "10.0"
 
 [node name="InnerCylinderContainer" type="VBoxContainer" parent="UIControlPanel/VBoxContainer"]
 layout_mode = 2
 
 [node name="Label" type="Label" parent="UIControlPanel/VBoxContainer/InnerCylinderContainer"]
 layout_mode = 2
-text = "Raio do Espaço Interno"
+text = "Raio do Espaço Interno (cm)"
 
 [node name="InnerRadiusSlider" type="HSlider" parent="UIControlPanel/VBoxContainer/InnerCylinderContainer"]
 layout_mode = 2
-min_value = 0.1
-max_value = 0.69
-step = 0.01
-value = 0.4
+min_value = 1.0
+max_value = 98.0
+value = 4.0
 
 [node name="InnerRadiusValue" type="Label" parent="UIControlPanel/VBoxContainer/InnerCylinderContainer"]
 layout_mode = 2
-text = "0.4"
+text = "4.0"
 
 [node name="OutlineContainer" type="VBoxContainer" parent="UIControlPanel/VBoxContainer"]
 layout_mode = 2
@@ -381,7 +396,7 @@ text = "Intensidade do Skybox"
 custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
 min_value = 0.1
-max_value = 2.0
+max_value = 5.0
 step = 0.1
 value = 0.2
 
@@ -399,7 +414,7 @@ offset_top = 216.25
 offset_right = -1558.75
 offset_bottom = 696.25
 script = ExtResource("15_spawnerui")
-spawner_path = NodePath("../../Spawner")
+spawner_path = NodePath("../../ExtractionBed/Spawner")
 
 [node name="BackgroundBlur" type="ColorRect" parent="UIControlPanel/SpawnerControlPanel"]
 layout_mode = 1
@@ -427,6 +442,18 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_constants/separation = 12
 
+[node name="HeightLabel" type="Label" parent="UIControlPanel/SpawnerControlPanel/SpawnerVBox"]
+custom_minimum_size = Vector2(120, 24)
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "Altura do Spawner (cm): 78"
+
+[node name="HeightSlider" type="HSlider" parent="UIControlPanel/SpawnerControlPanel/SpawnerVBox"]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+max_value = 200.0
+value = 78.0
+
 [node name="TypeLabel" type="Label" parent="UIControlPanel/SpawnerControlPanel/SpawnerVBox"]
 custom_minimum_size = Vector2(120, 24)
 layout_mode = 2
@@ -453,41 +480,41 @@ value = 1.0
 [node name="RaioLabel" type="Label" parent="UIControlPanel/SpawnerControlPanel/SpawnerVBox"]
 custom_minimum_size = Vector2(120, 18)
 layout_mode = 2
-text = "Raio/Diâmetro"
+text = "Raio/Diâmetro (cm)"
 
 [node name="RaioSpin" type="SpinBox" parent="UIControlPanel/SpawnerControlPanel/SpawnerVBox"]
 custom_minimum_size = Vector2(80, 22)
 layout_mode = 2
-min_value = 0.05
-max_value = 2.0
-step = 0.01
-value = 0.15
+min_value = 0.5
+max_value = 50.0
+step = 0.1
+value = 1.5
 
 [node name="AlturaLabel" type="Label" parent="UIControlPanel/SpawnerControlPanel/SpawnerVBox"]
 custom_minimum_size = Vector2(120, 18)
 layout_mode = 2
-text = "Altura"
+text = "Altura (cm)"
 
 [node name="AlturaSpin" type="SpinBox" parent="UIControlPanel/SpawnerControlPanel/SpawnerVBox"]
 custom_minimum_size = Vector2(80, 22)
 layout_mode = 2
-min_value = 0.05
-max_value = 2.0
-step = 0.01
-value = 0.3
+min_value = 0.5
+max_value = 50.0
+step = 0.1
+value = 3.0
 
 [node name="LarguraLabel" type="Label" parent="UIControlPanel/SpawnerControlPanel/SpawnerVBox"]
 custom_minimum_size = Vector2(120, 18)
 layout_mode = 2
-text = "Largura"
+text = "Largura (cm)"
 
 [node name="LarguraSpin" type="SpinBox" parent="UIControlPanel/SpawnerControlPanel/SpawnerVBox"]
 custom_minimum_size = Vector2(80, 22)
 layout_mode = 2
-min_value = 0.05
-max_value = 2.0
-step = 0.01
-value = 0.3
+min_value = 0.5
+max_value = 50.0
+step = 0.1
+value = 3.0
 
 [node name="IntervaloLabel" type="Label" parent="UIControlPanel/SpawnerControlPanel/SpawnerVBox"]
 custom_minimum_size = Vector2(120, 18)
@@ -529,7 +556,7 @@ text = "Massa"
 custom_minimum_size = Vector2(80, 22)
 layout_mode = 2
 min_value = 0.1
-max_value = 10.0
+max_value = 50.0
 step = 0.1
 value = 1.0
 
@@ -541,7 +568,7 @@ text = "Escala da Gravidade"
 [node name="GravityScaleSpin" type="SpinBox" parent="UIControlPanel/SpawnerControlPanel/SpawnerVBox"]
 custom_minimum_size = Vector2(80, 22)
 layout_mode = 2
-max_value = 5.0
+max_value = 20.0
 step = 0.1
 value = 1.0
 

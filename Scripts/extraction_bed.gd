@@ -1,11 +1,19 @@
 extends Node3D
 
-@export var height: float = 2.0
-@export var width: float = 1.0
-@export var diameter: float = 1.0
-@export var inner_cylinder_radius: float = 0.4
-@export var outline_color: Color = Color(0.0, 0.8, 1.0, 1.0)
-@export var transparency: float = 0.3
+# Valores iniciais do leito
+const INITIAL_HEIGHT = 2.0
+const INITIAL_WIDTH = 1.0
+const INITIAL_DIAMETER = 1.0
+const INITIAL_INNER_RADIUS = 0.4
+const INITIAL_OUTLINE_COLOR = Color(0.0, 0.8, 1.0, 1.0)
+const INITIAL_TRANSPARENCY = 0.3
+
+@export var height: float = INITIAL_HEIGHT
+@export var width: float = INITIAL_WIDTH
+@export var diameter: float = INITIAL_DIAMETER
+@export var inner_cylinder_radius: float = INITIAL_INNER_RADIUS
+@export var outline_color: Color = INITIAL_OUTLINE_COLOR
+@export var transparency: float = INITIAL_TRANSPARENCY
 
 @onready var cylinder: CSGCylinder3D = $CSGCylinder3D
 @onready var inner_cylinder: CSGCylinder3D = $CSGCylinder3D/InnerCylinder
@@ -124,6 +132,24 @@ func set_transparency(new_transparency: float):
 	transparency = new_transparency
 	update_material()
 	update_tampas()  # Atualiza também o material das tampas
+
+func reset_bed():
+	# Reseta todos os parâmetros para os valores iniciais
+	height = INITIAL_HEIGHT
+	width = INITIAL_WIDTH
+	diameter = INITIAL_DIAMETER
+	inner_cylinder_radius = INITIAL_INNER_RADIUS
+	outline_color = INITIAL_OUTLINE_COLOR
+	transparency = INITIAL_TRANSPARENCY
+	
+	# Atualiza o leito com os novos valores
+	update_cylinder()
+	update_inner_cylinder()
+	update_material()
+	update_tampas()
+	
+	# Emite um sinal para atualizar a UI
+	emit_signal("bed_reset")
 
 func confirm_boolean():
 	# Garante que a operação é subtração

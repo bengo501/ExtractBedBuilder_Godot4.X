@@ -354,6 +354,12 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 14
 text = "Adicionar/Remover Tampa Superior"
 
+[node name="ResetButton" type="Button" parent="UIControlPanel/VBoxContainer"]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "Resetar Leito"
+
 [node name="SpawnerControlPanel" type="Control" parent="UIControlPanel"]
 custom_minimum_size = Vector2(300, 0)
 layout_mode = 3

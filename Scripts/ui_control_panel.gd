@@ -14,6 +14,7 @@ extends Control
 @onready var tampa_inferior_button: Button = $VBoxContainer/TampasContainer/TampaInferiorButton
 @onready var tampa_superior_button: Button = $VBoxContainer/TampasContainer/TampaSuperiorButton
 @onready var zoom_value: Label = $VBoxContainer/ZoomContainer/ZoomValue
+@onready var reset_button: Button = $VBoxContainer/ResetButton
 
 @export var extraction_bed_path: NodePath
 var extraction_bed: Node3D
@@ -58,6 +59,9 @@ func _ready():
 	diameter_value.gui_input.connect(_on_diameter_value_gui_input)
 	inner_radius_value.gui_input.connect(_on_inner_radius_value_gui_input)
 	transparency_value.gui_input.connect(_on_transparency_value_gui_input)
+	
+	# Conecta o botão de reset
+	reset_button.pressed.connect(_on_reset_button_pressed)
 	
 	# Inicializa as tampas como nodes já existentes
 	tampa_inferior = extraction_bed.get_node_or_null("TampaInferior")
@@ -211,4 +215,15 @@ func _show_number_dialog(title: String, current_value: float, min_value: float, 
 			return new_value
 	
 	dialog.queue_free()
-	return null 
+	return null
+
+func _on_reset_button_pressed():
+	extraction_bed.reset_bed()
+	# Atualiza os sliders e valores para refletir o reset
+	height_slider.value = extraction_bed.height
+	width_slider.value = extraction_bed.width
+	diameter_slider.value = extraction_bed.diameter
+	inner_radius_slider.value = extraction_bed.inner_cylinder_radius
+	outline_color_button.color = extraction_bed.outline_color
+	transparency_slider.value = extraction_bed.transparency
+	update_labels() 

@@ -16,6 +16,8 @@ extends Control
 @onready var zoom_value: Label = $VBoxContainer/ZoomContainer/ZoomValue
 @onready var reset_button: Button = $VBoxContainer/ResetButton
 @onready var skybox_button: Button = $VBoxContainer/SkyboxButton
+@onready var skybox_intensity_slider: HSlider = $VBoxContainer/SkyboxContainer/SkyboxIntensitySlider
+@onready var skybox_intensity_value: Label = $VBoxContainer/SkyboxContainer/SkyboxIntensityValue
 
 @export var extraction_bed_path: NodePath
 @export var skybox_manager_path: NodePath
@@ -38,6 +40,7 @@ func _ready():
 	inner_radius_slider.value = extraction_bed.inner_cylinder_radius
 	outline_color_button.color = extraction_bed.outline_color
 	transparency_slider.value = extraction_bed.transparency
+	skybox_intensity_slider.value = skybox_manager.skybox_intensity
 	
 	update_labels()
 	
@@ -48,6 +51,7 @@ func _ready():
 	$VBoxContainer/InnerCylinderContainer/InnerRadiusSlider.value_changed.connect(_on_inner_radius_slider_value_changed)
 	outline_color_button.color_changed.connect(_on_outline_color_changed)
 	transparency_slider.value_changed.connect(_on_transparency_changed)
+	skybox_intensity_slider.value_changed.connect(_on_skybox_intensity_changed)
 	
 	# Conectar botões de zoom
 	$VBoxContainer/ZoomContainer/ZoomInButton.pressed.connect(_on_zoom_in_pressed)
@@ -165,6 +169,7 @@ func update_labels():
 	inner_radius_value.text = str(inner_radius_slider.value)
 	transparency_value.text = str(transparency_slider.value)
 	zoom_value.text = str(camera_controller.current_zoom)
+	skybox_intensity_value.text = str(skybox_intensity_slider.value)
 
 func _on_height_value_gui_input(event: InputEvent):
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
@@ -233,8 +238,14 @@ func _on_reset_button_pressed():
 	inner_radius_slider.value = extraction_bed.inner_cylinder_radius
 	outline_color_button.color = extraction_bed.outline_color
 	transparency_slider.value = extraction_bed.transparency
+	skybox_intensity_slider.value = skybox_manager.skybox_intensity
 	update_labels() 
 
 func _on_skybox_button_pressed():
 	skybox_manager.toggle_skybox()
 	skybox_button.text = "Grid Preta" if skybox_manager.current_skybox == "white" else "Grid Branca" 
+
+func _on_skybox_intensity_changed(value: float):
+	skybox_manager.skybox_intensity = value
+	skybox_intensity_value.text = str(value)
+	skybox_manager.load_skybox(skybox_manager.skybox_white_path if skybox_manager.current_skybox == "white" else skybox_manager.skybox_black_path) 

@@ -1,4 +1,4 @@
-[gd_scene load_steps=25 format=3 uid="uid://fbt81m33ijtb"]
+[gd_scene load_steps=26 format=3 uid="uid://fbt81m33ijtb"]
 
 [ext_resource type="Script" uid="uid://d4klsjbircvsq" path="res://Scripts/extraction_bed.gd" id="1_2k4m3"]
 [ext_resource type="Texture2D" uid="uid://cs7pfnrwfl34w" path="res://Assets/Textures/AnyConv.com__sl_072622_51930_13.hdr" id="1_g2tnf"]
@@ -17,6 +17,7 @@
 [ext_resource type="Script" uid="uid://n0hile8xer85" path="res://Scripts/object_info.gd" id="17_objectinfo"]
 [ext_resource type="Shader" uid="uid://bupq543w5ylqu" path="res://Shaders/outline.gdshader" id="18_outline"]
 [ext_resource type="Script" path="res://Scripts/bed_info.gd" id="19_bedinfo"]
+[ext_resource type="Script" path="res://Scripts/skybox_manager.gd" id="20_skybox"]
 
 [sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_xwv2h"]
 panorama = ExtResource("1_g2tnf")
@@ -171,6 +172,7 @@ grow_vertical = 2
 scale = Vector2(0.8, 0.8)
 script = ExtResource("3_4k4m3")
 extraction_bed_path = NodePath("../ExtractionBed")
+skybox_manager_path = NodePath("../SkyboxManager")
 
 [node name="BackgroundBlur" type="ColorRect" parent="UIControlPanel"]
 layout_mode = 1
@@ -360,6 +362,12 @@ custom_minimum_size = Vector2(0, 40)
 layout_mode = 2
 theme_override_font_sizes/font_size = 16
 text = "Resetar Leito"
+
+[node name="SkyboxButton" type="Button" parent="UIControlPanel/VBoxContainer"]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "Grid Preta"
 
 [node name="SpawnerControlPanel" type="Control" parent="UIControlPanel"]
 custom_minimum_size = Vector2(300, 0)
@@ -664,6 +672,10 @@ Largura: 1.00
 Diâmetro: 1.00
 Raio Interno: 0.40
 Transparência: 0.30"
+
+[node name="SkyboxManager" type="Node" parent="."]
+script = ExtResource("20_skybox")
+world_environment_path = NodePath("../WorldEnvironment")
 
 [connection signal="value_changed" from="UIControlPanel/VBoxContainer/HeightContainer/HeightSlider" to="UIControlPanel" method="_on_height_slider_value_changed"]
 [connection signal="value_changed" from="UIControlPanel/VBoxContainer/WidthContainer/WidthSlider" to="UIControlPanel" method="_on_width_slider_value_changed"]

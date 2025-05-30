@@ -15,10 +15,13 @@ extends Control
 @onready var tampa_superior_button: Button = $VBoxContainer/TampasContainer/TampaSuperiorButton
 @onready var zoom_value: Label = $VBoxContainer/ZoomContainer/ZoomValue
 @onready var reset_button: Button = $VBoxContainer/ResetButton
+@onready var skybox_button: Button = $VBoxContainer/SkyboxButton
 
 @export var extraction_bed_path: NodePath
+@export var skybox_manager_path: NodePath
 var extraction_bed: Node3D
 var camera_controller: Node
+var skybox_manager: Node
 
 var tampa_inferior: CSGCylinder3D
 var tampa_superior: CSGCylinder3D
@@ -26,6 +29,7 @@ var tampa_superior: CSGCylinder3D
 func _ready():
 	extraction_bed = get_node(extraction_bed_path)
 	camera_controller = get_node("../CameraController")
+	skybox_manager = get_node(skybox_manager_path)
 	
 	# Initialize sliders with current values
 	height_slider.value = extraction_bed.height
@@ -52,6 +56,9 @@ func _ready():
 	# Conecta os sinais dos botões de tampa
 	tampa_inferior_button.pressed.connect(_on_tampa_inferior_button_pressed)
 	tampa_superior_button.pressed.connect(_on_tampa_superior_button_pressed)
+	
+	# Conecta o botão de skybox
+	skybox_button.pressed.connect(_on_skybox_button_pressed)
 	
 	# Conecta os sinais de clique nos valores
 	height_value.gui_input.connect(_on_height_value_gui_input)
@@ -227,3 +234,7 @@ func _on_reset_button_pressed():
 	outline_color_button.color = extraction_bed.outline_color
 	transparency_slider.value = extraction_bed.transparency
 	update_labels() 
+
+func _on_skybox_button_pressed():
+	skybox_manager.toggle_skybox()
+	skybox_button.text = "Grid Preta" if skybox_manager.current_skybox == "white" else "Grid Branca" 

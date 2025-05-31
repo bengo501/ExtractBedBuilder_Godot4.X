@@ -1,4 +1,4 @@
-[gd_scene load_steps=25 format=3 uid="uid://dvvpv51105f5r"]
+[gd_scene load_steps=21 format=3 uid="uid://dvvpv51105f5r"]
 
 [ext_resource type="Script" uid="uid://d4klsjbircvsq" path="res://Scripts/extraction_bed.gd" id="1_2k4m3"]
 [ext_resource type="Texture2D" uid="uid://cs7pfnrwfl34w" path="res://Assets/Textures/AnyConv.com__sl_072622_51930_13.hdr" id="1_g2tnf"]
@@ -7,10 +7,6 @@
 [ext_resource type="Script" uid="uid://c6117y7ooqd2i" path="res://Scripts/ui_control_panel.gd" id="3_4k4m3"]
 [ext_resource type="Script" uid="uid://c3s2upg53hd5p" path="res://Scripts/free_camera.gd" id="8_freecam"]
 [ext_resource type="Script" uid="uid://rt7suxcv2hij" path="res://Scripts/camera_iso_control.gd" id="9_fhk2h"]
-[ext_resource type="PackedScene" path="res://Cenas/sphere.tscn" id="10_sphere"]
-[ext_resource type="PackedScene" path="res://Cenas/cube.tscn" id="11_cube"]
-[ext_resource type="PackedScene" uid="uid://bs6bvdgbi270p" path="res://Cenas/cylinder.tscn" id="12_cylinder"]
-[ext_resource type="PackedScene" uid="uid://bx5ovgcp3b1jb" path="res://Cenas/plane.tscn" id="13_plane"]
 [ext_resource type="Script" uid="uid://c5vuj1v32js8g" path="res://Scripts/spawner.gd" id="14_spawner"]
 [ext_resource type="Script" uid="uid://cbyautdbwb5dg" path="res://Scripts/spawner_ui.gd" id="15_spawnerui"]
 [ext_resource type="PackedScene" uid="uid://bq6t8isw3doa5" path="res://Cenas/PauseMenu.tscn" id="16_pausemenu"]
@@ -108,13 +104,6 @@ material = SubResource("ShaderMaterial_tampa")
 [node name="Spawner" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
 script = ExtResource("14_spawner")
-spawn_point = NodePath("SpawnerBlock")
-object_scenes = {
-"cube": ExtResource("11_cube"),
-"cylinder": ExtResource("12_cylinder"),
-"plane": ExtResource("13_plane"),
-"sphere": ExtResource("10_sphere")
-}
 
 [node name="SpawnerBlock" type="CSGBox3D" parent="Spawner"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 0)

@@ -19,70 +19,56 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.2, 0.2, 0.2, 0.647059)
+color = Color(0.1, 0.1, 0.1, 0.8)
 
-[node name="Panel" type="Panel" parent="."]
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -300.0
-offset_top = -200.0
-offset_right = 300.0
-offset_bottom = 200.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="VBoxContainer" type="VBoxContainer" parent="Panel"]
+[node name="CenterContainer" type="CenterContainer" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 20.0
-offset_top = 20.0
-offset_right = -20.0
-offset_bottom = -20.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/separation = 24
 
-[node name="Title" type="Label" parent="Panel/VBoxContainer"]
-custom_minimum_size = Vector2(0, 48)
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 32
-text = "Menu de Pausa"
+theme_override_constants/separation = 16
+
+[node name="Title" type="Label" parent="CenterContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "PAUSADO"
 horizontal_alignment = 1
-vertical_alignment = 1
 
-[node name="SaveButton" type="Button" parent="Panel/VBoxContainer"]
-custom_minimum_size = Vector2(0, 48)
+[node name="HSeparator" type="HSeparator" parent="CenterContainer/VBoxContainer"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 22
-text = "💾  Salvar Modelo"
+theme_override_constants/separation = 16
 
-[node name="RestartButton" type="Button" parent="Panel/VBoxContainer"]
-custom_minimum_size = Vector2(0, 48)
+[node name="ResumeButton" type="Button" parent="CenterContainer/VBoxContainer"]
+custom_minimum_size = Vector2(200, 40)
 layout_mode = 2
-theme_override_font_sizes/font_size = 22
-text = "🔄  Recomeçar Cena"
+theme_override_font_sizes/font_size = 16
+text = "Continuar"
 
-[node name="QuitButton" type="Button" parent="Panel/VBoxContainer"]
-custom_minimum_size = Vector2(0, 48)
+[node name="SaveButton" type="Button" parent="CenterContainer/VBoxContainer"]
+custom_minimum_size = Vector2(200, 40)
 layout_mode = 2
-theme_override_font_sizes/font_size = 22
-text = "⏻  Fechar Aplicação"
+theme_override_font_sizes/font_size = 16
+text = "💾 Salvar"
 
-[node name="CloseButton" type="Button" parent="Panel"]
-layout_mode = 1
-anchors_preset = 1
-anchor_left = 1.0
-anchor_right = 1.0
-offset_left = -48.0
-offset_top = 12.0
-offset_right = -12.0
-offset_bottom = 48.0
-grow_horizontal = 0
-theme_override_font_sizes/font_size = 20
-text = "✕"
+[node name="ExportButton" type="Button" parent="CenterContainer/VBoxContainer"]
+custom_minimum_size = Vector2(200, 40)
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "📤 Exportar Modelo"
+
+[node name="RestartButton" type="Button" parent="CenterContainer/VBoxContainer"]
+custom_minimum_size = Vector2(200, 40)
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "Recomeçar"
+
+[node name="QuitButton" type="Button" parent="CenterContainer/VBoxContainer"]
+custom_minimum_size = Vector2(200, 40)
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "Sair"

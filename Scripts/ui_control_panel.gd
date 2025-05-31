@@ -39,6 +39,8 @@ func _ready():
 	skybox_manager = get_node(skybox_manager_path)
 	
 	# Initialize sliders with current values (convertendo de unidades para centímetros)
+	height_slider.min_value = 5.0
+	height_slider.max_value = 500.0  # Aumentado para 500cm (5 metros)
 	height_slider.value = extraction_bed.height / CM_TO_UNITS
 	width_slider.value = extraction_bed.width / CM_TO_UNITS
 	diameter_slider.value = extraction_bed.diameter / CM_TO_UNITS
@@ -46,6 +48,10 @@ func _ready():
 	outline_color_button.color = extraction_bed.outline_color
 	transparency_slider.value = extraction_bed.transparency
 	skybox_intensity_slider.value = skybox_manager.skybox_intensity
+	
+	# Configura o slider de distância do chão
+	floor_distance_slider.min_value = 0.0  # Permite tocar o chão
+	floor_distance_slider.max_value = 100.0  # Limite máximo de 1 metro acima do chão
 	floor_distance_slider.value = extraction_bed.global_position.y / CM_TO_UNITS
 	
 	update_labels()
@@ -266,5 +272,8 @@ func _on_skybox_intensity_changed(value: float):
 
 func _on_floor_distance_changed(value: float):
 	if extraction_bed:
-		extraction_bed.global_position.y = value * CM_TO_UNITS
+		# Converte o valor do slider para unidades do Godot
+		var new_y = value * CM_TO_UNITS
+		# Usa a nova função para atualizar apenas a posição vertical
+		extraction_bed.update_vertical_position(new_y)
 		floor_distance_value.text = str(value)

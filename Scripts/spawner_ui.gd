@@ -33,7 +33,8 @@ func _ready():
 	# Configura o slider de altura
 	height_slider.min_value = 0.0
 	height_slider.max_value = 10.0
-	height_slider.value = spawner.position.y
+	height_slider.value = 5.0  # Define a altura inicial como 5
+	spawner.position.y = 5.0   # Define a posição inicial do spawner
 	height_label.text = "Altura do Spawner: %.1f" % height_slider.value
 
 func _on_height_slider_changed(value: float):

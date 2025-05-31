@@ -49,9 +49,9 @@ var inner_cylinder: CSGCylinder3D
 
 # Constantes para o posicionamento
 const FLOOR_Y = 0.0  # Posição Y do chão
-const MIN_DISTANCE_FROM_FLOOR = 0.1  # Distância mínima do chão
+const MIN_DISTANCE_FROM_FLOOR = 0.0  # Distância mínima do chão (agora é 0 para permitir tocar o chão)
 const MIN_DISTANCE_FROM_BED = 0.001  # Distância mínima do leito
-const MAX_HEIGHT = 10.0  # Altura máxima permitida
+const MAX_HEIGHT = 50.0  # Altura máxima permitida
 
 func _ready():
 	main_cylinder = $CSGCylinder3D
@@ -69,13 +69,20 @@ func _update_bed():
 		main_cylinder.radius = diameter / 2.0
 		main_cylinder.height = height
 		
-		# Ajusta a posição do cilindro principal para manter a base fixa
+		# Ajusta a posição do cilindro principal para manter a base fixa no chão
+		# A posição Y é metade da altura para que a base fique na posição correta
 		main_cylinder.position.y = height / 2.0
 		
 		# Atualiza o cilindro interno
 		inner_cylinder.radius = inner_cylinder_radius
 		inner_cylinder.height = height * 1.38603  # Mantém a proporção
-		inner_cylinder.position.y = -0.030771  # Mantém a posição relativa
+		inner_cylinder.position.y = 0  # Mantém o cilindro interno alinhado com o principal
+		
+		# Garante que o cilindro não ultrapasse o chão
+		var ponto_mais_baixo = get_ponto_mais_baixo()
+		if ponto_mais_baixo < FLOOR_Y:
+			# Ajusta a posição global para manter a base no chão
+			global_position.y = FLOOR_Y + (height / 2.0)
 
 func _update_materials():
 	if main_cylinder:
@@ -103,32 +110,28 @@ func _update_tampas():
 		tampa_superior.radius = (diameter / 2.0) + 0.035
 		
 		# Ajusta a posição das tampas para acompanhar a altura do leito
-		tampa_inferior.position.y = height + 1.15883  # Mantém a distância relativa
-		tampa_superior.position.y = height - 1.35908  # Mantém a distância relativa
+		var ponto_mais_baixo = get_ponto_mais_baixo()
+		var ponto_mais_alto = get_ponto_mais_alto()
+		
+		# Posiciona a tampa inferior no ponto mais baixo
+		tampa_inferior.position.y = ponto_mais_baixo - global_position.y
+		
+		# Posiciona a tampa superior no ponto mais alto
+		tampa_superior.position.y = ponto_mais_alto - global_position.y
 		
 		# Atualiza a colisão das tampas baseado na visibilidade
 		tampa_inferior.use_collision = tampa_inferior.visible
 		tampa_superior.use_collision = tampa_superior.visible
 
 func get_ponto_mais_baixo() -> float:
-	# Calcula o ponto mais baixo do leito considerando a altura e a escala
-	var ponto_mais_baixo = -height/2
-	# Considera a posição global do leito
-	ponto_mais_baixo += global_position.y
-	
-	# Garante que a tampa nunca fique abaixo do chão
-	var ponto_minimo = FLOOR_Y + MIN_DISTANCE_FROM_FLOOR
-	return max(ponto_mais_baixo, ponto_minimo)
+	# Calcula o ponto mais baixo do leito considerando a altura
+	var ponto_mais_baixo = global_position.y - (height / 2.0)
+	return ponto_mais_baixo
 
 func get_ponto_mais_alto() -> float:
-	# Calcula o ponto mais alto do leito considerando a altura e a escala
-	var ponto_mais_alto = height/2
-	# Considera a posição global do leito
-	ponto_mais_alto += global_position.y
-	
-	# Garante que a tampa nunca ultrapasse a altura máxima
-	var ponto_maximo = MAX_HEIGHT - MIN_DISTANCE_FROM_BED
-	return min(ponto_mais_alto, ponto_maximo)
+	# Calcula o ponto mais alto do leito considerando a altura
+	var ponto_mais_alto = global_position.y + (height / 2.0)
+	return ponto_mais_alto
 
 func update_tampas():
 	# Configurações comuns para ambas as tampas
@@ -180,3 +183,12 @@ func confirm_boolean():
 	# Garante que a operação é subtração
 	inner_cylinder.operation = CSGShape3D.OPERATION_SUBTRACTION
 	_update_materials() 
+
+# Nova função para atualizar apenas a posição vertical
+func update_vertical_position(new_y: float):
+	# Garante que o valor não seja negativo (não ultrapasse o chão)
+	var safe_y = max(FLOOR_Y, new_y)
+	global_position.y = safe_y
+	
+	# Atualiza as tampas para manter a proporção correta
+	_update_tampas() 

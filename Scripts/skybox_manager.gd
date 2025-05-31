@@ -3,7 +3,7 @@ extends Node
 @export var world_environment_path: NodePath
 @export var skybox_white_path: String = "res://Assets/Textures/AnyConv.com__sl_072622_51930_13.hdr"
 @export var skybox_black_path: String = "res://Assets/Textures/AnyConv.com__SL-072622-51930-14.hdr"
-@export var skybox_intensity: float = 0.7  # Valor menor para suavizar o skybox
+@export var skybox_intensity: float = 0.1  # Valor inicial da intensidade do skybox
 
 var world_environment: WorldEnvironment
 var current_skybox: String = "white"

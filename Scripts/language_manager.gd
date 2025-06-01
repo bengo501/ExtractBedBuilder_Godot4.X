@@ -146,6 +146,18 @@ var translations: Dictionary = {
 			"export": "📤 Exportar Modelo",
 			"settings": "Configurações",
 			"quit": "Sair"
+		},
+		"menu_bar": {
+			"file": "Arquivo",
+			"edit": "Editar",
+			"view": "Visualizar",
+			"tools": "Ferramentas",
+			"help": "Ajuda",
+			"language": "Idioma",
+			"control_panel": "Painel de Controle",
+			"spawner_panel": "Painel do Spawner",
+			"grid": "Grade",
+			"axes": "Eixos"
 		}
 	},
 	"en": {
@@ -290,6 +302,18 @@ var translations: Dictionary = {
 			"export": "📤 Export Model",
 			"settings": "Settings",
 			"quit": "Quit"
+		},
+		"menu_bar": {
+			"file": "File",
+			"edit": "Edit",
+			"view": "View",
+			"tools": "Tools",
+			"help": "Help",
+			"language": "Language",
+			"control_panel": "Control Panel",
+			"spawner_panel": "Spawner Panel",
+			"grid": "Grid",
+			"axes": "Axes"
 		}
 	}
 }

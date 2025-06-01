@@ -1,4 +1,4 @@
-extends Control
+extends Window
 
 @export var spawner_path: NodePath
 var spawner: Node3D
@@ -31,6 +31,9 @@ var language_manager: Node
 @onready var angular_damp_label: Label = $SpawnerVBox/AngularDampLabel
 
 func _ready():
+	# Configurar a janela
+	close_requested.connect(_on_close_requested)
+	
 	# Inicializar o gerenciador de idiomas
 	language_manager = get_node("/root/LanguageManager")
 	if not language_manager:
@@ -58,6 +61,9 @@ func _ready():
 	height_slider.value = 5.0  # Define a altura inicial como 5
 	spawner.position.y = 5.0   # Define a posição inicial do spawner
 	height_label.text = language_manager.get_text("spawner_control_panel", "spawner_height") + " " + str(height_slider.value)
+
+func _on_close_requested():
+	hide()
 
 func _on_height_slider_changed(value: float):
 	spawner.position.y = value

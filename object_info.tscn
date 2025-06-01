@@ -1,0 +1,43 @@
+[gd_scene load_steps=2 format=3 uid="uid://c4i1k2img881j"]
+
+[ext_resource type="Script" uid="uid://n0hile8xer85" path="res://Scripts/object_info.gd" id="1_rwxot"]
+
+[node name="ObjectInfo" type="Control"]
+layout_mode = 3
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -1366.0
+offset_top = -938.0
+offset_right = -1046.0
+offset_bottom = -890.0
+grow_horizontal = 0
+grow_vertical = 0
+script = ExtResource("1_rwxot")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = -166.0
+offset_bottom = 212.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.364706, 0.364706, 0.364706, 0.309804)
+
+[node name="ObjectIndicator" type="Label" parent="."]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = -8.0
+theme_override_font_sizes/font_size = 16
+text = "Objetos: -
+Tipo A: -
+Tipo B: -
+..."

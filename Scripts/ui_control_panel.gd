@@ -1,4 +1,4 @@
-extends Control
+extends Window
 
 @onready var height_slider: HSlider = $VBoxContainer/HeightContainer/HeightSlider
 @onready var width_slider: HSlider = $VBoxContainer/WidthContainer/WidthSlider
@@ -48,7 +48,15 @@ const CM_TO_UNITS = 0.01  # 1 unidade = 100cm
 
 var language_manager: Node
 
+@onready var camera_info = get_node("../CameraInfo")
+@onready var bed_info = get_node("../BedInfo")
+@onready var object_info = get_node("../ObjectInfo")
+@onready var spawner = get_node("../ExtractionBed/Spawner")
+
 func _ready():
+	# Configurar a janela
+	close_requested.connect(_on_close_requested)
+	
 	# Inicializar o gerenciador de idiomas
 	language_manager = get_node("/root/LanguageManager")
 	if not language_manager:
@@ -59,70 +67,48 @@ func _ready():
 	if not language_manager.is_connected("language_changed", Callable(self, "_on_language_changed")):
 		language_manager.connect("language_changed", Callable(self, "_on_language_changed"))
 	
+	# Aguarda um frame para garantir que todos os nós estejam prontos
+	await get_tree().process_frame
+	
 	extraction_bed = get_node(extraction_bed_path)
+	if not extraction_bed:
+		push_error("UIControlPanel: ExtractionBed não encontrado!")
+		return
+		
 	camera_controller = get_node("../CameraController")
+	if not camera_controller:
+		push_error("UIControlPanel: CameraController não encontrado!")
+		return
+		
 	skybox_manager = get_node(skybox_manager_path)
+	if not skybox_manager:
+		push_error("UIControlPanel: SkyboxManager não encontrado!")
+		return
 	
-	# Initialize sliders with current values (convertendo de unidades para centímetros)
-	height_slider.min_value = 5.0
-	height_slider.max_value = 500.0  # Aumentado para 500cm (5 metros)
-	height_slider.value = extraction_bed.height / CM_TO_UNITS
-	width_slider.value = extraction_bed.width / CM_TO_UNITS
-	diameter_slider.value = extraction_bed.diameter / CM_TO_UNITS
-	inner_radius_slider.value = extraction_bed.inner_cylinder_radius / CM_TO_UNITS
-	outline_color_button.color = extraction_bed.outline_color
-	transparency_slider.value = extraction_bed.transparency
-	skybox_intensity_slider.value = skybox_manager.skybox_intensity
+	# Encontrar as tampas
+	tampa_inferior = extraction_bed.get_node("CSGCylinder3D/TampaInferior")
+	tampa_superior = extraction_bed.get_node("CSGCylinder3D/TampaSuperior")
 	
-	# Configura o slider de distância do chão
-	floor_distance_slider.min_value = 0.0  # Permite tocar o chão
-	floor_distance_slider.max_value = 100.0  # Limite máximo de 1 metro acima do chão
-	floor_distance_slider.value = extraction_bed.global_position.y / CM_TO_UNITS
-	
-	update_labels()
-	
-	# Conectar sinais dos sliders
-	$VBoxContainer/HeightContainer/HeightSlider.value_changed.connect(_on_height_slider_value_changed)
-	$VBoxContainer/WidthContainer/WidthSlider.value_changed.connect(_on_width_slider_value_changed)
-	$VBoxContainer/DiameterContainer/DiameterSlider.value_changed.connect(_on_diameter_slider_value_changed)
-	$VBoxContainer/InnerCylinderContainer/InnerRadiusSlider.value_changed.connect(_on_inner_radius_slider_value_changed)
+	# Conectar sinais
+	height_slider.value_changed.connect(_on_height_slider_value_changed)
+	width_slider.value_changed.connect(_on_width_slider_value_changed)
+	diameter_slider.value_changed.connect(_on_diameter_slider_value_changed)
+	inner_radius_slider.value_changed.connect(_on_inner_radius_slider_value_changed)
 	outline_color_button.color_changed.connect(_on_outline_color_changed)
 	transparency_slider.value_changed.connect(_on_transparency_changed)
+	tampa_inferior_button.pressed.connect(_on_tampa_inferior_button_pressed)
+	tampa_superior_button.pressed.connect(_on_tampa_superior_button_pressed)
+	reset_button.pressed.connect(_on_reset_button_pressed)
+	skybox_button.pressed.connect(_on_skybox_button_pressed)
 	skybox_intensity_slider.value_changed.connect(_on_skybox_intensity_changed)
 	floor_distance_slider.value_changed.connect(_on_floor_distance_changed)
 	
-	# Conectar botões de zoom
-	$VBoxContainer/ZoomContainer/ZoomInButton.pressed.connect(_on_zoom_in_pressed)
-	$VBoxContainer/ZoomContainer/ZoomOutButton.pressed.connect(_on_zoom_out_pressed)
-	
-	# Conecta os sinais dos botões de tampa
-	tampa_inferior_button.pressed.connect(_on_tampa_inferior_button_pressed)
-	tampa_superior_button.pressed.connect(_on_tampa_superior_button_pressed)
-	
-	# Conecta o botão de skybox
-	skybox_button.pressed.connect(_on_skybox_button_pressed)
-	
-	# Conecta os sinais de clique nos valores
-	height_value.gui_input.connect(_on_height_value_gui_input)
-	width_value.gui_input.connect(_on_width_value_gui_input)
-	diameter_value.gui_input.connect(_on_diameter_value_gui_input)
-	inner_radius_value.gui_input.connect(_on_inner_radius_value_gui_input)
-	transparency_value.gui_input.connect(_on_transparency_value_gui_input)
-	
-	# Conecta o botão de reset
-	reset_button.pressed.connect(_on_reset_button_pressed)
-	
-	# Inicializa as tampas como nodes já existentes
-	tampa_inferior = extraction_bed.get_node_or_null("CSGCylinder3D/TampaInferior")
-	tampa_superior = extraction_bed.get_node_or_null("CSGCylinder3D/TampaSuperior")
-	
-	# Garante que a tampa superior começa invisível
-	if tampa_superior:
-		tampa_superior.visible = false
-		tampa_superior.use_collision = false
-	
-	# Atualiza o texto dos botões baseado no estado atual
-	_update_tampa_buttons()
+	# Configurar valores iniciais
+	_update_all_values()
+	_update_labels()
+
+func _on_close_requested():
+	hide()
 
 func _on_height_slider_value_changed(value: float):
 	extraction_bed.height = value * CM_TO_UNITS
@@ -205,44 +191,43 @@ func _update_tampa_buttons():
 		else:
 			tampa_superior_button.text = language_manager.get_text("ui_control_panel", "add_upper_cap")
 
-func update_labels():
+func _update_all_values():
+	# Initialize sliders with current values (converting from units to centimeters)
+	height_slider.min_value = 5.0
+	height_slider.max_value = 500.0  # Increased to 500cm (5 meters)
+	height_slider.value = extraction_bed.height / CM_TO_UNITS
+	width_slider.value = extraction_bed.width / CM_TO_UNITS
+	diameter_slider.value = extraction_bed.diameter / CM_TO_UNITS
+	inner_radius_slider.value = extraction_bed.inner_cylinder_radius / CM_TO_UNITS
+	outline_color_button.color = extraction_bed.outline_color
+	transparency_slider.value = extraction_bed.transparency
+	skybox_intensity_slider.value = skybox_manager.skybox_intensity
+	
+	# Configure floor distance slider
+	floor_distance_slider.min_value = 0.0  # Allow touching the floor
+	floor_distance_slider.max_value = 100.0  # Maximum limit of 1 meter above floor
+	floor_distance_slider.value = extraction_bed.global_position.y / CM_TO_UNITS
+	
+	# Update tampa buttons
+	_update_tampa_buttons()
+
+func _update_labels():
 	if not language_manager:
 		return
 		
-	# Atualizar labels dos sliders
 	floor_distance_label.text = language_manager.get_text("ui_control_panel", "floor_distance")
 	zoom_label.text = language_manager.get_text("ui_control_panel", "zoom")
 	height_label.text = language_manager.get_text("ui_control_panel", "height")
 	width_label.text = language_manager.get_text("ui_control_panel", "width")
 	diameter_label.text = language_manager.get_text("ui_control_panel", "diameter")
 	inner_radius_label.text = language_manager.get_text("ui_control_panel", "inner_radius")
-	
-	# Atualizar labels do outline
 	outline_label.text = language_manager.get_text("ui_control_panel", "outline")
 	transparency_label.text = language_manager.get_text("ui_control_panel", "transparency")
 	color_label.text = language_manager.get_text("ui_control_panel", "color")
-	
-	# Atualizar labels das tampas
 	bed_caps_label.text = language_manager.get_text("ui_control_panel", "bed_caps")
-	
-	# Atualizar botões
+	skybox_intensity_label.text = language_manager.get_text("ui_control_panel", "skybox_intensity")
 	reset_button.text = language_manager.get_text("ui_control_panel", "reset_bed")
 	skybox_button.text = language_manager.get_text("ui_control_panel", "black_grid")
-	
-	# Atualizar label do skybox
-	skybox_intensity_label.text = language_manager.get_text("ui_control_panel", "skybox_intensity")
-	
-	# Atualizar valores
-	floor_distance_value.text = str(floor_distance_slider.value)
-	zoom_value.text = str(camera_controller.current_zoom)
-	height_value.text = str(height_slider.value)
-	width_value.text = str(width_slider.value)
-	diameter_value.text = str(diameter_slider.value)
-	inner_radius_value.text = str(inner_radius_slider.value)
-	transparency_value.text = str(transparency_slider.value)
-	skybox_intensity_value.text = str(skybox_intensity_slider.value)
-	
-	_update_tampa_buttons()
 
 func _on_height_value_gui_input(event: InputEvent):
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
@@ -313,13 +298,21 @@ func _on_reset_button_pressed():
 	transparency_slider.value = extraction_bed.transparency
 	skybox_intensity_slider.value = skybox_manager.skybox_intensity
 	floor_distance_slider.value = extraction_bed.global_position.y / CM_TO_UNITS
-	update_labels()
+	_update_labels()
 
 func _on_skybox_button_pressed():
+	if not skybox_manager:
+		push_error("UIControlPanel: SkyboxManager não está disponível!")
+		return
+		
 	skybox_manager.toggle_skybox()
 	skybox_button.text = language_manager.get_text("ui_control_panel", "black_grid") if skybox_manager.current_skybox == "white" else language_manager.get_text("ui_control_panel", "white_grid")
 
 func _on_skybox_intensity_changed(value: float):
+	if not skybox_manager:
+		push_error("UIControlPanel: SkyboxManager não está disponível!")
+		return
+		
 	skybox_manager.skybox_intensity = value
 	skybox_intensity_value.text = str(value)
 	skybox_manager.load_skybox(skybox_manager.skybox_white_path if skybox_manager.current_skybox == "white" else skybox_manager.skybox_black_path)
@@ -333,4 +326,54 @@ func _on_floor_distance_changed(value: float):
 		floor_distance_value.text = str(value)
 
 func _on_language_changed():
-	update_labels()
+	_update_labels()
+
+func _on_type_selected(index: int):
+	_update_labels()
+
+func _on_qtd_changed(value: float):
+	_update_labels()
+
+func _on_raio_changed(value: float):
+	_update_labels()
+
+func _on_altura_changed(value: float):
+	_update_labels()
+
+func _on_largura_changed(value: float):
+	_update_labels()
+
+func _on_intervalo_changed(value: float):
+	_update_labels()
+
+func _on_mass_changed(value: float):
+	_update_labels()
+
+func _on_gravity_scale_changed(value: float):
+	_update_labels()
+
+func _on_linear_damp_changed(value: float):
+	_update_labels()
+
+func _on_angular_damp_changed(value: float):
+	_update_labels()
+
+func _process(_delta):
+	if not visible:
+		return
+		
+	# Atualizar informações da câmera
+	if camera_info and camera_controller:
+		var camera = camera_controller.get_current_camera()
+		if camera:
+			camera_info.update_info(camera.name, camera.global_position)
+	
+	# Atualizar informações do leito
+	if bed_info and extraction_bed:
+		bed_info.update_info()
+	
+	# Atualizar informações dos objetos
+	if object_info:
+		var total = spawner.get_total_objects()
+		var type_counts = spawner.get_object_types()
+		object_info.update_info(total, type_counts)

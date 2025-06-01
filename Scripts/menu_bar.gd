@@ -20,6 +20,13 @@ var max_history_size: int = 50  # Limite de ações no histórico
 var clipboard: Array = []  # Array para armazenar os objetos copiados
 var spawner: Node  # Referência ao spawner
 
+# Referências aos painéis de controle
+var ui_control_panel: Window
+var spawner_control_panel: Window
+var camera_info: Window
+var bed_info: Window
+var object_info: Window
+
 # Estrutura para armazenar ações
 class Action:
 	var type: String  # Tipo da ação (ex: "move", "rotate", "delete", etc)
@@ -38,17 +45,19 @@ func _ready():
 	# Inicializar o gerenciador de idiomas
 	language_manager = get_node("/root/LanguageManager")
 	if not language_manager:
-		print("MenuBar: Criando novo LanguageManager")
-		language_manager = Node.new()
-		language_manager.set_script(load("res://Scripts/language_manager.gd"))
-		get_tree().root.add_child(language_manager)
-	else:
-		print("MenuBar: LanguageManager encontrado")
+		push_error("MenuBar: LanguageManager não encontrado!")
+		return
 	
 	# Conectar ao sinal de mudança de idioma
 	if not language_manager.is_connected("language_changed", Callable(self, "_on_language_changed")):
-		print("MenuBar: Conectando ao sinal language_changed")
 		language_manager.connect("language_changed", Callable(self, "_on_language_changed"))
+	
+	# Encontrar os painéis de controle
+	ui_control_panel = get_node("../UIControlPanel")
+	spawner_control_panel = get_node("../UIControlPanel/SpawnerControlPanel")
+	camera_info = get_node("../CameraInfo")
+	bed_info = get_node("../BedInfo")
+	object_info = get_node("../ObjectInfo")
 	
 	# Criar diálogo de confirmação
 	confirmation_dialog = ConfirmationDialog.new()
@@ -105,13 +114,15 @@ func _setup_menus():
 	# Configurar menu de visualização
 	var view_popup = view_menu.get_popup()
 	view_popup.clear()
-	view_popup.add_item(language_manager.get_text("view_menu", "top_camera"), 0)
-	view_popup.add_item(language_manager.get_text("view_menu", "front_camera"), 1)
-	view_popup.add_item(language_manager.get_text("view_menu", "free_camera"), 2)
-	view_popup.add_item(language_manager.get_text("view_menu", "iso_camera"), 3)
+	view_popup.add_item(language_manager.get_text("menu_bar", "control_panel"), 0)
+	view_popup.add_item(language_manager.get_text("menu_bar", "spawner_panel"), 1)
 	view_popup.add_separator()
-	view_popup.add_check_item(language_manager.get_text("view_menu", "show_grid"), 4)
-	view_popup.add_check_item(language_manager.get_text("view_menu", "show_axes"), 5)
+	view_popup.add_item("Informações da Câmera", 2)
+	view_popup.add_item("Informações do Leito", 3)
+	view_popup.add_item("Informações dos Objetos", 4)
+	view_popup.add_separator()
+	view_popup.add_item(language_manager.get_text("menu_bar", "grid"), 5)
+	view_popup.add_item(language_manager.get_text("menu_bar", "axes"), 6)
 	
 	# Configurar menu de ferramentas
 	var tools_popup = tools_menu.get_popup()
@@ -161,12 +172,10 @@ func _update_menu_texts():
 	# Atualizar textos do menu de visualização
 	view_menu.text = "👁️ " + language_manager.get_text("view_menu", "title")
 	var view_popup = view_menu.get_popup()
-	view_popup.set_item_text(0, language_manager.get_text("view_menu", "top_camera"))
-	view_popup.set_item_text(1, language_manager.get_text("view_menu", "front_camera"))
-	view_popup.set_item_text(2, language_manager.get_text("view_menu", "free_camera"))
-	view_popup.set_item_text(3, language_manager.get_text("view_menu", "iso_camera"))
-	view_popup.set_item_text(5, language_manager.get_text("view_menu", "show_grid"))
-	view_popup.set_item_text(6, language_manager.get_text("view_menu", "show_axes"))
+	view_popup.set_item_text(0, language_manager.get_text("menu_bar", "control_panel"))
+	view_popup.set_item_text(1, language_manager.get_text("menu_bar", "spawner_panel"))
+	view_popup.set_item_text(2, language_manager.get_text("menu_bar", "grid"))
+	view_popup.set_item_text(3, language_manager.get_text("menu_bar", "axes"))
 	
 	# Atualizar textos do menu de ferramentas
 	tools_menu.text = "🛠️ " + language_manager.get_text("tools_menu", "title")
@@ -227,42 +236,25 @@ func _on_edit_menu_id_pressed(id: int):
 			paste_objects()
 
 func _on_view_menu_id_pressed(id: int):
-	var camera_controller = get_node_or_null("/root/MainScene/CameraController")
-	var grid_axes = get_node_or_null("/root/MainScene/GridAxes")
-	
 	match id:
-		0: # Câmera Superior
-			if camera_controller:
-				camera_controller.current_camera_index = 3  # Top
-				camera_controller._update_cameras()
-		1: # Câmera Frontal
-			if camera_controller:
-				camera_controller.current_camera_index = 0  # Front
-				camera_controller._update_cameras()
-		2: # Câmera Livre
-			if camera_controller:
-				camera_controller.current_camera_index = 1  # Free
-				camera_controller._update_cameras()
-		3: # Câmera Isométrica
-			if camera_controller:
-				camera_controller.current_camera_index = 2  # Iso
-				camera_controller._update_cameras()
-		4: # Mostrar Grade
+		0:  # Control Panel
+			ui_control_panel.show()
+		1:  # Spawner Panel
+			spawner_control_panel.show()
+		2:  # Camera Info
+			camera_info.show()
+		3:  # Bed Info
+			bed_info.show()
+		4:  # Object Info
+			object_info.show()
+		5:  # Grid
+			var grid_axes = get_node("../GridAxes")
 			if grid_axes:
-				if grid_axes.grid_visible:
-					grid_axes.hide_grid()
-					print("Grade oculta")
-				else:
-					grid_axes.show_grid()
-					print("Grade visível")
-		5: # Mostrar Eixos
+				grid_axes.toggle_grid()
+		6:  # Axes
+			var grid_axes = get_node("../GridAxes")
 			if grid_axes:
-				if grid_axes.axes_visible:
-					grid_axes.hide_axes()
-					print("Eixos ocultos")
-				else:
-					grid_axes.show_axes()
-					print("Eixos visíveis")
+				grid_axes.toggle_axes()
 
 func _on_tools_menu_id_pressed(id: int):
 	match id:

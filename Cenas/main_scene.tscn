@@ -1,4 +1,4 @@
-[gd_scene load_steps=28 format=3 uid="uid://fbt81m33ijtb"]
+[gd_scene load_steps=29 format=3 uid="uid://fbt81m33ijtb"]
 
 [ext_resource type="Script" uid="uid://d4klsjbircvsq" path="res://Scripts/extraction_bed.gd" id="1_2k4m3"]
 [ext_resource type="Texture2D" uid="uid://cs7pfnrwfl34w" path="res://Assets/Textures/AnyConv.com__sl_072622_51930_13.hdr" id="1_g2tnf"]
@@ -14,12 +14,13 @@
 [ext_resource type="Script" uid="uid://c5vuj1v32js8g" path="res://Scripts/spawner.gd" id="14_spawner"]
 [ext_resource type="Script" uid="uid://cbyautdbwb5dg" path="res://Scripts/spawner_ui.gd" id="15_spawnerui"]
 [ext_resource type="PackedScene" uid="uid://bq6t8isw3doa5" path="res://Cenas/PauseMenu.tscn" id="16_pausemenu"]
-[ext_resource type="Script" uid="uid://n0hile8xer85" path="res://Scripts/object_info.gd" id="17_objectinfo"]
 [ext_resource type="Shader" uid="uid://bupq543w5ylqu" path="res://Shaders/outline.gdshader" id="18_outline"]
 [ext_resource type="Script" uid="uid://ci8im2debx7vg" path="res://Scripts/bed_info.gd" id="19_bedinfo"]
 [ext_resource type="Script" uid="uid://c6svdj178b456" path="res://Scripts/skybox_manager.gd" id="20_skybox"]
 [ext_resource type="PackedScene" uid="uid://wmddubogu34d" path="res://Cenas/menu_bar.tscn" id="21_menubar"]
 [ext_resource type="Script" uid="uid://cycoc6cetj1x" path="res://Scripts/grid_axes.gd" id="22_gridaxes"]
+[ext_resource type="Script" uid="uid://dt8i8vgd4o37v" path="res://Scripts/camera_info.gd" id="23_camera"]
+[ext_resource type="Script" uid="uid://n0hile8xer85" path="res://Scripts/object_info.gd" id="24_object"]
 
 [sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_xwv2h"]
 panorama = ExtResource("1_g2tnf")
@@ -159,25 +160,16 @@ light_energy = 1.5
 omni_range = 15.0
 omni_attenuation = 1.2
 
-[node name="UIControlPanel" type="Control" parent="."]
-layout_mode = 3
-anchors_preset = 11
-anchor_left = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = -361.0
-offset_top = 60.0
-offset_right = 39.0
-offset_bottom = 60.0
-grow_horizontal = 0
-grow_vertical = 2
-scale = Vector2(0.8, 0.8)
+[node name="UIControlPanel" type="Window" parent="."]
+title = "Painel de Controle"
+position = Vector2i(100, 100)
+size = Vector2i(400, 800)
+visible = false
 script = ExtResource("3_4k4m3")
 extraction_bed_path = NodePath("../ExtractionBed")
 skybox_manager_path = NodePath("../SkyboxManager")
 
 [node name="BackgroundBlur" type="ColorRect" parent="UIControlPanel"]
-layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -187,7 +179,6 @@ grow_vertical = 2
 color = Color(0.2, 0.2, 0.2, 0.647059)
 
 [node name="VBoxContainer" type="VBoxContainer" parent="UIControlPanel"]
-layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -407,19 +398,15 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 14
 text = "0.2"
 
-[node name="SpawnerControlPanel" type="Control" parent="UIControlPanel"]
-custom_minimum_size = Vector2(300, 0)
-layout_mode = 3
-anchors_preset = 0
-offset_left = -1813.75
-offset_top = 292.5
-offset_right = -1453.75
-offset_bottom = 772.5
+[node name="SpawnerControlPanel" type="Window" parent="UIControlPanel"]
+title = "Painel do Spawner"
+position = Vector2i(50, 50)
+size = Vector2i(300, 600)
+visible = false
 script = ExtResource("15_spawnerui")
 spawner_path = NodePath("../../ExtractionBed/Spawner")
 
 [node name="BackgroundBlur" type="ColorRect" parent="UIControlPanel/SpawnerControlPanel"]
-layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -430,7 +417,6 @@ grow_vertical = 2
 color = Color(0.2, 0.2, 0.2, 0.592157)
 
 [node name="SpawnerVBox" type="VBoxContainer" parent="UIControlPanel/SpawnerControlPanel"]
-layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -598,123 +584,105 @@ max_value = 1.0
 step = 0.01
 value = 0.1
 
-[node name="CameraInfo" type="Control" parent="."]
-layout_mode = 3
-anchors_preset = 0
-offset_left = 325.0
-offset_top = 788.0
-offset_right = 365.0
-offset_bottom = 828.0
+[node name="CameraInfo" type="Window" parent="."]
+title = "Informações da Câmera"
+position = Vector2i(50, 50)
+size = Vector2i(300, 100)
+visible = false
+script = ExtResource("23_camera")
 
 [node name="Background" type="ColorRect" parent="CameraInfo"]
-layout_mode = 0
-offset_top = -103.0
-offset_right = 247.0
-offset_bottom = 4.0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 color = Color(0.2, 0.2, 0.2, 0.592157)
 
 [node name="CameraIndicator" type="Label" parent="CameraInfo"]
-custom_minimum_size = Vector2(320, 32)
-layout_mode = 1
-anchors_preset = 2
-anchor_top = 1.0
+anchors_preset = 15
+anchor_right = 1.0
 anchor_bottom = 1.0
-offset_top = -93.0
-offset_right = 320.0
-offset_bottom = -44.0
-grow_vertical = 0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = -40.0
+grow_horizontal = 2
+grow_vertical = 2
 theme_override_font_sizes/font_size = 16
 text = "Câmera: -
 Posição: -"
 
 [node name="ResetButton" type="Button" parent="CameraInfo"]
-layout_mode = 1
-anchors_preset = 2
+anchors_preset = 12
 anchor_top = 1.0
+anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -1.0
-offset_top = -26.0
-offset_right = 164.0
-offset_bottom = 14.0
+offset_top = -32.0
+offset_right = -8.0
+offset_bottom = -8.0
+grow_horizontal = 2
 grow_vertical = 0
 theme_override_font_sizes/font_size = 14
 text = "Resetar Câmeras"
 
-[node name="ObjectInfo" type="Control" parent="."]
-layout_mode = 3
-anchors_preset = 3
-anchor_left = 1.0
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = -1509.0
-offset_top = -866.0
-offset_right = -1189.0
-offset_bottom = -818.0
-grow_horizontal = 0
-grow_vertical = 0
-script = ExtResource("17_objectinfo")
+[node name="ObjectInfo" type="Window" parent="."]
+title = "Informações dos Objetos"
+position = Vector2i(50, 200)
+size = Vector2i(300, 200)
+visible = false
+script = ExtResource("24_object")
 
 [node name="Background" type="ColorRect" parent="ObjectInfo"]
-layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_right = -166.0
-offset_bottom = 212.0
 grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.2, 0.2, 0.2, 0.592157)
 
 [node name="ObjectIndicator" type="Label" parent="ObjectInfo"]
-layout_mode = 0
+anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = 8.0
 offset_top = 8.0
 offset_right = -8.0
 offset_bottom = -8.0
+grow_horizontal = 2
+grow_vertical = 2
 theme_override_font_sizes/font_size = 16
 text = "Objetos: -
 Tipo A: -
 Tipo B: -
 ..."
 
-[node name="BedInfo" type="Control" parent="."]
-layout_mode = 3
-anchors_preset = 3
-anchor_left = 1.0
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = -1509.0
-offset_top = -578.0
-offset_right = -1189.0
-offset_bottom = -428.0
-grow_horizontal = 0
-grow_vertical = 0
+[node name="BedInfo" type="Window" parent="."]
+title = "Informações do Leito"
+position = Vector2i(50, 450)
+size = Vector2i(300, 150)
+visible = false
 script = ExtResource("19_bedinfo")
 extraction_bed_path = NodePath("../ExtractionBed")
 
 [node name="Background" type="ColorRect" parent="BedInfo"]
-layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_right = -114.0
-offset_bottom = 52.0
 grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.2, 0.2, 0.2, 0.592157)
 
 [node name="BedIndicator" type="Label" parent="BedInfo"]
-layout_mode = 0
+anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = 8.0
 offset_top = 8.0
 offset_right = -8.0
 offset_bottom = -8.0
+grow_horizontal = 2
+grow_vertical = 2
 theme_override_font_sizes/font_size = 16
 text = "Leito de Extração:
 Altura: 2.00

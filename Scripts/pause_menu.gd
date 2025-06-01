@@ -32,8 +32,11 @@ func _ready():
 	
 	# Garantir que o menu começa invisível
 	visible = false
+	
+	# Habilitar processamento de input
+	process_mode = Node.PROCESS_MODE_ALWAYS
 
-func _unhandled_input(event):
+func _input(event):
 	if event is InputEventKey and event.keycode == KEY_ESCAPE and event.pressed:
 		toggle_menu()
 		get_viewport().set_input_as_handled()

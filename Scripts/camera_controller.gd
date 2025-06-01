@@ -6,14 +6,17 @@ extends Node
 @export var camera4_path: NodePath
 @export var extraction_bed_path: NodePath
 
-var current_camera: Camera3D
+var camera1: Camera3D
+var camera2: Camera3D
+var camera3: Camera3D
+var camera4: Camera3D
+var extraction_bed: Node3D
+
 var current_camera_index: int = 0  # Front como padrão
-var cameras: Array[Camera3D]
 var current_zoom: float = 1.0
 var target_zoom: float = 1.0
 var camera_names = ["Front", "Free", "Iso", "Top"]
 var camera_indicator: Label
-var extraction_bed: Node3D
 var manual_vertical_offset: float = 0.0  # Offset vertical manual
 
 const MIN_FOV = 30.0
@@ -45,15 +48,12 @@ const INITIAL_ROTATIONS = {
 signal fov_changed(new_fov: float)
 
 func _ready():
-	cameras = [
-		get_node(camera3_path),  # Front
-		get_node(camera2_path),  # Free
-		get_node(camera4_path),  # Iso
-		get_node(camera1_path)   # Top
-	]
+	camera1 = get_node(camera1_path)
+	camera2 = get_node(camera2_path)
+	camera3 = get_node(camera3_path)
+	camera4 = get_node(camera4_path)
 	extraction_bed = get_node(extraction_bed_path)
 	camera_indicator = get_tree().get_current_scene().get_node_or_null("CameraInfo/CameraIndicator")
-	current_camera = cameras[current_camera_index]
 	_update_cameras()
 	_update_camera_indicator()
 	
@@ -102,9 +102,12 @@ func _process(delta):
 	adjust_camera_for_bed_size()
 
 func _update_cameras():
-	for camera in cameras:
-		camera.current = false
-	current_camera = cameras[current_camera_index]
+	camera1.current = false
+	camera2.current = false
+	camera3.current = false
+	camera4.current = false
+	
+	var current_camera = get_current_camera()
 	current_camera.current = true
 	_update_camera_indicator()
 
@@ -131,6 +134,7 @@ func _update_camera_position():
 	var new_pos = initial_pos * current_zoom
 	
 	# Ajusta a posição da câmera diretamente
+	var current_camera = get_current_camera()
 	current_camera.transform.origin = new_pos
 
 func adjust_camera_for_bed_size():
@@ -147,6 +151,7 @@ func adjust_camera_for_bed_size():
 	var target_fov = clamp(BASE_FOV + (bed_size * FOV_ADJUSTMENT), MIN_FOV, MAX_FOV)
 	
 	# Ajusta o FOV diretamente
+	var current_camera = get_current_camera()
 	current_camera.fov = target_fov
 	
 	# Ajusta a posição da câmera baseado na distância alvo
@@ -164,35 +169,51 @@ func adjust_camera_for_bed_size():
 	emit_signal("fov_changed", current_camera.fov)
 
 func reset_cameras():
-	# Reseta o zoom e o offset vertical
-	current_zoom = 1.0
-	target_zoom = 1.0
-	manual_vertical_offset = 0.0
-	
 	# Reseta cada câmera para sua posição e rotação inicial
+	var cameras = [camera1, camera2, camera3, camera4]
 	for i in range(cameras.size()):
 		var camera = cameras[i]
 		var camera_name = camera_names[i]
 		
-		# Reseta a posição
-		camera.global_position = INITIAL_POSITIONS[camera_name]
-		
-		# Reseta a rotação
-		camera.rotation = INITIAL_ROTATIONS[camera_name]
-		
-		# Reseta o FOV
-		camera.fov = BASE_FOV
+		match camera_name:
+			"Front":
+				var basis = Basis(Vector3(-1.0, 0.0, -8.74228e-08), Vector3(0.0, 1.0, 0.0), Vector3(8.74228e-08, 0.0, -1.0))
+				var origin = Vector3(0.0, 2.5, -6.0)
+				camera.transform = Transform3D(basis, origin)
+			"Free":
+				var basis = Basis(Vector3(-0.655295, 0.0, -0.755373), Vector3(0.0, 1.0, 0.0), Vector3(0.755373, 0.0, -0.655295))
+				var origin = Vector3(-4.0, 3.4605, -4.0)
+				camera.transform = Transform3D(basis, origin)
+			"Iso":
+				var basis = Basis(Vector3(0.783693, 0.310574, -0.53793), Vector3(0.0, 0.866025, 0.5), Vector3(0.621148, -0.391847, 0.678698))
+				var origin = Vector3(-3.52846, 5.19071, 3.89156)
+				camera.transform = Transform3D(basis, origin)
+			"Top":
+				var basis = Basis(Vector3(1.0, 0.0, 0.0), Vector3(0.0, -4.37114e-08, 1.0), Vector3(0.0, -1.0, -4.37114e-08))
+				var origin = Vector3(0.0, 9.35908, 0.0)
+				camera.transform = Transform3D(basis, origin)
 	
-	# Atualiza a câmera atual
+	# Reseta o zoom
+	current_zoom = 1.0
+	target_zoom = 1.0
+	
+	# Atualiza as câmeras
 	_update_cameras()
-	_update_camera_indicator()
 
 func _update_camera_indicator():
-	if camera_indicator and current_camera:
-		var pos = current_camera.global_transform.origin
+	if camera_indicator and get_current_camera():
+		var pos = get_current_camera().global_transform.origin
 		camera_indicator.text = "Câmera: %s\nPosição: x=%.2f, y=%.2f, z=%.2f\nFOV: %.1f\nZoom: %.2f" % [
 			camera_names[current_camera_index], 
 			pos.x, pos.y, pos.z,
-			current_camera.fov,
+			get_current_camera().fov,
 			current_zoom
 		] 
+
+func get_current_camera() -> Camera3D:
+	match current_camera_index:
+		0: return camera1
+		1: return camera2
+		2: return camera3
+		3: return camera4
+		_: return camera1  # Retorna a primeira câmera como fallback

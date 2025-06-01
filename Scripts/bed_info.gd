@@ -1,29 +1,38 @@
-extends Control
+extends Window
 
-@onready var bed_indicator: Label = $BedIndicator
 @export var extraction_bed_path: NodePath
+@onready var bed_indicator = $BedIndicator
+
 var extraction_bed: Node3D
 
 func _ready():
+	# Configurar a janela
+	close_requested.connect(_on_close_requested)
+	
+	# Garantir que a janela começa invisível
+	visible = false
+	
+	# Obter referência ao leito de extração
 	extraction_bed = get_node(extraction_bed_path)
-	# Conecta o sinal de reset do leito
-	extraction_bed.connect("bed_reset", _on_bed_reset)
-	# Atualiza as informações iniciais
+	if not extraction_bed:
+		push_error("BedInfo: ExtractionBed não encontrado!")
+		return
+	
+	# Atualizar informações iniciais
 	update_info()
 
-func _process(_delta):
-	update_info()
+func _on_close_requested():
+	hide()
 
 func update_info():
-	if extraction_bed:
-		var info_text = "Leito de Extração:\n"
-		info_text += "Altura: %.2f\n" % extraction_bed.height
-		info_text += "Largura: %.2f\n" % extraction_bed.width
-		info_text += "Diâmetro: %.2f\n" % extraction_bed.diameter
-		info_text += "Raio Interno: %.2f\n" % extraction_bed.inner_cylinder_radius
-		info_text += "Transparência: %.2f" % extraction_bed.transparency
+	if not extraction_bed:
+		return
 		
-		bed_indicator.text = info_text
-
-func _on_bed_reset():
-	update_info() 
+	var text = "Leito de Extração:\n"
+	text += "Altura: %.2f\n" % (extraction_bed.height * 100)  # Converter para centímetros
+	text += "Largura: %.2f\n" % (extraction_bed.width * 100)
+	text += "Diâmetro: %.2f\n" % (extraction_bed.diameter * 100)
+	text += "Raio Interno: %.2f\n" % (extraction_bed.inner_cylinder_radius * 100)
+	text += "Transparência: %.2f" % extraction_bed.transparency
+	
+	bed_indicator.text = text 

@@ -162,9 +162,8 @@ omni_attenuation = 1.2
 
 [node name="UIControlPanel" type="Window" parent="."]
 title = "Painel de Controle"
-position = Vector2i(100, 100)
+position = Vector2i(20, 20)
 size = Vector2i(400, 800)
-visible = false
 script = ExtResource("3_4k4m3")
 extraction_bed_path = NodePath("../ExtractionBed")
 skybox_manager_path = NodePath("../SkyboxManager")
@@ -400,9 +399,8 @@ text = "0.2"
 
 [node name="SpawnerControlPanel" type="Window" parent="UIControlPanel"]
 title = "Painel do Spawner"
-position = Vector2i(50, 50)
-size = Vector2i(300, 600)
-visible = false
+position = Vector2i(20, 20)
+size = Vector2i(250, 700)
 script = ExtResource("15_spawnerui")
 spawner_path = NodePath("../../ExtractionBed/Spawner")
 
@@ -420,15 +418,15 @@ color = Color(0.2, 0.2, 0.2, 0.592157)
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 12.0
-offset_top = 12.0
-offset_right = -12.0
-offset_bottom = -12.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = -8.0
 grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-theme_override_constants/separation = 12
+theme_override_constants/separation = 8
 
 [node name="HeightLabel" type="Label" parent="UIControlPanel/SpawnerControlPanel/SpawnerVBox"]
 custom_minimum_size = Vector2(120, 24)
@@ -586,9 +584,8 @@ value = 0.1
 
 [node name="CameraInfo" type="Window" parent="."]
 title = "Informações da Câmera"
-position = Vector2i(50, 50)
+position = Vector2i(20, 840)
 size = Vector2i(300, 100)
-visible = false
 script = ExtResource("23_camera")
 
 [node name="Background" type="ColorRect" parent="CameraInfo"]
@@ -609,7 +606,7 @@ offset_right = -8.0
 offset_bottom = -40.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_font_sizes/font_size = 16
+theme_override_font_sizes/font_size = 12
 text = "Câmera: -
 Posição: -"
 
@@ -628,9 +625,8 @@ text = "Resetar Câmeras"
 
 [node name="ObjectInfo" type="Window" parent="."]
 title = "Informações dos Objetos"
-position = Vector2i(50, 200)
+position = Vector2i(340, 840)
 size = Vector2i(300, 200)
-visible = false
 script = ExtResource("24_object")
 
 [node name="Background" type="ColorRect" parent="ObjectInfo"]
@@ -651,7 +647,7 @@ offset_right = -8.0
 offset_bottom = -8.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_font_sizes/font_size = 16
+theme_override_font_sizes/font_size = 12
 text = "Objetos: -
 Tipo A: -
 Tipo B: -
@@ -659,9 +655,8 @@ Tipo B: -
 
 [node name="BedInfo" type="Window" parent="."]
 title = "Informações do Leito"
-position = Vector2i(50, 450)
+position = Vector2i(660, 840)
 size = Vector2i(300, 150)
-visible = false
 script = ExtResource("19_bedinfo")
 extraction_bed_path = NodePath("../ExtractionBed")
 
@@ -683,7 +678,7 @@ offset_right = -8.0
 offset_bottom = -8.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_font_sizes/font_size = 16
+theme_override_font_sizes/font_size = 12
 text = "Leito de Extração:
 Altura: 2.00
 Largura: 1.00

@@ -4,59 +4,55 @@ extends Control
 @onready var loading_text = $VBoxContainer/LoadingText
 @onready var animation_player = $AnimationPlayer
 
-var loading_time: float = 2.0  # Tempo total de carregamento em segundos
-var current_time: float = 0.0
-var main_scene_path: String = "res://Cenas/main_scene.tscn"
+var language_manager: Node
 
 func _ready():
-	# Configurar animação de fade in
-	var fade_in = Animation.new()
-	var track_index = fade_in.add_track(Animation.TYPE_VALUE)
-	fade_in.track_set_path(track_index, ".:modulate")
-	fade_in.track_insert_key(track_index, 0.0, Color(1, 1, 1, 0.5))  # Começa com 50% de opacidade
-	fade_in.track_insert_key(track_index, 0.2, Color(1, 1, 1, 1))    # Fade in mais rápido (0.2 segundos)
+	# Inicializar o gerenciador de idiomas
+	language_manager = get_node("/root/LanguageManager")
+	if not language_manager:
+		language_manager = Node.new()
+		language_manager.set_script(load("res://Scripts/language_manager.gd"))
+		get_tree().root.add_child(language_manager)
 	
-	# Configurar animação de fade out
-	var fade_out = Animation.new()
-	track_index = fade_out.add_track(Animation.TYPE_VALUE)
-	fade_out.track_set_path(track_index, ".:modulate")
-	fade_out.track_insert_key(track_index, 0.0, Color(1, 1, 1, 1))
-	fade_out.track_insert_key(track_index, 0.5, Color(1, 1, 1, 0))
+	# Conectar ao sinal de mudança de idioma
+	language_manager.connect("language_changed", Callable(self, "_on_language_changed"))
 	
-	# Criar biblioteca de animações
-	var animation_library = AnimationLibrary.new()
-	animation_library.add_animation("fade_in", fade_in)
-	animation_library.add_animation("fade_out", fade_out)
-	animation_player.add_animation_library("", animation_library)
-	
-	# Iniciar fade in
+	# Iniciar animação
 	animation_player.play("fade_in")
 	
 	# Iniciar carregamento
-	loading_bar.value = 0
-	loading_text.text = "Carregando..."
+	await get_tree().create_timer(0.5).timeout
+	_update_loading(0.2, language_manager.get_text("loading", "loading_resources"))
+	
+	await get_tree().create_timer(0.5).timeout
+	_update_loading(0.4, language_manager.get_text("loading", "initializing"))
+	
+	await get_tree().create_timer(0.5).timeout
+	_update_loading(0.6, language_manager.get_text("loading", "preparing"))
+	
+	await get_tree().create_timer(0.5).timeout
+	_update_loading(0.8, language_manager.get_text("loading", "completed"))
+	
+	await get_tree().create_timer(0.5).timeout
+	_update_loading(1.0, language_manager.get_text("loading", "completed"))
+	
+	# Aguardar um pouco antes de mudar de cena
+	await get_tree().create_timer(0.5).timeout
+	
+	# Mudar para a cena principal
+	get_tree().change_scene_to_file("res://Cenas/main_scene.tscn")
 
-func _process(delta):
-	if current_time < loading_time:
-		current_time += delta
-		var progress = (current_time / loading_time) * 100
-		loading_bar.value = progress
-		
-		# Atualizar texto de carregamento
-		if progress < 30:
-			loading_text.text = "Carregando recursos..."
-		elif progress < 60:
-			loading_text.text = "Inicializando sistema..."
-		elif progress < 90:
-			loading_text.text = "Preparando interface..."
-		else:
-			loading_text.text = "Concluído!"
-		
-		# Quando terminar o carregamento
-		if current_time >= loading_time:
-			# Iniciar fade out
-			animation_player.play("fade_out")
-			# Aguardar a animação terminar antes de mudar de cena
-			await animation_player.animation_finished
-			# Carregar a cena principal
-			get_tree().change_scene_to_file(main_scene_path) 
+func _update_loading(progress: float, text: String):
+	loading_bar.value = progress * 100
+	loading_text.text = text
+
+func _on_language_changed():
+	# Atualizar textos quando o idioma mudar
+	if loading_bar.value < 20:
+		loading_text.text = language_manager.get_text("loading", "loading_resources")
+	elif loading_bar.value < 40:
+		loading_text.text = language_manager.get_text("loading", "initializing")
+	elif loading_bar.value < 60:
+		loading_text.text = language_manager.get_text("loading", "preparing")
+	else:
+		loading_text.text = language_manager.get_text("loading", "completed")

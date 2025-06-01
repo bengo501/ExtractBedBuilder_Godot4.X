@@ -625,7 +625,6 @@ offset_bottom = -500.0
 grow_horizontal = 0
 grow_vertical = 0
 script = ExtResource("19_bedinfo")
-extraction_bed_path = NodePath("../ExtractionBed")
 
 [node name="Background" type="ColorRect" parent="BedInfo"]
 layout_mode = 1

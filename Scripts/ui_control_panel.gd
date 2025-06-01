@@ -33,7 +33,19 @@ var tampa_superior: CSGCylinder3D
 # Constante para conversão entre centímetros e unidades do Godot
 const CM_TO_UNITS = 0.01  # 1 unidade = 100cm
 
+var language_manager: Node
+
 func _ready():
+	# Inicializar o gerenciador de idiomas
+	language_manager = get_node("/root/LanguageManager")
+	if not language_manager:
+		push_error("UIControlPanel: LanguageManager não encontrado!")
+		return
+	
+	# Conectar ao sinal de mudança de idioma
+	if not language_manager.is_connected("language_changed", Callable(self, "_on_language_changed")):
+		language_manager.connect("language_changed", Callable(self, "_on_language_changed"))
+	
 	extraction_bed = get_node(extraction_bed_path)
 	camera_controller = get_node("../CameraController")
 	skybox_manager = get_node(skybox_manager_path)
@@ -170,25 +182,30 @@ func _on_tampa_superior_button_pressed():
 func _update_tampa_buttons():
 	if tampa_inferior:
 		if tampa_inferior.visible:
-			tampa_inferior_button.text = "Remover Tampa Inferior"
+			tampa_inferior_button.text = language_manager.get_text("ui_control_panel", "remove_lower_cap")
 		else:
-			tampa_inferior_button.text = "Adicionar Tampa Inferior"
+			tampa_inferior_button.text = language_manager.get_text("ui_control_panel", "add_lower_cap")
 	
 	if tampa_superior:
 		if tampa_superior.visible:
-			tampa_superior_button.text = "Remover Tampa Superior"
+			tampa_superior_button.text = language_manager.get_text("ui_control_panel", "remove_upper_cap")
 		else:
-			tampa_superior_button.text = "Adicionar Tampa Superior"
+			tampa_superior_button.text = language_manager.get_text("ui_control_panel", "add_upper_cap")
 
 func update_labels():
+	if not language_manager:
+		return
+		
+	floor_distance_value.text = str(floor_distance_slider.value)
+	zoom_value.text = str(camera_controller.current_zoom)
 	height_value.text = str(height_slider.value)
 	width_value.text = str(width_slider.value)
 	diameter_value.text = str(diameter_slider.value)
 	inner_radius_value.text = str(inner_radius_slider.value)
 	transparency_value.text = str(transparency_slider.value)
-	zoom_value.text = str(camera_controller.current_zoom)
 	skybox_intensity_value.text = str(skybox_intensity_slider.value)
-	floor_distance_value.text = str(floor_distance_slider.value)
+	
+	_update_tampa_buttons()
 
 func _on_height_value_gui_input(event: InputEvent):
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
@@ -263,7 +280,7 @@ func _on_reset_button_pressed():
 
 func _on_skybox_button_pressed():
 	skybox_manager.toggle_skybox()
-	skybox_button.text = "Grid Preta" if skybox_manager.current_skybox == "white" else "Grid Branca" 
+	skybox_button.text = language_manager.get_text("ui_control_panel", "black_grid") if skybox_manager.current_skybox == "white" else language_manager.get_text("ui_control_panel", "white_grid") 
 
 func _on_skybox_intensity_changed(value: float):
 	skybox_manager.skybox_intensity = value
@@ -277,3 +294,6 @@ func _on_floor_distance_changed(value: float):
 		# Usa a nova função para atualizar apenas a posição vertical
 		extraction_bed.update_vertical_position(new_y)
 		floor_distance_value.text = str(value)
+
+func _on_language_changed():
+	update_labels()

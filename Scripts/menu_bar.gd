@@ -5,9 +5,11 @@ extends Control
 @onready var view_menu = $HBoxContainer/ViewMenu
 @onready var tools_menu = $HBoxContainer/ToolsMenu
 @onready var help_menu = $HBoxContainer/HelpMenu
+@onready var language_menu = $HBoxContainer/LanguageMenu
 
 var confirmation_dialog: ConfirmationDialog
 var spawn_timer: Timer
+var language_manager: Node
 
 # Sistema de histórico para desfazer/refazer
 var action_history: Array = []
@@ -30,13 +32,31 @@ class Action:
 		timestamp = Time.get_unix_time_from_system()
 
 func _ready():
+	# Aguardar um frame para garantir que todos os nós estejam prontos
+	await get_tree().process_frame
+	
+	# Inicializar o gerenciador de idiomas
+	language_manager = get_node("/root/LanguageManager")
+	if not language_manager:
+		print("MenuBar: Criando novo LanguageManager")
+		language_manager = Node.new()
+		language_manager.set_script(load("res://Scripts/language_manager.gd"))
+		get_tree().root.add_child(language_manager)
+	else:
+		print("MenuBar: LanguageManager encontrado")
+	
+	# Conectar ao sinal de mudança de idioma
+	if not language_manager.is_connected("language_changed", Callable(self, "_on_language_changed")):
+		print("MenuBar: Conectando ao sinal language_changed")
+		language_manager.connect("language_changed", Callable(self, "_on_language_changed"))
+	
 	# Criar diálogo de confirmação
 	confirmation_dialog = ConfirmationDialog.new()
 	confirmation_dialog.title = "Aviso"
 	confirmation_dialog.dialog_text = "Você será redirecionado para uma página externa. Deseja continuar?"
 	confirmation_dialog.confirmed.connect(_on_confirmation_dialog_confirmed)
-	confirmation_dialog.size = Vector2(400, 150)  # Define um tamanho fixo para o diálogo
-	confirmation_dialog.initial_position = Window.WINDOW_INITIAL_POSITION_CENTER_PRIMARY_SCREEN  # Centraliza na tela principal
+	confirmation_dialog.size = Vector2(400, 150)
+	confirmation_dialog.initial_position = Window.WINDOW_INITIAL_POSITION_CENTER_PRIMARY_SCREEN
 	add_child(confirmation_dialog)
 	
 	# Criar timer para spawn
@@ -47,48 +67,137 @@ func _ready():
 	# Obter referência ao spawner
 	spawner = get_node_or_null("/root/MainScene/ExtractionBed/Spawner")
 	
-	# Configurar menu Arquivo
+	# Verificar se todos os menus foram encontrados
+	if not _verify_menu_nodes():
+		push_error("Alguns nós do menu não foram encontrados!")
+		return
+	
+	# Configurar menus
+	_setup_menus()
+	
+	# Atualizar textos iniciais
+	_update_menu_texts()
+
+func _verify_menu_nodes() -> bool:
+	if not file_menu or not edit_menu or not view_menu or not tools_menu or not help_menu or not language_menu:
+		return false
+	return true
+
+func _setup_menus():
+	# Configurar menu de arquivo
 	var file_popup = file_menu.get_popup()
-	file_popup.add_item("📂 Abrir", 0)
-	file_popup.add_item("💾 Salvar Projeto", 1)
-	file_popup.add_item("📤 Exportar Modelo", 2)
+	file_popup.clear()
+	file_popup.add_item(language_manager.get_text("file_menu", "open"), 0)
+	file_popup.add_item(language_manager.get_text("file_menu", "save"), 1)
+	file_popup.add_item(language_manager.get_text("file_menu", "export"), 2)
 	file_popup.add_separator()
-	file_popup.add_item("❌ Sair", 3)
-	file_popup.id_pressed.connect(_on_file_menu_id_pressed)
+	file_popup.add_item(language_manager.get_text("file_menu", "exit"), 3)
 	
-	# Configurar menu Editar
+	# Configurar menu de edição
 	var edit_popup = edit_menu.get_popup()
-	edit_popup.add_item("↩️ Desfazer", 0)
-	edit_popup.add_item("↪️ Refazer", 1)
+	edit_popup.clear()
+	edit_popup.add_item(language_manager.get_text("edit_menu", "undo"), 0)
+	edit_popup.add_item(language_manager.get_text("edit_menu", "redo"), 1)
 	edit_popup.add_separator()
-	edit_popup.add_item("📋 Copiar", 2)
-	edit_popup.add_item("📋 Colar", 3)
-	edit_popup.id_pressed.connect(_on_edit_menu_id_pressed)
+	edit_popup.add_item(language_manager.get_text("edit_menu", "copy"), 2)
+	edit_popup.add_item(language_manager.get_text("edit_menu", "paste"), 3)
 	
-	# Configurar menu Visualizar
+	# Configurar menu de visualização
 	var view_popup = view_menu.get_popup()
-	view_popup.add_item("⬆️ Câmera Superior", 0)
-	view_popup.add_item("➡️ Câmera Frontal", 1)
-	view_popup.add_item("🎥 Câmera Livre", 2)
-	view_popup.add_item("📐 Câmera Isométrica", 3)
+	view_popup.clear()
+	view_popup.add_item(language_manager.get_text("view_menu", "top_camera"), 0)
+	view_popup.add_item(language_manager.get_text("view_menu", "front_camera"), 1)
+	view_popup.add_item(language_manager.get_text("view_menu", "free_camera"), 2)
+	view_popup.add_item(language_manager.get_text("view_menu", "iso_camera"), 3)
 	view_popup.add_separator()
-	view_popup.add_item("📏 Mostrar Grade", 4)
-	view_popup.add_item("📊 Mostrar Eixos", 5)
-	view_popup.id_pressed.connect(_on_view_menu_id_pressed)
+	view_popup.add_check_item(language_manager.get_text("view_menu", "show_grid"), 4)
+	view_popup.add_check_item(language_manager.get_text("view_menu", "show_axes"), 5)
 	
-	# Configurar menu Ferramentas
+	# Configurar menu de ferramentas
 	var tools_popup = tools_menu.get_popup()
-	tools_popup.add_item("🔄 Resetar Câmeras", 0)
-	tools_popup.add_item("🔄 Resetar Leito", 1)
+	tools_popup.clear()
+	tools_popup.add_item(language_manager.get_text("tools_menu", "reset_cameras"), 0)
+	tools_popup.add_item(language_manager.get_text("tools_menu", "reset_bed"), 1)
 	tools_popup.add_separator()
-	tools_popup.add_item("🗑️ Limpar Objetos", 2)
-	tools_popup.id_pressed.connect(_on_tools_menu_id_pressed)
+	tools_popup.add_item(language_manager.get_text("tools_menu", "clear_objects"), 2)
 	
-	# Configurar menu Ajuda
+	# Configurar menu de ajuda
 	var help_popup = help_menu.get_popup()
-	help_popup.add_item("📚 Documentação", 0)
-	help_popup.add_item("ℹ️ Sobre", 1)
-	help_popup.id_pressed.connect(_on_help_menu_id_pressed)
+	help_popup.clear()
+	help_popup.add_item(language_manager.get_text("help_menu", "docs"), 0)
+	help_popup.add_item(language_manager.get_text("help_menu", "about"), 1)
+	
+	# Configurar menu de idioma
+	var language_popup = language_menu.get_popup()
+	language_popup.clear()
+	language_popup.add_item(language_manager.get_text("language_menu", "portuguese"), 0)
+	language_popup.add_item(language_manager.get_text("language_menu", "english"), 1)
+	
+	# Conectar sinais
+	file_popup.connect("id_pressed", Callable(self, "_on_file_menu_id_pressed"))
+	edit_popup.connect("id_pressed", Callable(self, "_on_edit_menu_id_pressed"))
+	view_popup.connect("id_pressed", Callable(self, "_on_view_menu_id_pressed"))
+	tools_popup.connect("id_pressed", Callable(self, "_on_tools_menu_id_pressed"))
+	help_popup.connect("id_pressed", Callable(self, "_on_help_menu_id_pressed"))
+	language_popup.connect("id_pressed", Callable(self, "_on_language_menu_id_pressed"))
+
+func _update_menu_texts():
+	# Atualizar textos do menu de arquivo
+	file_menu.text = "📁 " + language_manager.get_text("file_menu", "title")
+	var file_popup = file_menu.get_popup()
+	file_popup.set_item_text(0, language_manager.get_text("file_menu", "open"))
+	file_popup.set_item_text(1, language_manager.get_text("file_menu", "save"))
+	file_popup.set_item_text(2, language_manager.get_text("file_menu", "export"))
+	file_popup.set_item_text(4, language_manager.get_text("file_menu", "exit"))
+	
+	# Atualizar textos do menu de edição
+	edit_menu.text = "✏️ " + language_manager.get_text("edit_menu", "title")
+	var edit_popup = edit_menu.get_popup()
+	edit_popup.set_item_text(0, language_manager.get_text("edit_menu", "undo"))
+	edit_popup.set_item_text(1, language_manager.get_text("edit_menu", "redo"))
+	edit_popup.set_item_text(3, language_manager.get_text("edit_menu", "copy"))
+	edit_popup.set_item_text(4, language_manager.get_text("edit_menu", "paste"))
+	
+	# Atualizar textos do menu de visualização
+	view_menu.text = "👁️ " + language_manager.get_text("view_menu", "title")
+	var view_popup = view_menu.get_popup()
+	view_popup.set_item_text(0, language_manager.get_text("view_menu", "top_camera"))
+	view_popup.set_item_text(1, language_manager.get_text("view_menu", "front_camera"))
+	view_popup.set_item_text(2, language_manager.get_text("view_menu", "free_camera"))
+	view_popup.set_item_text(3, language_manager.get_text("view_menu", "iso_camera"))
+	view_popup.set_item_text(5, language_manager.get_text("view_menu", "show_grid"))
+	view_popup.set_item_text(6, language_manager.get_text("view_menu", "show_axes"))
+	
+	# Atualizar textos do menu de ferramentas
+	tools_menu.text = "🛠️ " + language_manager.get_text("tools_menu", "title")
+	var tools_popup = tools_menu.get_popup()
+	tools_popup.set_item_text(0, language_manager.get_text("tools_menu", "reset_cameras"))
+	tools_popup.set_item_text(1, language_manager.get_text("tools_menu", "reset_bed"))
+	tools_popup.set_item_text(3, language_manager.get_text("tools_menu", "clear_objects"))
+	
+	# Atualizar textos do menu de ajuda
+	help_menu.text = "❓ " + language_manager.get_text("help_menu", "title")
+	var help_popup = help_menu.get_popup()
+	help_popup.set_item_text(0, language_manager.get_text("help_menu", "docs"))
+	help_popup.set_item_text(1, language_manager.get_text("help_menu", "about"))
+	
+	# Atualizar textos do menu de idioma
+	language_menu.text = "🌐 " + language_manager.get_text("language_menu", "title")
+	var language_popup = language_menu.get_popup()
+	language_popup.set_item_text(0, language_manager.get_text("language_menu", "portuguese"))
+	language_popup.set_item_text(1, language_manager.get_text("language_menu", "english"))
+
+func _on_language_changed():
+	print("MenuBar: Recebido sinal language_changed")
+	_update_menu_texts()
+
+func _on_language_menu_id_pressed(id: int):
+	print("MenuBar: Menu de idioma pressionado - ID: ", id)
+	match id:
+		0: # Português
+			language_manager.set_language("pt")
+		1: # English
+			language_manager.set_language("en")
 
 func _exit_tree():
 	# Limpar timer ao sair

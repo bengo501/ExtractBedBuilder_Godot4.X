@@ -1,58 +1,40 @@
-[gd_scene load_steps=2 format=3 uid="uid://wmddubogu34d"]
+[gd_scene load_steps=2 format=3 uid="uid://c8yvxqnvxqnvx"]
 
-[ext_resource type="Script" uid="uid://brupqovkq1vm5" path="res://Scripts/menu_bar.gd" id="1_menu"]
+[ext_resource type="Script" path="res://Scripts/menu_bar.gd" id="1_menu"]
 
 [node name="MenuBar" type="Control"]
 layout_mode = 3
 anchors_preset = 10
 anchor_right = 1.0
-offset_bottom = 40.0
+offset_bottom = 30.0
 grow_horizontal = 2
 script = ExtResource("1_menu")
-
-[node name="Background" type="ColorRect" parent="."]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-color = Color(0.13, 0.15, 0.18, 0.95)
 
 [node name="HBoxContainer" type="HBoxContainer" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 12.0
-offset_top = 4.0
-offset_right = -12.0
-offset_bottom = -4.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 8
 
 [node name="FileMenu" type="MenuButton" parent="HBoxContainer"]
-custom_minimum_size = Vector2(80, 0)
 layout_mode = 2
-text = "Arquivo"
+text = "📂 Arquivo"
 
 [node name="EditMenu" type="MenuButton" parent="HBoxContainer"]
-custom_minimum_size = Vector2(80, 0)
 layout_mode = 2
-text = "Editar"
+text = "[E] Editar"
 
 [node name="ViewMenu" type="MenuButton" parent="HBoxContainer"]
-custom_minimum_size = Vector2(80, 0)
 layout_mode = 2
-text = "Visualizar"
+text = "[V] Visualizar"
 
 [node name="ToolsMenu" type="MenuButton" parent="HBoxContainer"]
-custom_minimum_size = Vector2(80, 0)
 layout_mode = 2
-text = "Ferramentas"
+text = "[T] Ferramentas"
 
 [node name="HelpMenu" type="MenuButton" parent="HBoxContainer"]
-custom_minimum_size = Vector2(80, 0)
 layout_mode = 2
-text = "Ajuda"
+text = "[A] Ajuda" 

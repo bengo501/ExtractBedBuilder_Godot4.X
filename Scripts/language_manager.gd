@@ -138,6 +138,14 @@ var translations: Dictionary = {
 			"gravity_scale": "Escala da Gravidade",
 			"linear_damp": "Amortecimento Linear",
 			"angular_damp": "Amortecimento Angular"
+		},
+		"pause_menu": {
+			"title": "Menu de Pause",
+			"resume": "Continuar",
+			"save": "💾 Salvar Projeto",
+			"export": "📤 Exportar Modelo",
+			"settings": "Configurações",
+			"quit": "Sair"
 		}
 	},
 	"en": {
@@ -274,6 +282,14 @@ var translations: Dictionary = {
 			"gravity_scale": "Gravity Scale",
 			"linear_damp": "Linear Damping",
 			"angular_damp": "Angular Damping"
+		},
+		"pause_menu": {
+			"title": "Pause Menu",
+			"resume": "Resume",
+			"save": "💾 Save Project",
+			"export": "📤 Export Model",
+			"settings": "Settings",
+			"quit": "Quit"
 		}
 	}
 }

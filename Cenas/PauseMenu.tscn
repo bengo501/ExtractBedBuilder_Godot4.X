@@ -36,7 +36,7 @@ theme_override_constants/separation = 16
 [node name="Title" type="Label" parent="CenterContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 24
-text = "PAUSADO"
+text = "Menu de Pause"
 horizontal_alignment = 1
 
 [node name="HSeparator" type="HSeparator" parent="CenterContainer/VBoxContainer"]
@@ -53,7 +53,7 @@ text = "Continuar"
 custom_minimum_size = Vector2(200, 40)
 layout_mode = 2
 theme_override_font_sizes/font_size = 16
-text = "💾 Salvar"
+text = "💾 Salvar Projeto"
 
 [node name="ExportButton" type="Button" parent="CenterContainer/VBoxContainer"]
 custom_minimum_size = Vector2(200, 40)
@@ -61,11 +61,11 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 16
 text = "📤 Exportar Modelo"
 
-[node name="RestartButton" type="Button" parent="CenterContainer/VBoxContainer"]
+[node name="SettingsButton" type="Button" parent="CenterContainer/VBoxContainer"]
 custom_minimum_size = Vector2(200, 40)
 layout_mode = 2
 theme_override_font_sizes/font_size = 16
-text = "Recomeçar"
+text = "Configurações"
 
 [node name="QuitButton" type="Button" parent="CenterContainer/VBoxContainer"]
 custom_minimum_size = Vector2(200, 40)

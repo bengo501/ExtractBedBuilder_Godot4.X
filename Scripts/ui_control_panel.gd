@@ -21,6 +21,19 @@ extends Control
 @onready var floor_distance_slider: HSlider = $VBoxContainer/FloorDistanceContainer/FloorDistanceSlider
 @onready var floor_distance_value: Label = $VBoxContainer/FloorDistanceContainer/FloorDistanceValue
 
+# Labels para tradução
+@onready var floor_distance_label: Label = $VBoxContainer/FloorDistanceContainer/Label
+@onready var zoom_label: Label = $VBoxContainer/ZoomContainer/Label
+@onready var height_label: Label = $VBoxContainer/HeightContainer/Label
+@onready var width_label: Label = $VBoxContainer/WidthContainer/Label
+@onready var diameter_label: Label = $VBoxContainer/DiameterContainer/Label
+@onready var inner_radius_label: Label = $VBoxContainer/InnerCylinderContainer/Label
+@onready var outline_label: Label = $VBoxContainer/OutlineContainer/Label
+@onready var transparency_label: Label = $VBoxContainer/OutlineContainer/TransparencyContainer/Label
+@onready var color_label: Label = $VBoxContainer/OutlineContainer/OutlineColorContainer/Label
+@onready var bed_caps_label: Label = $VBoxContainer/TampasContainer/Label
+@onready var skybox_intensity_label: Label = $VBoxContainer/SkyboxContainer/Label
+
 @export var extraction_bed_path: NodePath
 @export var skybox_manager_path: NodePath
 var extraction_bed: Node3D
@@ -196,6 +209,30 @@ func update_labels():
 	if not language_manager:
 		return
 		
+	# Atualizar labels dos sliders
+	floor_distance_label.text = language_manager.get_text("ui_control_panel", "floor_distance")
+	zoom_label.text = language_manager.get_text("ui_control_panel", "zoom")
+	height_label.text = language_manager.get_text("ui_control_panel", "height")
+	width_label.text = language_manager.get_text("ui_control_panel", "width")
+	diameter_label.text = language_manager.get_text("ui_control_panel", "diameter")
+	inner_radius_label.text = language_manager.get_text("ui_control_panel", "inner_radius")
+	
+	# Atualizar labels do outline
+	outline_label.text = language_manager.get_text("ui_control_panel", "outline")
+	transparency_label.text = language_manager.get_text("ui_control_panel", "transparency")
+	color_label.text = language_manager.get_text("ui_control_panel", "color")
+	
+	# Atualizar labels das tampas
+	bed_caps_label.text = language_manager.get_text("ui_control_panel", "bed_caps")
+	
+	# Atualizar botões
+	reset_button.text = language_manager.get_text("ui_control_panel", "reset_bed")
+	skybox_button.text = language_manager.get_text("ui_control_panel", "black_grid")
+	
+	# Atualizar label do skybox
+	skybox_intensity_label.text = language_manager.get_text("ui_control_panel", "skybox_intensity")
+	
+	# Atualizar valores
 	floor_distance_value.text = str(floor_distance_slider.value)
 	zoom_value.text = str(camera_controller.current_zoom)
 	height_value.text = str(height_slider.value)
@@ -209,31 +246,31 @@ func update_labels():
 
 func _on_height_value_gui_input(event: InputEvent):
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-		var new_value = await _show_number_dialog("Altura", height_slider.value, height_slider.min_value, height_slider.max_value)
+		var new_value = await _show_number_dialog(language_manager.get_text("ui_control_panel", "height"), height_slider.value, height_slider.min_value, height_slider.max_value)
 		if new_value != null:
 			height_slider.value = new_value
 
 func _on_width_value_gui_input(event: InputEvent):
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-		var new_value = await _show_number_dialog("Largura", width_slider.value, width_slider.min_value, width_slider.max_value)
+		var new_value = await _show_number_dialog(language_manager.get_text("ui_control_panel", "width"), width_slider.value, width_slider.min_value, width_slider.max_value)
 		if new_value != null:
 			width_slider.value = new_value
 
 func _on_diameter_value_gui_input(event: InputEvent):
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-		var new_value = await _show_number_dialog("Diâmetro", diameter_slider.value, diameter_slider.min_value, diameter_slider.max_value)
+		var new_value = await _show_number_dialog(language_manager.get_text("ui_control_panel", "diameter"), diameter_slider.value, diameter_slider.min_value, diameter_slider.max_value)
 		if new_value != null:
 			diameter_slider.value = new_value
 
 func _on_inner_radius_value_gui_input(event: InputEvent):
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-		var new_value = await _show_number_dialog("Raio do Espaço Interno", inner_radius_slider.value, inner_radius_slider.min_value, inner_radius_slider.max_value)
+		var new_value = await _show_number_dialog(language_manager.get_text("ui_control_panel", "inner_radius"), inner_radius_slider.value, inner_radius_slider.min_value, inner_radius_slider.max_value)
 		if new_value != null:
 			inner_radius_slider.value = new_value
 
 func _on_transparency_value_gui_input(event: InputEvent):
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-		var new_value = await _show_number_dialog("Transparência", transparency_slider.value, transparency_slider.min_value, transparency_slider.max_value)
+		var new_value = await _show_number_dialog(language_manager.get_text("ui_control_panel", "transparency"), transparency_slider.value, transparency_slider.min_value, transparency_slider.max_value)
 		if new_value != null:
 			transparency_slider.value = new_value
 
@@ -276,16 +313,16 @@ func _on_reset_button_pressed():
 	transparency_slider.value = extraction_bed.transparency
 	skybox_intensity_slider.value = skybox_manager.skybox_intensity
 	floor_distance_slider.value = extraction_bed.global_position.y / CM_TO_UNITS
-	update_labels() 
+	update_labels()
 
 func _on_skybox_button_pressed():
 	skybox_manager.toggle_skybox()
-	skybox_button.text = language_manager.get_text("ui_control_panel", "black_grid") if skybox_manager.current_skybox == "white" else language_manager.get_text("ui_control_panel", "white_grid") 
+	skybox_button.text = language_manager.get_text("ui_control_panel", "black_grid") if skybox_manager.current_skybox == "white" else language_manager.get_text("ui_control_panel", "white_grid")
 
 func _on_skybox_intensity_changed(value: float):
 	skybox_manager.skybox_intensity = value
 	skybox_intensity_value.text = str(value)
-	skybox_manager.load_skybox(skybox_manager.skybox_white_path if skybox_manager.current_skybox == "white" else skybox_manager.skybox_black_path) 
+	skybox_manager.load_skybox(skybox_manager.skybox_white_path if skybox_manager.current_skybox == "white" else skybox_manager.skybox_black_path)
 
 func _on_floor_distance_changed(value: float):
 	if extraction_bed:

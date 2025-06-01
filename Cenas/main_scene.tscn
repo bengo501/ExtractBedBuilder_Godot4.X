@@ -162,8 +162,8 @@ omni_attenuation = 1.2
 
 [node name="UIControlPanel" type="Window" parent="."]
 title = "Painel de Controle"
-position = Vector2i(20, 20)
-size = Vector2i(400, 800)
+position = Vector2i(1000, 20)
+size = Vector2i(350, 800)
 script = ExtResource("3_4k4m3")
 extraction_bed_path = NodePath("../ExtractionBed")
 skybox_manager_path = NodePath("../SkyboxManager")
@@ -181,59 +181,59 @@ color = Color(0.2, 0.2, 0.2, 0.647059)
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 12.0
-offset_top = 12.0
-offset_right = -12.0
-offset_bottom = -12.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = -8.0
 grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-theme_override_constants/separation = 15
+theme_override_constants/separation = 8
 
 [node name="FloorDistanceContainer" type="VBoxContainer" parent="UIControlPanel/VBoxContainer"]
 layout_mode = 2
 
 [node name="Label" type="Label" parent="UIControlPanel/VBoxContainer/FloorDistanceContainer"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 16
+theme_override_font_sizes/font_size = 11
 text = "Distância do Chão (cm)"
 
 [node name="FloorDistanceSlider" type="HSlider" parent="UIControlPanel/VBoxContainer/FloorDistanceContainer"]
-custom_minimum_size = Vector2(0, 30)
+custom_minimum_size = Vector2(0, 25)
 layout_mode = 2
 max_value = 50.0
 value = 5.0
 
 [node name="FloorDistanceValue" type="Label" parent="UIControlPanel/VBoxContainer/FloorDistanceContainer"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 14
+theme_override_font_sizes/font_size = 11
 text = "5.0"
 
 [node name="ZoomContainer" type="HBoxContainer" parent="UIControlPanel/VBoxContainer"]
 layout_mode = 2
-theme_override_constants/separation = 10
+theme_override_constants/separation = 8
 
 [node name="Label" type="Label" parent="UIControlPanel/VBoxContainer/ZoomContainer"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 16
+theme_override_font_sizes/font_size = 11
 text = "Zoom"
 
 [node name="ZoomOutButton" type="Button" parent="UIControlPanel/VBoxContainer/ZoomContainer"]
-custom_minimum_size = Vector2(40, 40)
+custom_minimum_size = Vector2(35, 35)
 layout_mode = 2
-theme_override_font_sizes/font_size = 20
+theme_override_font_sizes/font_size = 16
 text = "-"
 
 [node name="ZoomValue" type="Label" parent="UIControlPanel/VBoxContainer/ZoomContainer"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 16
+theme_override_font_sizes/font_size = 11
 text = "1.0"
 
 [node name="ZoomInButton" type="Button" parent="UIControlPanel/VBoxContainer/ZoomContainer"]
-custom_minimum_size = Vector2(40, 40)
+custom_minimum_size = Vector2(35, 35)
 layout_mode = 2
-theme_override_font_sizes/font_size = 20
+theme_override_font_sizes/font_size = 16
 text = "+"
 
 [node name="HeightContainer" type="VBoxContainer" parent="UIControlPanel/VBoxContainer"]
@@ -241,11 +241,11 @@ layout_mode = 2
 
 [node name="Label" type="Label" parent="UIControlPanel/VBoxContainer/HeightContainer"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 16
+theme_override_font_sizes/font_size = 11
 text = "Altura (cm)"
 
 [node name="HeightSlider" type="HSlider" parent="UIControlPanel/VBoxContainer/HeightContainer"]
-custom_minimum_size = Vector2(0, 30)
+custom_minimum_size = Vector2(0, 25)
 layout_mode = 2
 min_value = 5.0
 max_value = 200.0
@@ -253,7 +253,7 @@ value = 20.0
 
 [node name="HeightValue" type="Label" parent="UIControlPanel/VBoxContainer/HeightContainer"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 14
+theme_override_font_sizes/font_size = 11
 text = "20.0"
 
 [node name="WidthContainer" type="VBoxContainer" parent="UIControlPanel/VBoxContainer"]
@@ -261,9 +261,11 @@ layout_mode = 2
 
 [node name="Label" type="Label" parent="UIControlPanel/VBoxContainer/WidthContainer"]
 layout_mode = 2
+theme_override_font_sizes/font_size = 11
 text = "Largura (cm)"
 
 [node name="WidthSlider" type="HSlider" parent="UIControlPanel/VBoxContainer/WidthContainer"]
+custom_minimum_size = Vector2(0, 25)
 layout_mode = 2
 min_value = 5.0
 max_value = 200.0
@@ -271,6 +273,7 @@ value = 10.0
 
 [node name="WidthValue" type="Label" parent="UIControlPanel/VBoxContainer/WidthContainer"]
 layout_mode = 2
+theme_override_font_sizes/font_size = 11
 text = "10.0"
 
 [node name="DiameterContainer" type="VBoxContainer" parent="UIControlPanel/VBoxContainer"]
@@ -278,9 +281,11 @@ layout_mode = 2
 
 [node name="Label" type="Label" parent="UIControlPanel/VBoxContainer/DiameterContainer"]
 layout_mode = 2
+theme_override_font_sizes/font_size = 11
 text = "Diâmetro (cm)"
 
 [node name="DiameterSlider" type="HSlider" parent="UIControlPanel/VBoxContainer/DiameterContainer"]
+custom_minimum_size = Vector2(0, 25)
 layout_mode = 2
 min_value = 5.0
 max_value = 200.0
@@ -288,6 +293,7 @@ value = 10.0
 
 [node name="DiameterValue" type="Label" parent="UIControlPanel/VBoxContainer/DiameterContainer"]
 layout_mode = 2
+theme_override_font_sizes/font_size = 11
 text = "10.0"
 
 [node name="InnerCylinderContainer" type="VBoxContainer" parent="UIControlPanel/VBoxContainer"]
@@ -295,9 +301,11 @@ layout_mode = 2
 
 [node name="Label" type="Label" parent="UIControlPanel/VBoxContainer/InnerCylinderContainer"]
 layout_mode = 2
+theme_override_font_sizes/font_size = 11
 text = "Raio do Espaço Interno (cm)"
 
 [node name="InnerRadiusSlider" type="HSlider" parent="UIControlPanel/VBoxContainer/InnerCylinderContainer"]
+custom_minimum_size = Vector2(0, 25)
 layout_mode = 2
 min_value = 1.0
 max_value = 98.0
@@ -305,6 +313,7 @@ value = 4.0
 
 [node name="InnerRadiusValue" type="Label" parent="UIControlPanel/VBoxContainer/InnerCylinderContainer"]
 layout_mode = 2
+theme_override_font_sizes/font_size = 11
 text = "4.0"
 
 [node name="OutlineContainer" type="VBoxContainer" parent="UIControlPanel/VBoxContainer"]
@@ -312,6 +321,7 @@ layout_mode = 2
 
 [node name="Label" type="Label" parent="UIControlPanel/VBoxContainer/OutlineContainer"]
 layout_mode = 2
+theme_override_font_sizes/font_size = 11
 text = "Outline"
 
 [node name="TransparencyContainer" type="HBoxContainer" parent="UIControlPanel/VBoxContainer/OutlineContainer"]
@@ -319,9 +329,11 @@ layout_mode = 2
 
 [node name="Label" type="Label" parent="UIControlPanel/VBoxContainer/OutlineContainer/TransparencyContainer"]
 layout_mode = 2
+theme_override_font_sizes/font_size = 11
 text = "Transparência"
 
 [node name="TransparencySlider" type="HSlider" parent="UIControlPanel/VBoxContainer/OutlineContainer/TransparencyContainer"]
+custom_minimum_size = Vector2(0, 25)
 layout_mode = 2
 size_flags_horizontal = 3
 max_value = 1.0
@@ -330,6 +342,7 @@ value = 0.3
 
 [node name="TransparencyValue" type="Label" parent="UIControlPanel/VBoxContainer/OutlineContainer/TransparencyContainer"]
 layout_mode = 2
+theme_override_font_sizes/font_size = 11
 text = "0.3"
 
 [node name="OutlineColorContainer" type="HBoxContainer" parent="UIControlPanel/VBoxContainer/OutlineContainer"]
@@ -337,10 +350,11 @@ layout_mode = 2
 
 [node name="Label" type="Label" parent="UIControlPanel/VBoxContainer/OutlineContainer/OutlineColorContainer"]
 layout_mode = 2
+theme_override_font_sizes/font_size = 11
 text = "Cor"
 
 [node name="OutlineColorButton" type="ColorPickerButton" parent="UIControlPanel/VBoxContainer/OutlineContainer/OutlineColorContainer"]
-custom_minimum_size = Vector2(100, 30)
+custom_minimum_size = Vector2(80, 25)
 layout_mode = 2
 color = Color(0, 0.8, 1, 1)
 
@@ -349,31 +363,31 @@ layout_mode = 2
 
 [node name="Label" type="Label" parent="UIControlPanel/VBoxContainer/TampasContainer"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 16
+theme_override_font_sizes/font_size = 11
 text = "Tampas do Leito"
 
 [node name="TampaInferiorButton" type="Button" parent="UIControlPanel/VBoxContainer/TampasContainer"]
-custom_minimum_size = Vector2(0, 36)
+custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
-theme_override_font_sizes/font_size = 14
+theme_override_font_sizes/font_size = 11
 text = "Adicionar/Remover Tampa Inferior"
 
 [node name="TampaSuperiorButton" type="Button" parent="UIControlPanel/VBoxContainer/TampasContainer"]
-custom_minimum_size = Vector2(0, 36)
+custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
-theme_override_font_sizes/font_size = 14
+theme_override_font_sizes/font_size = 11
 text = "Adicionar/Remover Tampa Superior"
 
 [node name="ResetButton" type="Button" parent="UIControlPanel/VBoxContainer"]
-custom_minimum_size = Vector2(0, 40)
+custom_minimum_size = Vector2(0, 35)
 layout_mode = 2
-theme_override_font_sizes/font_size = 16
+theme_override_font_sizes/font_size = 11
 text = "Resetar Leito"
 
 [node name="SkyboxButton" type="Button" parent="UIControlPanel/VBoxContainer"]
-custom_minimum_size = Vector2(0, 40)
+custom_minimum_size = Vector2(0, 35)
 layout_mode = 2
-theme_override_font_sizes/font_size = 16
+theme_override_font_sizes/font_size = 11
 text = "Grid Preta"
 
 [node name="SkyboxContainer" type="VBoxContainer" parent="UIControlPanel/VBoxContainer"]
@@ -381,11 +395,11 @@ layout_mode = 2
 
 [node name="Label" type="Label" parent="UIControlPanel/VBoxContainer/SkyboxContainer"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 16
+theme_override_font_sizes/font_size = 11
 text = "Intensidade do Skybox"
 
 [node name="SkyboxIntensitySlider" type="HSlider" parent="UIControlPanel/VBoxContainer/SkyboxContainer"]
-custom_minimum_size = Vector2(0, 30)
+custom_minimum_size = Vector2(0, 25)
 layout_mode = 2
 min_value = 0.1
 max_value = 5.0
@@ -394,13 +408,13 @@ value = 0.2
 
 [node name="SkyboxIntensityValue" type="Label" parent="UIControlPanel/VBoxContainer/SkyboxContainer"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 14
+theme_override_font_sizes/font_size = 11
 text = "0.2"
 
 [node name="SpawnerControlPanel" type="Window" parent="UIControlPanel"]
 title = "Painel do Spawner"
 position = Vector2i(20, 20)
-size = Vector2i(250, 700)
+size = Vector2i(250, 900)
 script = ExtResource("15_spawnerui")
 spawner_path = NodePath("../../ExtractionBed/Spawner")
 

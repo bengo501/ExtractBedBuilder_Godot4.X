@@ -46,6 +46,7 @@ var tampa_inferior: CSGCylinder3D
 var tampa_superior: CSGCylinder3D
 var main_cylinder: CSGCylinder3D
 var inner_cylinder: CSGCylinder3D
+var cylinder: CSGCylinder3D
 
 # Constantes para o posicionamento
 const FLOOR_Y = 0.0  # Posição Y do chão
@@ -58,10 +59,20 @@ func _ready():
 	inner_cylinder = $CSGCylinder3D/InnerCylinder
 	tampa_inferior = $TampaInferior
 	tampa_superior = $TampaSuperior
+	cylinder = $CSGCylinder3D
 	
 	_update_bed()
 	_update_materials()
 	_update_tampas()
+	
+	# Configurar camadas de colisão das tampas
+	if tampa_inferior:
+		tampa_inferior.collision_layer = 2  # Camada 2 para tampa inferior
+		tampa_inferior.collision_mask = 1   # Colide apenas com objetos (camada 1)
+	
+	if tampa_superior:
+		tampa_superior.collision_layer = 4  # Camada 3 para tampa superior
+		tampa_superior.collision_mask = 1   # Colide apenas com objetos (camada 1)
 
 func _update_bed():
 	if main_cylinder and inner_cylinder:
@@ -192,3 +203,37 @@ func update_vertical_position(new_y: float):
 	
 	# Atualiza as tampas para manter a proporção correta
 	_update_tampas() 
+
+func update_bed():
+	if cylinder:
+		cylinder.height = height
+		cylinder.radius = diameter / 2.0
+		cylinder.inner_radius = inner_cylinder_radius
+
+func set_height(new_height: float):
+	height = new_height
+	update_bed()
+	_update_tampas()
+
+func set_width(new_width: float):
+	width = new_width
+	_update_tampas()
+
+func set_diameter(new_diameter: float):
+	diameter = new_diameter
+	update_bed()
+	_update_tampas()
+
+func set_inner_radius(new_radius: float):
+	inner_cylinder_radius = new_radius
+	update_bed()
+
+func toggle_tampa_inferior():
+	if tampa_inferior:
+		tampa_inferior.visible = !tampa_inferior.visible
+		_update_tampas()
+
+func toggle_tampa_superior():
+	if tampa_superior:
+		tampa_superior.visible = !tampa_superior.visible
+		_update_tampas()

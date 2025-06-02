@@ -1,4 +1,4 @@
-[gd_scene load_steps=29 format=3 uid="uid://fbt81m33ijtb"]
+[gd_scene load_steps=30 format=3 uid="uid://fbt81m33ijtb"]
 
 [ext_resource type="Script" uid="uid://d4klsjbircvsq" path="res://Scripts/extraction_bed.gd" id="1_2k4m3"]
 [ext_resource type="Texture2D" uid="uid://cs7pfnrwfl34w" path="res://Assets/Textures/AnyConv.com__sl_072622_51930_13.hdr" id="1_g2tnf"]
@@ -18,6 +18,7 @@
 [ext_resource type="Script" uid="uid://ci8im2debx7vg" path="res://Scripts/bed_info.gd" id="19_bedinfo"]
 [ext_resource type="Script" uid="uid://c6svdj178b456" path="res://Scripts/skybox_manager.gd" id="20_skybox"]
 [ext_resource type="PackedScene" uid="uid://wmddubogu34d" path="res://Cenas/menu_bar.tscn" id="21_menubar"]
+[ext_resource type="PackedScene" uid="uid://c8q6v0j6y5n3q" path="res://addons/obj_exporter/OBJExporter.tscn" id="22_54aen"]
 [ext_resource type="Script" uid="uid://cycoc6cetj1x" path="res://Scripts/grid_axes.gd" id="22_gridaxes"]
 [ext_resource type="Script" uid="uid://dt8i8vgd4o37v" path="res://Scripts/camera_info.gd" id="23_camera"]
 [ext_resource type="Script" uid="uid://n0hile8xer85" path="res://Scripts/object_info.gd" id="24_object"]
@@ -710,6 +711,8 @@ world_environment_path = NodePath("../WorldEnvironment")
 
 [node name="GridAxes" type="Node3D" parent="."]
 script = ExtResource("22_gridaxes")
+
+[node name="OBJExporter" parent="." instance=ExtResource("22_54aen")]
 
 [connection signal="value_changed" from="UIControlPanel/VBoxContainer/HeightContainer/HeightSlider" to="UIControlPanel" method="_on_height_slider_value_changed"]
 [connection signal="value_changed" from="UIControlPanel/VBoxContainer/WidthContainer/WidthSlider" to="UIControlPanel" method="_on_width_slider_value_changed"]

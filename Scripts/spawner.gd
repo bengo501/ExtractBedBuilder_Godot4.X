@@ -15,10 +15,20 @@ var current_spawn_gravity_scale: float = 1.0
 var current_spawn_linear_damp: float = 0.1
 var current_spawn_angular_damp: float = 0.1
 
+var extraction_bed: Node3D
+var tampa_inferior: CSGCylinder3D
+var tampa_superior: CSGCylinder3D
+
 func _ready():
 	spawn_timer = Timer.new()
 	add_child(spawn_timer)
 	spawn_timer.timeout.connect(_on_spawn_timer_timeout)
+	
+	# Obter referências ao leito e tampas
+	extraction_bed = get_node("/root/MainScene/ExtractionBed")
+	if extraction_bed:
+		tampa_inferior = extraction_bed.get_node("CSGCylinder3D/TampaInferior")
+		tampa_superior = extraction_bed.get_node("CSGCylinder3D/TampaSuperior")
 
 func start_spawning(qtd: int, obj_type: String, raio: float, altura: float, largura: float, intervalo: float, mass: float = 1.0, gravity_scale: float = 1.0, linear_damp: float = 0.1, angular_damp: float = 0.1):
 	# Configura os parâmetros do spawn
@@ -70,6 +80,15 @@ func spawn_object(type: String, radius: float, height: float, width: float, mass
 			object.gravity_scale = gravity_scale
 			object.linear_damp = linear_damp
 			object.angular_damp = angular_damp
+			
+			# Configurar camada de colisão base (camada 1 para objetos)
+			object.collision_layer = 1
+			
+			# Configurar máscara de colisão para colidir com as tampas
+			if tampa_inferior and tampa_inferior.visible:
+				object.collision_mask |= 2  # Colide com tampa inferior (camada 2)
+			if tampa_superior and tampa_superior.visible:
+				object.collision_mask |= 4  # Colide com tampa superior (camada 4)
 		
 		# Configurar escala baseada no tipo
 		match type:
@@ -85,9 +104,8 @@ func spawn_object(type: String, radius: float, height: float, width: float, mass
 		# Adicionar meta dado do tipo
 		object.set_meta("object_type", type)
 		
-		# Posicionar o objeto
-		var spawn_position = get_node(spawn_point).global_position
-		object.global_position = spawn_position
+		# Posicionar o objeto diretamente no spawner
+		object.global_position = global_position
 		
 		# Adicionar à cena
 		add_child(object)

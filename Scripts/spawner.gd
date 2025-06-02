@@ -111,6 +111,9 @@ func spawn_object(type: String, radius: float, height: float, width: float, mass
 		add_child(object)
 		spawned_objects.append(object)
 		
+		# Adicionar ao grupo spawned_objects
+		object.add_to_group("spawned_objects")
+		
 		return object
 	
 	return null

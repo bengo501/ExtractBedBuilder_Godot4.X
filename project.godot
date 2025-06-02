@@ -35,7 +35,7 @@ movie_writer/fps=30
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/obj_exporter/plugin.cfg")
+enabled=PackedStringArray("res://addons/csgtomesh/plugin.cfg", "res://addons/obj_exporter/plugin.cfg")
 
 [gui]
 

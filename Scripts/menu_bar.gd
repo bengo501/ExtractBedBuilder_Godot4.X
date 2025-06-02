@@ -11,6 +11,7 @@ var confirmation_dialog: ConfirmationDialog
 var spawn_timer: Timer
 var language_manager: Node
 var model_exporter: Node
+var file_dialog: FileDialog
 
 # Sistema de histórico para desfazer/refazer
 var action_history: Array = []
@@ -54,6 +55,15 @@ func _ready():
 	model_exporter.set_script(load("res://Scripts/model_exporter.gd"))
 	add_child(model_exporter)
 	model_exporter.export_complete.connect(_on_export_complete)
+	
+	# Criar diálogo de arquivo
+	file_dialog = FileDialog.new()
+	file_dialog.title = "Salvar Modelo"
+	file_dialog.file_mode = FileDialog.FILE_MODE_SAVE_FILE
+	file_dialog.add_filter("*.obj", "OBJ Files")
+	file_dialog.access = FileDialog.ACCESS_FILESYSTEM
+	file_dialog.file_selected.connect(_on_file_dialog_file_selected)
+	add_child(file_dialog)
 	
 	# Conectar ao sinal de mudança de idioma
 	if not language_manager.is_connected("language_changed", Callable(self, "_on_language_changed")):
@@ -224,10 +234,10 @@ func _on_file_menu_id_pressed(id: int):
 	match id:
 		0: # Abrir
 			print("Abrir arquivo (implementar)")
-		1: # Salvar Projeto
+		1: # Salvar
 			print("Salvar projeto (implementar)")
-		2: # Exportar Modelo
-			_show_export_dialog()
+		2: # Exportar
+			_export_model()
 		3: # Sair
 			get_tree().quit()
 
@@ -474,29 +484,36 @@ func paste_objects():
 	
 	print("Objetos colados: ", clipboard.size())
 
-func _show_export_dialog():
-	var dialog = FileDialog.new()
-	dialog.title = "Exportar Modelo"
-	dialog.file_mode = FileDialog.FILE_MODE_SAVE_FILE
-	dialog.add_filter("*.obj", "OBJ Files")
-	dialog.add_filter("*.stl", "STL Files")
-	dialog.add_filter("*.fbx", "FBX Files")
+func _export_model():
+	# Obter o objeto selecionado
+	var selected_object = get_selected_object()
+	if not selected_object:
+		OS.alert("Selecione um objeto para exportar!", "Erro")
+		return
 	
-	# Conectar o sinal de arquivo selecionado
-	dialog.file_selected.connect(_on_export_file_selected)
-	
-	# Adicionar o diálogo à cena
-	add_child(dialog)
-	dialog.popup_centered()
+	# Mostrar diálogo de arquivo
+	file_dialog.popup_centered()
 
-func _on_export_file_selected(path: String):
-	var format = path.get_extension().to_lower()
-	model_exporter.export_model(format, path)
+func _on_file_dialog_file_selected(path: String):
+	var selected_object = get_selected_object()
+	if not selected_object:
+		return
+	
+	var save_path = path.get_base_dir()
+	var file_name = path.get_file().get_basename()
+	
+	model_exporter.export_mesh_to_file(selected_object, save_path, file_name)
 
 func _on_export_complete(success: bool, message: String):
-	# Mostrar mensagem de sucesso/erro
-	var dialog = AcceptDialog.new()
-	dialog.title = "Exportação"
-	dialog.dialog_text = message
-	add_child(dialog)
-	dialog.popup_centered() 
+	if success:
+		OS.alert(message, "Sucesso")
+	else:
+		OS.alert(message, "Erro")
+
+func get_selected_object() -> Node3D:
+	# Implementar lógica para obter o objeto selecionado
+	# Por enquanto, retorna o primeiro objeto encontrado
+	var objects = get_tree().get_nodes_in_group("spawned_objects")
+	if objects.size() > 0:
+		return objects[0]
+	return null 

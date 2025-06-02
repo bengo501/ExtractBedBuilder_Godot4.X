@@ -10,6 +10,7 @@ extends Control
 var confirmation_dialog: ConfirmationDialog
 var spawn_timer: Timer
 var language_manager: Node
+var model_exporter: Node
 
 # Sistema de histórico para desfazer/refazer
 var action_history: Array = []
@@ -47,6 +48,12 @@ func _ready():
 	if not language_manager:
 		push_error("MenuBar: LanguageManager não encontrado!")
 		return
+	
+	# Inicializar o exportador de modelos
+	model_exporter = Node.new()
+	model_exporter.set_script(load("res://Scripts/model_exporter.gd"))
+	add_child(model_exporter)
+	model_exporter.export_complete.connect(_on_export_complete)
 	
 	# Conectar ao sinal de mudança de idioma
 	if not language_manager.is_connected("language_changed", Callable(self, "_on_language_changed")):
@@ -220,7 +227,7 @@ func _on_file_menu_id_pressed(id: int):
 		1: # Salvar Projeto
 			print("Salvar projeto (implementar)")
 		2: # Exportar Modelo
-			print("Exportar modelo (implementar)")
+			_show_export_dialog()
 		3: # Sair
 			get_tree().quit()
 
@@ -465,4 +472,31 @@ func paste_objects():
 			new_object.rotation = object_data.rotation
 			new_object.scale = object_data.scale
 	
-	print("Objetos colados: ", clipboard.size()) 
+	print("Objetos colados: ", clipboard.size())
+
+func _show_export_dialog():
+	var dialog = FileDialog.new()
+	dialog.title = "Exportar Modelo"
+	dialog.file_mode = FileDialog.FILE_MODE_SAVE_FILE
+	dialog.add_filter("*.obj", "OBJ Files")
+	dialog.add_filter("*.stl", "STL Files")
+	dialog.add_filter("*.fbx", "FBX Files")
+	
+	# Conectar o sinal de arquivo selecionado
+	dialog.file_selected.connect(_on_export_file_selected)
+	
+	# Adicionar o diálogo à cena
+	add_child(dialog)
+	dialog.popup_centered()
+
+func _on_export_file_selected(path: String):
+	var format = path.get_extension().to_lower()
+	model_exporter.export_model(format, path)
+
+func _on_export_complete(success: bool, message: String):
+	# Mostrar mensagem de sucesso/erro
+	var dialog = AcceptDialog.new()
+	dialog.title = "Exportação"
+	dialog.dialog_text = message
+	add_child(dialog)
+	dialog.popup_centered() 

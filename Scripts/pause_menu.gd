@@ -1,6 +1,8 @@
 extends Control
 
 var language_manager: Node
+var windows = []
+var model_exporter: Node
 
 @onready var title_label = $CenterContainer/VBoxContainer/Title
 @onready var resume_button = $CenterContainer/VBoxContainer/ResumeButton
@@ -20,6 +22,12 @@ func _ready():
 	if not language_manager.is_connected("language_changed", Callable(self, "_on_language_changed")):
 		language_manager.connect("language_changed", Callable(self, "_on_language_changed"))
 	
+	# Inicializar o exportador de modelos
+	model_exporter = Node.new()
+	model_exporter.set_script(load("res://Scripts/model_exporter.gd"))
+	add_child(model_exporter)
+	model_exporter.export_complete.connect(_on_export_complete)
+	
 	# Conectar sinais dos botões
 	resume_button.pressed.connect(_on_resume_pressed)
 	save_button.pressed.connect(_on_save_pressed)
@@ -35,6 +43,15 @@ func _ready():
 	
 	# Habilitar processamento de input
 	process_mode = Node.PROCESS_MODE_ALWAYS
+	
+	# Coletar todas as janelas
+	windows = [
+		get_node("../UIControlPanel"),
+		get_node("../UIControlPanel/SpawnerControlPanel"),
+		get_node("../CameraInfo"),
+		get_node("../ObjectInfo"),
+		get_node("../BedInfo")
+	]
 
 func _input(event):
 	if event is InputEventKey and event.keycode == KEY_ESCAPE and event.pressed:
@@ -51,11 +68,21 @@ func open_menu():
 	visible = true
 	get_tree().paused = true
 	process_mode = Node.PROCESS_MODE_ALWAYS
+	
+	# Esconder todas as janelas
+	for window in windows:
+		if window:
+			window.hide()
 
 func close_menu():
 	visible = false
 	get_tree().paused = false
 	process_mode = Node.PROCESS_MODE_INHERIT
+	
+	# Mostrar todas as janelas
+	for window in windows:
+		if window:
+			window.show()
 
 func _update_labels():
 	if not language_manager:
@@ -80,9 +107,31 @@ func _on_save_pressed():
 	# Não fecha o menu após salvar para permitir múltiplos salvamentos
 
 func _on_export_pressed():
-	# TODO: Implementar lógica de exportar modelo
-	print("Exportar modelo (implementar)")
-	# Não fecha o menu após exportar para permitir múltiplas exportações
+	var dialog = FileDialog.new()
+	dialog.title = "Exportar Modelo"
+	dialog.file_mode = FileDialog.FILE_MODE_SAVE_FILE
+	dialog.add_filter("*.obj", "OBJ Files")
+	dialog.add_filter("*.stl", "STL Files")
+	dialog.add_filter("*.fbx", "FBX Files")
+	
+	# Conectar o sinal de arquivo selecionado
+	dialog.file_selected.connect(_on_export_file_selected)
+	
+	# Adicionar o diálogo à cena
+	add_child(dialog)
+	dialog.popup_centered()
+
+func _on_export_file_selected(path: String):
+	var format = path.get_extension().to_lower()
+	model_exporter.export_model(format, path)
+
+func _on_export_complete(success: bool, message: String):
+	# Mostrar mensagem de sucesso/erro
+	var dialog = AcceptDialog.new()
+	dialog.title = "Exportação"
+	dialog.dialog_text = message
+	add_child(dialog)
+	dialog.popup_centered()
 
 func _on_settings_pressed():
 	# Implementar lógica das configurações

@@ -125,9 +125,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 0)
 cast_shadow = 0
 size = Vector3(0.3, 0.1, 0.3)
 
-[node name="CameraTop" type="Camera3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 9.35908, 0)
-
 [node name="CameraFront" type="Camera3D" parent="."]
 transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 2.5, -6)
 
@@ -141,12 +138,15 @@ transform = Transform3D(0.783693, 0.310574, -0.53793, 0, 0.866025, 0.5, 0.621148
 fov = 60.0
 script = ExtResource("9_fhk2h")
 
+[node name="CameraTop" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 9.35908, 0)
+
 [node name="CameraController" type="Node" parent="."]
 script = ExtResource("2_3k4m3")
-camera1_path = NodePath("../CameraTop")
+camera1_path = NodePath("../CameraFront")
 camera2_path = NodePath("../CameraFree")
-camera3_path = NodePath("../CameraFront")
-camera4_path = NodePath("../CameraIso")
+camera3_path = NodePath("../CameraIso")
+camera4_path = NodePath("../CameraTop")
 extraction_bed_path = NodePath("../ExtractionBed")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
@@ -162,7 +162,7 @@ omni_attenuation = 1.2
 
 [node name="UIControlPanel" type="Window" parent="."]
 title = "Painel de Controle"
-position = Vector2i(1000, 20)
+position = Vector2i(1450, 100)
 size = Vector2i(350, 800)
 script = ExtResource("3_4k4m3")
 extraction_bed_path = NodePath("../ExtractionBed")
@@ -175,7 +175,7 @@ anchor_bottom = 1.0
 offset_bottom = 17.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.2, 0.2, 0.2, 0.647059)
+color = Color(0.2, 0.2, 0.2, 0.2)
 
 [node name="VBoxContainer" type="VBoxContainer" parent="UIControlPanel"]
 anchors_preset = 15
@@ -413,8 +413,8 @@ text = "0.2"
 
 [node name="SpawnerControlPanel" type="Window" parent="UIControlPanel"]
 title = "Painel do Spawner"
-position = Vector2i(20, 20)
-size = Vector2i(250, 900)
+position = Vector2i(30, 100)
+size = Vector2i(300, 900)
 script = ExtResource("15_spawnerui")
 spawner_path = NodePath("../../ExtractionBed/Spawner")
 
@@ -426,7 +426,7 @@ offset_top = -267.0
 offset_bottom = 265.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.2, 0.2, 0.2, 0.592157)
+color = Color(0.2, 0.2, 0.2, 0.2)
 
 [node name="SpawnerVBox" type="VBoxContainer" parent="UIControlPanel/SpawnerControlPanel"]
 anchors_preset = 15
@@ -598,7 +598,7 @@ value = 0.1
 
 [node name="CameraInfo" type="Window" parent="."]
 title = "Informações da Câmera"
-position = Vector2i(20, 840)
+position = Vector2i(360, 260)
 size = Vector2i(300, 100)
 script = ExtResource("23_camera")
 
@@ -608,7 +608,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.2, 0.2, 0.2, 0.592157)
+color = Color(0.2, 0.2, 0.2, 0.2)
 
 [node name="CameraIndicator" type="Label" parent="CameraInfo"]
 anchors_preset = 15
@@ -639,7 +639,7 @@ text = "Resetar Câmeras"
 
 [node name="ObjectInfo" type="Window" parent="."]
 title = "Informações dos Objetos"
-position = Vector2i(340, 840)
+position = Vector2i(360, 540)
 size = Vector2i(300, 200)
 script = ExtResource("24_object")
 
@@ -649,7 +649,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.2, 0.2, 0.2, 0.592157)
+color = Color(0.2, 0.2, 0.2, 0.2)
 
 [node name="ObjectIndicator" type="Label" parent="ObjectInfo"]
 anchors_preset = 15
@@ -669,7 +669,7 @@ Tipo B: -
 
 [node name="BedInfo" type="Window" parent="."]
 title = "Informações do Leito"
-position = Vector2i(660, 840)
+position = Vector2i(360, 840)
 size = Vector2i(300, 150)
 script = ExtResource("19_bedinfo")
 extraction_bed_path = NodePath("../ExtractionBed")
@@ -680,7 +680,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.2, 0.2, 0.2, 0.592157)
+color = Color(0.2, 0.2, 0.2, 0.0823529)
 
 [node name="BedIndicator" type="Label" parent="BedInfo"]
 anchors_preset = 15

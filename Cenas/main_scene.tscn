@@ -163,7 +163,7 @@ omni_attenuation = 1.2
 
 [node name="UIControlPanel" type="Window" parent="."]
 title = "Painel de Controle"
-position = Vector2i(1450, 100)
+position = Vector2i(967, 36)
 size = Vector2i(350, 800)
 script = ExtResource("3_4k4m3")
 extraction_bed_path = NodePath("../ExtractionBed")
@@ -414,7 +414,7 @@ text = "0.2"
 
 [node name="SpawnerControlPanel" type="Window" parent="UIControlPanel"]
 title = "Painel do Spawner"
-position = Vector2i(30, 100)
+position = Vector2i(30, 36)
 size = Vector2i(300, 900)
 script = ExtResource("15_spawnerui")
 spawner_path = NodePath("../../ExtractionBed/Spawner")
@@ -640,7 +640,7 @@ text = "Resetar Câmeras"
 
 [node name="ObjectInfo" type="Window" parent="."]
 title = "Informações dos Objetos"
-position = Vector2i(360, 540)
+position = Vector2i(360, 321)
 size = Vector2i(300, 200)
 script = ExtResource("24_object")
 
@@ -670,7 +670,7 @@ Tipo B: -
 
 [node name="BedInfo" type="Window" parent="."]
 title = "Informações do Leito"
-position = Vector2i(360, 840)
+position = Vector2i(360, 371)
 size = Vector2i(300, 150)
 script = ExtResource("19_bedinfo")
 extraction_bed_path = NodePath("../ExtractionBed")

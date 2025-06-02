@@ -13,53 +13,40 @@ func _ready():
 # Função auxiliar para adicionar mesh de um objeto
 func _add_mesh_from_object(obj, all_meshes):
 	if obj is MeshInstance3D:
-		all_meshes.append(obj)
-	elif obj is CSGShape3D:
-		var mesh_pairs = obj.get_meshes()
-		if mesh_pairs.size() == 2 and typeof(mesh_pairs[1]) == TYPE_OBJECT:
-			print("[Export] CSGShape3D convertido para mesh:", obj)
-			all_meshes.append(mesh_pairs[1])
-		else:
-			print("[Export] CSGShape3D ignorado, mesh não gerado:", obj)
-	elif obj is ArrayMesh:
+		print("[Export] MeshInstance3D adicionado:", obj)
 		all_meshes.append(obj)
 	else:
-		print("[Export] Objeto ignorado (não é MeshInstance3D, CSGShape3D nem ArrayMesh):", obj)
+		print("[Export] Objeto ignorado (não é MeshInstance3D):", obj)
+
+# Função auxiliar para converter CSG em MeshInstance3D temporário
+func _csg_to_mesh_instance(csg: CSGShape3D) -> MeshInstance3D:
+	var orig_mesh : Mesh = csg.get_meshes()[1]
+	var new_mesh : Mesh
+	for i in orig_mesh.get_surface_count():
+		var st = SurfaceTool.new()
+		st.append_from(orig_mesh, i, Transform3D())
+		st.set_material(orig_mesh.surface_get_material(i))
+		st.index()
+		if i == 0: new_mesh = st.commit()
+		else: st.commit(new_mesh)
+	var mesh_instance = MeshInstance3D.new()
+	mesh_instance.mesh = new_mesh
+	mesh_instance.global_transform = csg.global_transform
+	return mesh_instance
 
 func export_model(format: String, file_path: String) -> void:
-	# Lista para armazenar todos os objetos exportáveis
 	var all_meshes = []
-
-	# Adiciona leito e tampas
-	var extraction_bed = get_node("/root/MainScene/ExtractionBed/CSGCylinder3D")
+	var extraction_bed = get_node("/root/MainScene/ExtractionBed")
 	if extraction_bed:
-		_add_mesh_from_object(extraction_bed, all_meshes)
-		var inner_cylinder = extraction_bed.get_node("InnerCylinder")
-		if inner_cylinder:
-			_add_mesh_from_object(inner_cylinder, all_meshes)
-		var tampa_inferior = extraction_bed.get_node("TampaInferior")
-		if tampa_inferior and tampa_inferior.visible:
-			_add_mesh_from_object(tampa_inferior, all_meshes)
-		var tampa_superior = extraction_bed.get_node("TampaSuperior")
-		if tampa_superior and tampa_superior.visible:
-			_add_mesh_from_object(tampa_superior, all_meshes)
-
-	# Adiciona objetos spawnados
+		for child in extraction_bed.get_children():
+			if child is MeshInstance3D:
+				all_meshes.append(child)
 	var spawner = get_node("/root/MainScene/ExtractionBed/Spawner")
-	for child in spawner.get_children():
-		if child.name != "SpawnerBlock" and not (child is Timer):
-			_add_mesh_from_object(child, all_meshes)
-
-	# Exportar o modelo combinado
-	match format.to_lower():
-		"obj":
-			_export_obj(all_meshes, file_path)
-		"fbx":
-			_export_fbx(all_meshes, file_path)
-		"stl":
-			_export_stl(all_meshes, file_path)
-		_:
-			emit_signal("export_complete", false, "Formato não suportado: " + format)
+	if spawner:
+		for child in spawner.get_children():
+			if child is MeshInstance3D:
+				all_meshes.append(child)
+	_export_obj(all_meshes, file_path)
 
 func _get_mesh_data(object) -> Dictionary:
 	var mesh_data = {

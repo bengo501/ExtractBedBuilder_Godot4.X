@@ -12,6 +12,9 @@ var spawn_timer: Timer
 var language_manager: Node
 var model_exporter: Node
 var file_dialog: FileDialog
+var export_dialog: AcceptDialog
+var convert_button: Button
+var export_button: Button
 
 # Sistema de histórico para desfazer/refazer
 var action_history: Array = []
@@ -103,6 +106,20 @@ func _ready():
 	
 	# Atualizar textos iniciais
 	_update_menu_texts()
+	
+	# Adiciona diálogo de exportação
+	export_dialog = AcceptDialog.new()
+	export_dialog.dialog_text = "Exportação de Modelo 3D"
+	convert_button = Button.new()
+	convert_button.text = "Converter CSGs para MeshInstance3D"
+	convert_button.pressed.connect(_on_convert_csgs_pressed)
+	export_dialog.add_child(convert_button)
+	export_button = Button.new()
+	export_button.text = "Exportar para OBJ"
+	export_button.disabled = true
+	export_button.pressed.connect(_on_export_obj_pressed)
+	export_dialog.add_child(export_button)
+	add_child(export_dialog)
 
 func _verify_menu_nodes() -> bool:
 	if not file_menu or not edit_menu or not view_menu or not tools_menu or not help_menu or not language_menu:
@@ -485,14 +502,52 @@ func paste_objects():
 	print("Objetos colados: ", clipboard.size())
 
 func _export_model():
-	# Obter o objeto selecionado
-	var selected_object = get_selected_object()
-	if not selected_object:
-		OS.alert("Selecione um objeto para exportar!", "Erro")
-		return
-	
-	# Mostrar diálogo de arquivo
-	file_dialog.popup_centered()
+	export_dialog.popup_centered()
+
+func _on_convert_csgs_pressed():
+	_convert_all_csgs_to_mesh()
+	export_button.disabled = false
+
+func _on_export_obj_pressed():
+	model_exporter.export_model("obj", "user://exported_model.obj")
+	export_dialog.hide()
+
+func _convert_all_csgs_to_mesh():
+	var nodes = []
+	# Leito e tampas
+	var extraction_bed = get_node("/root/MainScene/ExtractionBed")
+	if extraction_bed:
+		nodes += extraction_bed.get_children()
+	# Objetos spawnados
+	var spawner = get_node("/root/MainScene/ExtractionBed/Spawner")
+	if spawner:
+		nodes += spawner.get_children()
+	for node in nodes:
+		if node is CSGShape3D:
+			# Evita duplicar se já existe um MeshInstance3D com o mesmo nome
+			var mesh_name = "Mesh_" + node.name
+			if node.get_parent().has_node(mesh_name):
+				continue
+			var mesh_instance = _csg_to_mesh_instance(node)
+			mesh_instance.name = mesh_name
+			node.get_parent().add_child(mesh_instance)
+			mesh_instance.owner = get_tree().get_edited_scene_root()
+			mesh_instance.global_transform = node.global_transform
+
+func _csg_to_mesh_instance(csg: CSGShape3D) -> MeshInstance3D:
+	var orig_mesh : Mesh = csg.get_meshes()[1]
+	var new_mesh : Mesh
+	for i in orig_mesh.get_surface_count():
+		var st = SurfaceTool.new()
+		st.append_from(orig_mesh, i, Transform3D())
+		st.set_material(orig_mesh.surface_get_material(i))
+		st.index()
+		if i == 0: new_mesh = st.commit()
+		else: st.commit(new_mesh)
+	var mesh_instance = MeshInstance3D.new()
+	mesh_instance.mesh = new_mesh
+	mesh_instance.global_transform = csg.global_transform
+	return mesh_instance
 
 func _on_file_dialog_file_selected(path: String):
 	var selected_object = get_selected_object()

@@ -30,6 +30,14 @@ func _ready():
 		tampa_inferior = extraction_bed.get_node("CSGCylinder3D/TampaInferior")
 		tampa_superior = extraction_bed.get_node("CSGCylinder3D/TampaSuperior")
 
+	# Corrigir object_scenes para garantir que todas as referências são PackedScenes válidas
+	object_scenes = {
+		"cube": preload("res://Cenas/cube.tscn"),
+		"cylinder": preload("res://Cenas/cylinder.tscn"),
+		"plane": preload("res://Cenas/plane.tscn"),
+		"sphere": preload("res://Cenas/sphere.tscn"),
+	}
+
 func start_spawning(qtd: int, obj_type: String, raio: float, altura: float, largura: float, intervalo: float, mass: float = 1.0, gravity_scale: float = 1.0, linear_damp: float = 0.1, angular_damp: float = 0.1):
 	# Configura os parâmetros do spawn
 	remaining_spawns = qtd
@@ -66,11 +74,17 @@ func update_object_info():
 		object_info.update_info(total, type_counts)
 
 func spawn_object(type: String, radius: float, height: float, width: float, mass: float, gravity_scale: float, linear_damp: float, angular_damp: float) -> Node3D:
+	print("[DEBUG] spawn_object chamado com type: ", type)
+	print("[DEBUG] object_scenes: ", object_scenes)
 	if not object_scenes.has(type):
 		push_error("Tipo de objeto não encontrado: " + type)
 		return null
 	
 	var object_scene = object_scenes[type]
+	if object_scene == null or not object_scene is PackedScene:
+		push_error("object_scene para tipo '" + type + "' é inválido: " + str(object_scene))
+		return null
+
 	var object = object_scene.instantiate()
 	
 	if object is Node3D:
@@ -83,6 +97,9 @@ func spawn_object(type: String, radius: float, height: float, width: float, mass
 			
 			# Configurar camada de colisão base (camada 1 para objetos)
 			object.collision_layer = 1
+			
+			# Configurar máscara de colisão para colidir com as tampas e o chão
+			object.collision_mask = 1 | 2 | 4 | 8  # Colide com objetos (1), tampas (2,4) e chão (8)
 			
 			# Configurar máscara de colisão para colidir com as tampas
 			if tampa_inferior and tampa_inferior.visible:

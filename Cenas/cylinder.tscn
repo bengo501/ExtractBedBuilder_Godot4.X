@@ -1,4 +1,6 @@
-[gd_scene load_steps=2 format=3 uid="uid://bs6bvdgbi270p"]
+[gd_scene load_steps=3 format=3 uid="uid://bs6bvdgbi270p"]
+
+[ext_resource type="Script" uid="uid://daxy4exesi1pa" path="res://Scripts/sphere_physics.gd" id="1_physics"]
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_1"]
 height = 0.3
@@ -7,6 +9,7 @@ radius = 0.15
 [node name="Cylinder" type="RigidBody3D"]
 linear_damp = 0.1
 angular_damp = 0.1
+script = ExtResource("1_physics")
 
 [node name="CSGCylinder3D" type="CSGCylinder3D" parent="."]
 radius = 0.15

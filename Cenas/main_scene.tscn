@@ -1,4 +1,4 @@
-[gd_scene load_steps=31 format=3 uid="uid://fbt81m33ijtb"]
+[gd_scene load_steps=32 format=3 uid="uid://fbt81m33ijtb"]
 
 [ext_resource type="Script" uid="uid://d4klsjbircvsq" path="res://Scripts/extraction_bed.gd" id="1_2k4m3"]
 [ext_resource type="Texture2D" uid="uid://cs7pfnrwfl34w" path="res://Assets/Textures/AnyConv.com__sl_072622_51930_13.hdr" id="1_g2tnf"]
@@ -8,7 +8,7 @@
 [ext_resource type="Script" uid="uid://c3s2upg53hd5p" path="res://Scripts/free_camera.gd" id="8_freecam"]
 [ext_resource type="Script" uid="uid://rt7suxcv2hij" path="res://Scripts/camera_iso_control.gd" id="9_fhk2h"]
 [ext_resource type="PackedScene" path="res://Cenas/sphere.tscn" id="10_sphere"]
-[ext_resource type="PackedScene" path="res://Cenas/cube.tscn" id="11_cube"]
+[ext_resource type="PackedScene" uid="uid://dal2xblic7d5e" path="res://Cenas/cube.tscn" id="11_cube"]
 [ext_resource type="PackedScene" uid="uid://bs6bvdgbi270p" path="res://Cenas/cylinder.tscn" id="12_cylinder"]
 [ext_resource type="PackedScene" uid="uid://bx5ovgcp3b1jb" path="res://Cenas/plane.tscn" id="13_plane"]
 [ext_resource type="Script" uid="uid://c5vuj1v32js8g" path="res://Scripts/spawner.gd" id="14_spawner"]
@@ -22,7 +22,8 @@
 [ext_resource type="Script" uid="uid://cycoc6cetj1x" path="res://Scripts/grid_axes.gd" id="22_gridaxes"]
 [ext_resource type="Script" uid="uid://dt8i8vgd4o37v" path="res://Scripts/camera_info.gd" id="23_camera"]
 [ext_resource type="Script" uid="uid://n0hile8xer85" path="res://Scripts/object_info.gd" id="24_object"]
-[ext_resource type="PackedScene" path="res://Cenas/performance_monitor.tscn" id="25_perfmon"]
+[ext_resource type="PackedScene" uid="uid://b6x8v0j6y5n3q" path="res://Cenas/performance_monitor.tscn" id="25_perfmon"]
+[ext_resource type="Script" uid="uid://dgc0wxtxrj08s" path="res://Scripts/floor_deadzone.gd" id="26_deadzone"]
 
 [sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_xwv2h"]
 panorama = ExtResource("1_g2tnf")
@@ -66,6 +67,7 @@ environment = SubResource("Environment_1")
 
 [node name="Floor" type="StaticBody3D" parent="."]
 transform = Transform3D(2.5, 0, 0, 0, 2.5, 0, 0, 0, 2.5, 0, 0, 0)
+script = ExtResource("26_deadzone")
 
 [node name="CSGBox3D" type="CSGBox3D" parent="Floor"]
 material_override = SubResource("StandardMaterial3D_age84")

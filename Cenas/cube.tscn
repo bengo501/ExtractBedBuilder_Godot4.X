@@ -1,16 +1,17 @@
-[gd_scene format=3]
+[gd_scene load_steps=3 format=3 uid="uid://dal2xblic7d5e"]
+
+[ext_resource type="Script" uid="uid://daxy4exesi1pa" path="res://Scripts/sphere_physics.gd" id="1_physics"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_1"]
 size = Vector3(0.3, 0.3, 0.3)
 
 [node name="Cube" type="RigidBody3D"]
-mass = 1.0
-gravity_scale = 1.0
 linear_damp = 0.1
 angular_damp = 0.1
+script = ExtResource("1_physics")
 
 [node name="CSGBox3D" type="CSGBox3D" parent="."]
 size = Vector3(0.3, 0.3, 0.3)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
-shape = SubResource("BoxShape3D_1") 
+shape = SubResource("BoxShape3D_1")

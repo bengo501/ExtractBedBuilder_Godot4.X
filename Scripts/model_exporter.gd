@@ -237,4 +237,79 @@ func _on_export_completed(obj_file: String, mtl_file: String) -> void:
 	print("[Export] Exportação concluída!")
 	print("[Export] Arquivo OBJ: ", obj_file)
 	print("[Export] Arquivo MTL: ", mtl_file)
-	emit_signal("export_complete", true, "Modelo exportado com sucesso!") 
+	emit_signal("export_complete", true, "Modelo exportado com sucesso!")
+
+# Exporta todos os CSGs do leito e suas tampas
+func export_bed_and_covers_to_obj(export_dir: String) -> void:
+	print("[ModelExporter] Iniciando exportação do leito e tampas para OBJ...")
+	if not extraction_bed:
+		print("[ModelExporter] Erro: ExtractionBed não encontrado!")
+		emit_signal("export_complete", false, "ExtractionBed não encontrado!")
+		return
+	print("[ModelExporter] Exportando CSGs do leito:", extraction_bed.name)
+	csg_exporter.export_all_csgs_to_obj(extraction_bed, export_dir)
+	for child in extraction_bed.get_children():
+		if child.name.to_lower().find("tampa") != -1 or child.name.to_lower().find("cover") != -1:
+			print("[ModelExporter] Exportando CSGs da tampa:", child.name)
+			csg_exporter.export_all_csgs_to_obj(child, export_dir)
+	print("[ModelExporter] Exportação do leito e tampas finalizada!")
+	# Não emite sinal de conclusão aqui, pois pode ser chamado em lote 
+
+# Exporta todos os CSGs dos objetos spawnados
+func export_spawned_objects_to_obj(export_dir: String) -> void:
+	print("[ModelExporter] Iniciando exportação dos objetos spawnados para OBJ...")
+	if not spawner:
+		print("[ModelExporter] Erro: Spawner não encontrado!")
+		emit_signal("export_complete", false, "Spawner não encontrado!")
+		return
+	for child in spawner.get_children():
+		if child is CSGShape3D:
+			print("[ModelExporter] Exportando CSG do objeto spawnado:", child.name)
+			csg_exporter.export_csg_to_obj(child, export_dir.path_join(child.name + ".obj"))
+		# Se o objeto spawnado for um corpo físico, exportar todos os CSGs filhos
+		elif child is Node3D:
+			for subchild in child.get_children():
+				if subchild is CSGShape3D:
+					print("[ModelExporter] Exportando CSG filho de objeto spawnado:", subchild.name)
+					csg_exporter.export_csg_to_obj(subchild, export_dir.path_join(subchild.name + ".obj"))
+	print("[ModelExporter] Exportação dos objetos spawnados finalizada!")
+
+# Exporta todos os CSGs do leito, tampas e objetos spawnados em um único arquivo OBJ
+func export_all_to_single_obj(file_path: String) -> void:
+	print("[ModelExporter] Iniciando exportação de todos os CSGs para um único OBJ...")
+	var all_csgs: Array = []
+	# Coletar CSGs do leito
+	if extraction_bed:
+		print("[ModelExporter] Coletando CSGs do leito:", extraction_bed.name)
+		all_csgs += _collect_csgs_recursive(extraction_bed)
+		# Coletar CSGs das tampas (filhos do leito com 'tampa' ou 'cover' no nome)
+		for child in extraction_bed.get_children():
+			if child.name.to_lower().find("tampa") != -1 or child.name.to_lower().find("cover") != -1:
+				print("[ModelExporter] Coletando CSGs da tampa:", child.name)
+				all_csgs += _collect_csgs_recursive(child)
+	else:
+		print("[ModelExporter] Aviso: ExtractionBed não encontrado!")
+	# Coletar CSGs dos objetos spawnados
+	if spawner:
+		print("[ModelExporter] Coletando CSGs dos objetos spawnados...")
+		for child in spawner.get_children():
+			all_csgs += _collect_csgs_recursive(child)
+	else:
+		print("[ModelExporter] Aviso: Spawner não encontrado!")
+	print("[ModelExporter] Total de CSGs coletados:", all_csgs.size())
+	if all_csgs.size() == 0:
+		print("[ModelExporter] Nenhum CSG encontrado para exportar!")
+		emit_signal("export_complete", false, "Nenhum CSG encontrado para exportar!")
+		return
+	# Exportar todos os CSGs juntos para um único OBJ
+	var success = csg_exporter.export_multiple_csgs_to_obj(all_csgs, file_path)
+	emit_signal("export_complete", success, "Exportação finalizada para OBJ único." if success else "Erro ao exportar OBJ único.")
+
+# Função auxiliar para coletar todos os CSGs recursivamente
+func _collect_csgs_recursive(node: Node) -> Array:
+	var csgs = []
+	if node is CSGShape3D:
+		csgs.append(node)
+	for child in node.get_children():
+		csgs += _collect_csgs_recursive(child)
+	return csgs

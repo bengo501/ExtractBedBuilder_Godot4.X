@@ -125,4 +125,87 @@ func export_all_csgs_to_obj(root_node: Node, base_path: String) -> void:
 			print("[CSGExporter] Exportando CSG:", child.name, "para:", file_path)
 			export_csg_to_obj(child, file_path)
 		# Busca recursivamente em todos os filhos
-		export_all_csgs_to_obj(child, base_path) 
+		export_all_csgs_to_obj(child, base_path)
+
+# Exporta múltiplos CSGs para um único arquivo OBJ
+func export_multiple_csgs_to_obj(csgs: Array, file_path: String) -> bool:
+	print("[CSGExporter] Iniciando exportação de múltiplos CSGs para um único OBJ...")
+	if csgs.size() == 0:
+		print("[CSGExporter] Nenhum CSG fornecido para exportação!")
+		return false
+	var file = FileAccess.open(file_path, FileAccess.WRITE)
+	if not file:
+		print("[CSGExporter] Erro ao criar arquivo:", file_path)
+		return false
+	file.store_line("# Exported from Godot CSG - Multiple Objects")
+	var vertex_offset = 0
+	var total_vertices = 0
+	var total_faces = 0
+	for csg in csgs:
+		if not csg:
+			print("[CSGExporter] CSG nulo, ignorando...")
+			continue
+		print("[CSGExporter] Exportando CSG:", csg.name)
+		var mesh_pairs = csg.get_meshes()
+		if mesh_pairs.size() != 2 or typeof(mesh_pairs[0]) != TYPE_TRANSFORM3D or typeof(mesh_pairs[1]) != TYPE_OBJECT:
+			print("[CSGExporter] Erro: Formato de malha CSG inválido para:", csg.name)
+			continue
+		var mesh = mesh_pairs[1]
+		var transform = mesh_pairs[0]
+		var has_faces := false
+		for surface_idx in range(mesh.get_surface_count()):
+			var arrays = mesh.surface_get_arrays(surface_idx)
+			if arrays == null or arrays.size() <= ArrayMesh.ARRAY_INDEX:
+				continue
+			var indices = arrays[ArrayMesh.ARRAY_INDEX]
+			if indices != null and indices.size() > 0:
+				has_faces = true
+				break
+		if not has_faces:
+			print("[CSGExporter] Nenhuma face encontrada em", csg.name, "- convertendo para MeshInstance3D...")
+			var mesh_instance = _csg_to_mesh_instance(csg)
+			if mesh_instance and mesh_instance.mesh:
+				mesh = mesh_instance.mesh
+				transform = mesh_instance.global_transform
+			else:
+				print("[CSGExporter] Falha ao converter CSG para MeshInstance3D:", csg.name)
+				continue
+		file.store_line("o " + csg.name)
+		file.store_line("g " + csg.name)
+		for surface_idx in range(mesh.get_surface_count()):
+			print("[CSGExporter] --- Superfície", surface_idx, "de", csg.name, "---")
+			var arrays = mesh.surface_get_arrays(surface_idx)
+			if arrays == null or arrays.size() <= ArrayMesh.ARRAY_INDEX:
+				print("[CSGExporter] Superfície", surface_idx, ": arrays nulo ou tamanho insuficiente.")
+				continue
+			var vertices = arrays[ArrayMesh.ARRAY_VERTEX]
+			var indices = arrays[ArrayMesh.ARRAY_INDEX]
+			print("[CSGExporter] Superfície", surface_idx, ": vértices =", vertices.size() if vertices else 0, ", índices =", indices.size() if indices else 0)
+			if vertices == null or vertices.size() == 0:
+				print("[CSGExporter] Superfície", surface_idx, ": sem vértices, ignorando.")
+				continue
+			for vertex in vertices:
+				var transformed_vertex = transform * vertex
+				file.store_line("v %.6f %.6f %.6f" % [transformed_vertex.x, transformed_vertex.y, transformed_vertex.z])
+			total_vertices += vertices.size()
+			if indices != null and indices.size() > 0:
+				for i in range(0, indices.size(), 3):
+					if i + 2 >= indices.size():
+						print("[CSGExporter] Superfície", surface_idx, ": índice incompleto em", i, ", ignorando triângulo.")
+						continue
+					var v1 = indices[i] + vertex_offset + 1
+					var v2 = indices[i + 1] + vertex_offset + 1
+					var v3 = indices[i + 2] + vertex_offset + 1
+					file.store_line("f %d %d %d" % [v1, v2, v3])
+					total_faces += 1
+				print("[CSGExporter] Superfície", surface_idx, ": faces exportadas =", total_faces)
+			else:
+				print("[CSGExporter] Superfície", surface_idx, ": sem índices/faces.")
+			vertex_offset += vertices.size()
+	print("[CSGExporter] Exportação múltipla concluída para:", file_path)
+	print("[CSGExporter] Total de vértices exportados:", total_vertices)
+	print("[CSGExporter] Total de faces exportadas:", total_faces)
+	if total_vertices == 0 or total_faces == 0:
+		print("[CSGExporter] Aviso: OBJ exportado está vazio ou incompleto!")
+		return false
+	return true 

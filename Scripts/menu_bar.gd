@@ -553,19 +553,8 @@ func _csg_to_mesh_instance(csg: CSGShape3D) -> MeshInstance3D:
 
 func _on_file_dialog_file_selected(path: String):
 	print("[MenuBar] Arquivo selecionado:", path)
-	var selected_object = get_selected_object()
-	if not selected_object:
-		print("[MenuBar] Nenhum objeto selecionado!")
-		return
-	
-	var save_path = path.get_base_dir()
-	var file_name = path.get_file().get_basename()
-	
-	print("[MenuBar] Exportando objeto:", selected_object.name)
-	print("[MenuBar] Caminho de salvamento:", save_path)
-	print("[MenuBar] Nome do arquivo:", file_name)
-	
-	model_exporter.export_mesh_to_file(selected_object, save_path, file_name)
+	print("[MenuBar] Exportando leito, tampas e objetos spawnados para um único OBJ...")
+	model_exporter.export_all_to_single_obj(path)
 
 func _on_export_complete(success: bool, message: String):
 	print("[MenuBar] Exportação concluída. Sucesso:", success)

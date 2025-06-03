@@ -65,6 +65,7 @@ func _ready():
 	file_dialog.file_mode = FileDialog.FILE_MODE_SAVE_FILE
 	file_dialog.add_filter("*.obj", "OBJ Files")
 	file_dialog.access = FileDialog.ACCESS_FILESYSTEM
+	file_dialog.current_dir = "res://exports"  # Definir diretório padrão
 	file_dialog.file_selected.connect(_on_file_dialog_file_selected)
 	add_child(file_dialog)
 	
@@ -502,7 +503,8 @@ func paste_objects():
 	print("Objetos colados: ", clipboard.size())
 
 func _export_model():
-	export_dialog.popup_centered()
+	print("[MenuBar] Iniciando exportação de modelo...")
+	file_dialog.popup_centered()
 
 func _on_convert_csgs_pressed():
 	_convert_all_csgs_to_mesh()
@@ -550,16 +552,24 @@ func _csg_to_mesh_instance(csg: CSGShape3D) -> MeshInstance3D:
 	return mesh_instance
 
 func _on_file_dialog_file_selected(path: String):
+	print("[MenuBar] Arquivo selecionado:", path)
 	var selected_object = get_selected_object()
 	if not selected_object:
+		print("[MenuBar] Nenhum objeto selecionado!")
 		return
 	
 	var save_path = path.get_base_dir()
 	var file_name = path.get_file().get_basename()
 	
+	print("[MenuBar] Exportando objeto:", selected_object.name)
+	print("[MenuBar] Caminho de salvamento:", save_path)
+	print("[MenuBar] Nome do arquivo:", file_name)
+	
 	model_exporter.export_mesh_to_file(selected_object, save_path, file_name)
 
 func _on_export_complete(success: bool, message: String):
+	print("[MenuBar] Exportação concluída. Sucesso:", success)
+	print("[MenuBar] Mensagem:", message)
 	if success:
 		OS.alert(message, "Sucesso")
 	else:

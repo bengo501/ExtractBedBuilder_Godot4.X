@@ -5,10 +5,60 @@ signal export_complete(success: bool, message: String)
 
 var extraction_bed: Node3D
 var spawner: Node
+var csg_exporter: Node
+var export_dir: String = "res://exports"
 
 func _ready():
+	print("[ModelExporter] Inicializando exportador...")
 	extraction_bed = get_node("/root/MainScene/ExtractionBed")
 	spawner = get_node("/root/MainScene/ExtractionBed/Spawner")
+	
+	# Inicializar o exportador de CSG
+	csg_exporter = Node.new()
+	csg_exporter.set_script(load("res://Scripts/csg_exporter.gd"))
+	add_child(csg_exporter)
+	
+	# Criar diretório de exportação se não existir
+	var dir = DirAccess.open("res://")
+	if not dir.dir_exists("exports"):
+		print("[ModelExporter] Criando diretório de exportação...")
+		dir.make_dir("exports")
+
+func export_model(format: String, file_path: String) -> void:
+	print("[ModelExporter] Iniciando exportação no formato:", format)
+	print("[ModelExporter] Caminho do arquivo:", file_path)
+	
+	if format.to_lower() == "obj":
+		# Exportar todos os CSGs do leito e spawner
+		var base_path = file_path.get_base_dir()
+		var file_name = file_path.get_file().get_basename()
+		
+		print("[ModelExporter] Exportando CSGs do leito...")
+		if extraction_bed:
+			csg_exporter.export_all_csgs_to_obj(extraction_bed, base_path)
+		
+		print("[ModelExporter] Exportando CSGs do spawner...")
+		if spawner:
+			csg_exporter.export_all_csgs_to_obj(spawner, base_path)
+		
+		emit_signal("export_complete", true, "Modelo exportado com sucesso para OBJ")
+	else:
+		print("[ModelExporter] Formato não suportado:", format)
+		emit_signal("export_complete", false, "Formato não suportado: " + format)
+
+func export_mesh_to_file(object: Node3D, save_path: String, file_name: String) -> void:
+	print("[ModelExporter] Exportando objeto:", object.name)
+	print("[ModelExporter] Caminho de salvamento:", save_path)
+	print("[ModelExporter] Nome do arquivo:", file_name)
+	
+	if object is CSGShape3D:
+		var file_path = save_path.path_join(file_name + ".obj")
+		print("[ModelExporter] Caminho completo do arquivo:", file_path)
+		var success = csg_exporter.export_csg_to_obj(object, file_path)
+		emit_signal("export_complete", success, "Modelo exportado com sucesso para OBJ" if success else "Erro ao exportar modelo")
+	else:
+		print("[ModelExporter] Objeto não é um CSGShape3D:", object)
+		emit_signal("export_complete", false, "Objeto não é um CSGShape3D")
 
 # Função auxiliar para adicionar mesh de um objeto
 func _add_mesh_from_object(obj, all_meshes):
@@ -33,20 +83,6 @@ func _csg_to_mesh_instance(csg: CSGShape3D) -> MeshInstance3D:
 	mesh_instance.mesh = new_mesh
 	mesh_instance.global_transform = csg.global_transform
 	return mesh_instance
-
-func export_model(format: String, file_path: String) -> void:
-	var all_meshes = []
-	var extraction_bed = get_node("/root/MainScene/ExtractionBed")
-	if extraction_bed:
-		for child in extraction_bed.get_children():
-			if child is MeshInstance3D:
-				all_meshes.append(child)
-	var spawner = get_node("/root/MainScene/ExtractionBed/Spawner")
-	if spawner:
-		for child in spawner.get_children():
-			if child is MeshInstance3D:
-				all_meshes.append(child)
-	_export_obj(all_meshes, file_path)
 
 func _get_mesh_data(object) -> Dictionary:
 	var mesh_data = {
@@ -169,78 +205,6 @@ func _export_stl(objects: Array, file_path: String) -> void:
 	file.store_line("endsolid LeitoExtra")
 	file.close()
 	emit_signal("export_complete", true, "Modelo exportado com sucesso para STL")
-
-func export_mesh_to_file(object: Node3D, save_path: String, file_name: String) -> void:
-	print("[Export] Iniciando exportação para:", save_path, "Arquivo:", file_name)
-	# Certifique-se de que o diretório existe
-	var dir = DirAccess.open(save_path)
-	if not dir:
-		var err = DirAccess.make_dir_absolute(save_path)
-		print("[Export] Diretório não existia, tentando criar. Resultado:", err)
-		if err != OK:
-			print("[Export] Erro ao criar diretório:", err)
-			emit_signal("export_complete", false, "Erro ao criar diretório: " + str(err))
-			return
-	
-	# Buscar MeshInstance3D ou CSGShape3D em qualquer nível da hierarquia
-	var mesh_instance = null
-	var csg_instance = null
-	for child in object.get_children():
-		if child is MeshInstance3D:
-			mesh_instance = child
-			print("[Export] MeshInstance3D encontrado como filho direto.")
-			break
-		elif child is CSGShape3D:
-			csg_instance = child
-			print("[Export] CSGShape3D encontrado como filho direto.")
-			break
-	if mesh_instance == null and csg_instance == null:
-		# Busca recursiva
-		var descendants = object.get_children()
-		while descendants.size() > 0 and mesh_instance == null and csg_instance == null:
-			var node = descendants.pop_front()
-			if node is MeshInstance3D:
-				mesh_instance = node
-				print("[Export] MeshInstance3D encontrado na busca recursiva.")
-				break
-			elif node is CSGShape3D:
-				csg_instance = node
-				print("[Export] CSGShape3D encontrado na busca recursiva.")
-				break
-			descendants += node.get_children()
-	if mesh_instance == null and csg_instance == null:
-		print("[Export] Nenhum MeshInstance3D nem CSGShape3D encontrado!")
-		emit_signal("export_complete", false, "Objeto não possui MeshInstance3D nem CSGShape3D")
-		return
-	
-	# Conecte os sinais do OBJExporter
-	if not OBJExporter.export_started.is_connected(_on_export_started):
-		OBJExporter.export_started.connect(_on_export_started)
-	if not OBJExporter.export_progress_updated.is_connected(_on_export_progress):
-		OBJExporter.export_progress_updated.connect(_on_export_progress)
-	if not OBJExporter.export_completed.is_connected(_on_export_completed):
-		OBJExporter.export_completed.connect(_on_export_completed)
-	
-	# Se for MeshInstance3D, exporta normalmente
-	if mesh_instance:
-		print("[Export] Exportando MeshInstance3D...")
-		_export_obj([mesh_instance], save_path.path_join(file_name + ".obj"))
-		return
-	
-	# Se for CSGShape3D, converte para mesh e exporta
-	if csg_instance:
-		print("[Export] Exportando CSGShape3D...")
-		var mesh_pairs = csg_instance.get_meshes()
-		print("[Export] mesh_pairs:", mesh_pairs)
-		if mesh_pairs.size() == 2 and typeof(mesh_pairs[0]) == TYPE_TRANSFORM3D and typeof(mesh_pairs[1]) == TYPE_OBJECT:
-			var mesh = mesh_pairs[1]
-			var csg_file_name = file_name + "_csg"
-			print("[Export] Chamando _export_obj para mesh do CSG...")
-			_export_obj([mesh], save_path.path_join(csg_file_name + ".obj"))
-			return
-		else:
-			print("[Export] mesh_pairs retornou formato inesperado:", mesh_pairs)
-			return
 
 func _on_export_started() -> void:
 	print("[Export] Exportação iniciada")

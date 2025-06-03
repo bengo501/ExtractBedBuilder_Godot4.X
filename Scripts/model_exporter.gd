@@ -50,15 +50,36 @@ func export_mesh_to_file(object: Node3D, save_path: String, file_name: String) -
 	print("[ModelExporter] Exportando objeto:", object.name)
 	print("[ModelExporter] Caminho de salvamento:", save_path)
 	print("[ModelExporter] Nome do arquivo:", file_name)
-	
+
 	if object is CSGShape3D:
 		var file_path = save_path.path_join(file_name + ".obj")
 		print("[ModelExporter] Caminho completo do arquivo:", file_path)
 		var success = csg_exporter.export_csg_to_obj(object, file_path)
 		emit_signal("export_complete", success, "Modelo exportado com sucesso para OBJ" if success else "Erro ao exportar modelo")
-	else:
-		print("[ModelExporter] Objeto não é um CSGShape3D:", object)
-		emit_signal("export_complete", false, "Objeto não é um CSGShape3D")
+		return
+
+	# Se for um Node3D (ex: RigidBody3D), procurar CSGShape3D filhos
+	if object is Node3D:
+		var csgs = []
+		for child in object.get_children():
+			if child is CSGShape3D:
+				csgs.append(child)
+		if csgs.size() == 0:
+			print("[ModelExporter] Nenhum CSGShape3D encontrado em:", object)
+			emit_signal("export_complete", false, "Nenhum CSGShape3D encontrado no objeto selecionado")
+			return
+		print("[ModelExporter] Exportando", csgs.size(), "CSG(s) filho(s) de:", object.name)
+		var all_success = true
+		for csg in csgs:
+			var csg_file_path = save_path.path_join(file_name + "_" + csg.name + ".obj")
+			print("[ModelExporter] Exportando CSG:", csg.name, "para", csg_file_path)
+			var success = csg_exporter.export_csg_to_obj(csg, csg_file_path)
+			all_success = all_success and success
+		emit_signal("export_complete", all_success, "Exportação finalizada. Verifique a pasta de exportação.")
+		return
+
+	print("[ModelExporter] Objeto não é um CSGShape3D nem possui filhos CSGShape3D:", object)
+	emit_signal("export_complete", false, "Objeto não é um CSGShape3D nem possui filhos CSGShape3D")
 
 # Função auxiliar para adicionar mesh de um objeto
 func _add_mesh_from_object(obj, all_meshes):

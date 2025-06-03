@@ -24,35 +24,45 @@ func export_csg_to_obj(csg: CSGShape3D, file_path: String) -> bool:
 	# Escreve o cabeçalho do arquivo
 	file.store_line("# Exported from Godot CSG")
 	file.store_line("o " + csg.name)
+	file.store_line("g " + csg.name)
 	
 	var vertex_offset = 0
+	var total_vertices = 0
+	var total_faces = 0
 	
 	# Processa cada superfície da malha
 	for surface_idx in range(mesh.get_surface_count()):
 		var arrays = mesh.surface_get_arrays(surface_idx)
+		if arrays == null or arrays.size() <= ArrayMesh.ARRAY_INDEX:
+			continue
 		var vertices = arrays[ArrayMesh.ARRAY_VERTEX]
 		var indices = arrays[ArrayMesh.ARRAY_INDEX]
-		
 		if vertices == null or vertices.size() == 0:
 			continue
-			
 		# Escreve os vértices
 		for vertex in vertices:
 			var transformed_vertex = transform * vertex
 			file.store_line("v %.6f %.6f %.6f" % [transformed_vertex.x, transformed_vertex.y, transformed_vertex.z])
-			
+		total_vertices += vertices.size()
 		# Escreve as faces
 		if indices != null and indices.size() > 0:
 			for i in range(0, indices.size(), 3):
+				if i + 2 >= indices.size():
+					continue
 				var v1 = indices[i] + vertex_offset + 1
 				var v2 = indices[i + 1] + vertex_offset + 1
 				var v3 = indices[i + 2] + vertex_offset + 1
 				file.store_line("f %d %d %d" % [v1, v2, v3])
-				
+				total_faces += 1
 		vertex_offset += vertices.size()
 	
 	file.close()
 	print("CSG exportado com sucesso para:", file_path)
+	print("Total de vértices exportados:", total_vertices)
+	print("Total de faces exportadas:", total_faces)
+	if total_vertices == 0 or total_faces == 0:
+		print("Aviso: OBJ exportado está vazio ou incompleto!")
+		return false
 	return true
 
 # Função para exportar todos os CSGs de um nó

@@ -1,0 +1,35 @@
+[gd_scene load_steps=2 format=3 uid="uid://b6x8v0j6y5n3q"]
+
+[ext_resource type="Script" path="res://Scripts/performance_monitor.gd" id="1_2k4m3"]
+
+[node name="PerformanceMonitor" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+script = ExtResource("1_2k4m3")
+
+[node name="FPSLabel" type="Label" parent="."]
+layout_mode = 0
+offset_left = 10.0
+offset_top = 10.0
+offset_right = 200.0
+offset_bottom = 30.0
+text = "FPS: --"
+horizontal_alignment = 0
+
+[node name="MemoryLabel" type="Label" parent="."]
+layout_mode = 0
+offset_left = 10.0
+offset_top = 35.0
+offset_right = 200.0
+offset_bottom = 55.0
+text = "Memory: --"
+horizontal_alignment = 0
+
+[node name="ObjectsLabel" type="Label" parent="."]
+layout_mode = 0
+offset_left = 10.0
+offset_top = 60.0
+offset_right = 200.0
+offset_bottom = 80.0
+text = "Objects: --"
+horizontal_alignment = 0 
